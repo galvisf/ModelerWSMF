@@ -89,7 +89,8 @@ if plot_gravity
 end
 
 % Add ground
-
+dX = max(Xs)/4;
+plot([- dX, max(Xs) + dX], [0, 0], 'LineWidth', 5, 'Color', [0.6350 0.0780 0.1840])
 
 % Formatting
 titlePos = [0.5 1];

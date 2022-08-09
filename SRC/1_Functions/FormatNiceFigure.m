@@ -101,7 +101,14 @@ if uniformDigits(1)
         y(i) = digits_debugged(ticksX(i));
     end
     MAX_Y = max(y(y<5));
-    xtickformat(['%0.' num2str(MAX_Y) 'f'])
+    
+%     xtickformat(['%0.' num2str(MAX_Y) 'f'])
+    labels_updated = cell(length(ticksX),1);
+    for i = 1:length(ticksX)
+        labels_updated{i}= num2str(ticksX(i),['%0.' num2str(MAX_Y) 'f']);
+    end
+    % labels_updated{i} = sprintf(['%0.' num2str(MAX_Y) 'f|'], ticksX);
+    set(gca,'xticklabel',labels_updated);
 end
 if uniformDigits(2)
     ticksY = get(gca,'ytick');
@@ -110,7 +117,13 @@ if uniformDigits(2)
         y(i) = digits_debugged(ticksY(i));
     end
     MAX_Y = max(y(y<5));
-    ytickformat(['%0.' num2str(MAX_Y) 'f'])
+    
+%     ytickformat(['%0.' num2str(MAX_Y) 'f'])
+    labels_updated = cell(length(ticksY),1);
+    for i = 1:length(ticksY)
+        labels_updated{i}= num2str(ticksY(i),['%0.' num2str(MAX_Y) 'f']);
+    end
+    % labels_updated = sprintf(['%0.' num2str(MAX_Y) 'f|'], ticksY);
 end
 if uniformDigits(3)
     ticksZ = get(gca,'ztick');
@@ -119,7 +132,11 @@ if uniformDigits(3)
         y(i) = digits_debugged(ticksZ(i));
     end
     MAX_Y = max(y(y<5));
-    ztickformat(['%0.' num2str(MAX_Y) 'f'])
+%     ztickformat(['%0.' num2str(MAX_Y) 'f'])
+    labels_updated = cell(length(ticksY),1);
+    for i = 1:length(ticksZ)
+        labels_updated{i}= num2str(ticksY(i),['%0.' num2str(MAX_Y) 'f']);
+    end
 end
 
 %% Y-Label direction
@@ -156,20 +173,20 @@ end
 
 %% Color scheme
 
-set(get(gca,'legend'),'autoupdate','off')
-p1 = findobj(gca,'linestyle','-');
-p1 = p1(1:end);
-p2 = findobj(gca,'linestyle','--');
-p = [p1;p2];
-if strcmp(color,'gray') 
-    for i = 1:length(p)
-        if length(p) ~= 1
-            set(p(i),'color',[0 0 0]+0.7/(length(p)-1)*(i-1));
-        else
-            set(p(i),'color',[0 0 0]);
-        end
-    end
-end
+% set(get(gca,'legend'),'autoupdate','off')
+% p1 = findobj(gca,'linestyle','-');
+% p1 = p1(1:end);
+% p2 = findobj(gca,'linestyle','--');
+% p = [p1;p2];
+% if strcmp(color,'gray') 
+%     for i = 1:length(p)
+%         if length(p) ~= 1
+%             set(p(i),'color',[0 0 0]+0.7/(length(p)-1)*(i-1));
+%         else
+%             set(p(i),'color',[0 0 0]);
+%         end
+%     end
+% end
 
 %% Title
 
@@ -187,13 +204,12 @@ title(titleText, 'Units', 'normalized', 'Position', titlePos, ...
 
 %% Others
 
-set(gcf,'color', 'w')
-set(gca,'box','on')
-if ~isempty(get(gca,'legend'))
-    hl = legend;
-    set(hl,'edgecolor','none')
-end
-
+% set(gcf,'color', 'w')
+% set(gca,'box','on')
+% if ~isempty(get(gca,'legend'))
+%     hl = legend;
+%     set(hl,'edgecolor','none')
+% end
 
 
 function y = digits_debugged(x)
