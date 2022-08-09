@@ -40,7 +40,7 @@ function AllEle = write_Columns(INP,AllEle,bldgData,AISC_v14p1,addSplices,...
     
     % Compute properties and write each column
     for Axis = 1:axisNum               
-        storiesDone = zeros(storyNum, 0); % counter for columns spanning multiple stories                             
+        storiesDone = zeros(storyNum, 1); % counter for columns spanning multiple stories                             
         
         for Story = 1:storyNum
             isBox_i = false;

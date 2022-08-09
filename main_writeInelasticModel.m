@@ -19,7 +19,7 @@ n_models = 1;
 
 % Building input file
 modelName = 'Frame 1C Grid 16';
-folderPath = pwd;
+folderPath = 'OUTPUTS';
 geomFN = 'inputs_frame1C_grid16.xlsx';
 
 %% Modeling considerations

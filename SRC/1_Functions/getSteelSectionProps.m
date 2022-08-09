@@ -32,7 +32,7 @@ function props = getSteelSectionProps(sectionSize, AISC_v14p1)
     % Reformat section name    
     sectionSize = sectionSize(~isspace(sectionSize)); % remove spaces
 %     sectionSize
-    if contains(sectionSize, 'x')
+    if isempty(strfind(sectionSize, 'x'))
         sectionSize = strrep(sectionSize, 'x', 'X');
     end
     
@@ -65,9 +65,9 @@ function props = getSteelSectionProps(sectionSize, AISC_v14p1)
         
         props.tPZ_z = props.tw; % strong axis (web)
         props.tPZ_y = 2*props.tf; % weak axis (flanges)
-    elseif contains(sectionSize, 'FL') || contains(sectionSize, 'BUILT')                 
+    elseif ~isempty(strfind(sectionSize, 'FL')) || ~isempty(strfind(sectionSize, 'BUILT'))              
         % Built-up section
-		if contains(sectionSize, 'FL')
+		if strfind(sectionSize, 'FL')
 			sSectionSize = split(sectionSize, 'X'); % split at "X"
 			props.db = str2double(sSectionSize{end});
 			props.tf = str2double(sSectionSize{1}(3:end));
