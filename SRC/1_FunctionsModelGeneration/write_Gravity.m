@@ -173,7 +173,7 @@ if strcmp(modelSetUp, 'Generic')
         else
     %%%%%%%%%%%%%%%%%%%%% Build leaning column supports %%%%%%%%%%%%%%%%%%%%%%%
             % 1st floor of leaning column
-            nodeID = 10000+axisNum*100;
+            nodeID = 10000+(axisNum+1)*100+2;
             fprintf(INP, ' %d', nodeID);
         end
     end

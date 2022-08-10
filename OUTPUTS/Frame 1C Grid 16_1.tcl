@@ -169,11 +169,11 @@ ConstructPanel_Rectangle  2 4 $Axis2 $Floor4 $Es $A_Stiff $I_Stiff 18.30 23.90 $
 # COMMAND SYNTAX 
 # PanelZoneSpring    eleID NodeI NodeJ Es mu Fy dc bc tcf tcw tdp db Ic Acol alpha Pr trib ts pzModelTag isExterior Composite
 # Panel zones floor2
-PanelZoneSpring 9020100 4020109 4020110 $Es $mu $FyCol 18.30 16.60  2.85  1.77  2.75 37.30 6000.00 117.000 $SH_PZ 198.193 $trib $tslab $pzModelTag 1 $Composite;
-PanelZoneSpring 9020200 4020209 4020210 $Es $mu $FyCol 18.30 16.60  2.85  1.77  2.75 37.30 6000.00 117.000 $SH_PZ 198.193 $trib $tslab $pzModelTag 1 $Composite;
+PanelZoneSpring 9020100 4020109 4020110 $Es $mu $FyCol 18.30 16.60  2.85  1.77  2.75 37.30 6000.00 117.000 $SH_PZ 958.375 $trib $tslab $pzModelTag 1 $Composite;
+PanelZoneSpring 9020200 4020209 4020210 $Es $mu $FyCol 18.30 16.60  2.85  1.77  2.75 37.30 6000.00 117.000 $SH_PZ 958.375 $trib $tslab $pzModelTag 1 $Composite;
 # Panel zones floor3
-PanelZoneSpring 9030100 4030109 4030110 $Es $mu $FyCol 18.30 16.60  2.85  1.77  1.75 37.10 6000.00 117.000 $SH_PZ 139.893 $trib $tslab $pzModelTag 1 $Composite;
-PanelZoneSpring 9030200 4030209 4030210 $Es $mu $FyCol 18.30 16.60  2.85  1.77  1.75 37.10 6000.00 117.000 $SH_PZ 139.893 $trib $tslab $pzModelTag 1 $Composite;
+PanelZoneSpring 9030100 4030109 4030110 $Es $mu $FyCol 18.30 16.60  2.85  1.77  1.75 37.10 6000.00 117.000 $SH_PZ 505.175 $trib $tslab $pzModelTag 1 $Composite;
+PanelZoneSpring 9030200 4030209 4030210 $Es $mu $FyCol 18.30 16.60  2.85  1.77  1.75 37.10 6000.00 117.000 $SH_PZ 505.175 $trib $tslab $pzModelTag 1 $Composite;
 # Panel zones floor4
 PanelZoneSpring 9040100 4040109 4040110 $Es $mu $FyCol 18.30 16.60  2.85  1.77  0.00 23.90 6000.00 117.000 $SH_PZ 60.500 $trib $tslab $pzModelTag 1 $Composite;
 PanelZoneSpring 9040200 4040209 4040210 $Es $mu $FyCol 18.30 16.60  2.85  1.77  0.00 23.90 6000.00 117.000 $SH_PZ 60.500 $trib $tslab $pzModelTag 1 $Composite;
@@ -219,13 +219,13 @@ hingeBeamColumn 1040100 4040104 4040202 "Horizontal" $trans_selected $n $Es $FyB
 # (no splice) hingeBeamColumn        ElementID node_i node_j eleDir, ... A, Ieff
 
 # Columns at story 1 axis 1
-set secInfo_i {772.3138   1.2772   0.8678   0.0709   0.0623   0.1540   0.0000};
-set secInfo_j {772.3138   1.2772   0.8678   0.0709   0.0623   0.1540   0.0000};
+set secInfo_i {662.2858   1.2259   0.7441   0.0496   0.0426   0.1064   0.0000};
+set secInfo_j {662.2858   1.2259   0.7441   0.0496   0.0426   0.1064   0.0000};
 hingeBeamColumn 2010100 10100 4020101 "Vertical" $trans_selected $n $Es $FyCol $rigMatTag 117.000 5617.449 $degradation $c $secInfo_i $secInfo_j 0 0;
 
 # Columns at story 2 axis 1
-set secInfo_i {780.7521   1.3241   0.8772   0.0766   0.0685   0.1678   0.0000};
-set secInfo_j {780.7521   1.3241   0.8772   0.0766   0.0685   0.1678   0.0000};
+set secInfo_i {727.8815   1.2957   0.8178   0.0651   0.0576   0.1420   0.0000};
+set secInfo_j {727.8815   1.2957   0.8178   0.0651   0.0576   0.1420   0.0000};
 hingeBeamColumn 2020100 4020103 4030101 "Vertical" $trans_selected $n $Es $FyCol $rigMatTag 117.000 5533.957 $degradation $c $secInfo_i $secInfo_j 0 0;
 
 # Columns at story 3 axis 1
@@ -234,13 +234,13 @@ set secInfo_j {792.2433   1.1676   0.8902   0.0614   0.0514   0.1299   0.0000};
 hingeBeamColumn 2030100 4030103 4040101 "Vertical" $trans_selected $n $Es $FyCol $rigMatTag 117.000 5811.305 $degradation $c $secInfo_i $secInfo_j 0 0;
 
 # Columns at story 1 axis 2
-set secInfo_i {772.3138   1.2772   0.8678   0.0709   0.0623   0.1540   0.0000};
-set secInfo_j {772.3138   1.2772   0.8678   0.0709   0.0623   0.1540   0.0000};
+set secInfo_i {662.2858   1.2259   0.7441   0.0496   0.0426   0.1064   0.0000};
+set secInfo_j {662.2858   1.2259   0.7441   0.0496   0.0426   0.1064   0.0000};
 hingeBeamColumn 2010200 10200 4020201 "Vertical" $trans_selected $n $Es $FyCol $rigMatTag 117.000 5617.449 $degradation $c $secInfo_i $secInfo_j 0 0;
 
 # Columns at story 2 axis 2
-set secInfo_i {780.7521   1.3241   0.8772   0.0766   0.0685   0.1678   0.0000};
-set secInfo_j {780.7521   1.3241   0.8772   0.0766   0.0685   0.1678   0.0000};
+set secInfo_i {727.8815   1.2957   0.8178   0.0651   0.0576   0.1420   0.0000};
+set secInfo_j {727.8815   1.2957   0.8178   0.0651   0.0576   0.1420   0.0000};
 hingeBeamColumn 2020200 4020203 4030201 "Vertical" $trans_selected $n $Es $FyCol $rigMatTag 117.000 5533.957 $degradation $c $secInfo_i $secInfo_j 0 0;
 
 # Columns at story 3 axis 2
@@ -292,11 +292,11 @@ fix 10302 1 1 0;
 # MASS ON THE MOMENT FRAME
 
 # Panel zones floor2
-mass 4020103 0.1510  0.0015 16.3077;
-mass 4020203 0.1510  0.0015 16.3077;
+mass 4020103 1.1738  0.0117 126.7692;
+mass 4020203 1.1738  0.0117 126.7692;
 # Panel zones floor3
-mass 4030103 0.2056  0.0021 22.2077;
-mass 4030203 0.2056  0.0021 22.2077;
+mass 4030103 1.1517  0.0115 124.3846;
+mass 4030203 1.1517  0.0115 124.3846;
 # Panel zones floor4
 mass 4040103 0.1567  0.0016 16.9231;
 mass 4040203 0.1567  0.0016 16.9231;
@@ -315,9 +315,9 @@ pattern Plain 101 Linear {
 
 	# MR Frame: Distributed beam element loads
 	# Floor 2
-	eleLoad -ele 1020100 -type -beamUniform   -0.00644; # Beam at floor 2 bay 1
+	eleLoad -ele 1020100 -type -beamUniform   -2.31782; # Beam at floor 2 bay 1
 	# Floor 3
-	eleLoad -ele 1030100 -type -beamUniform   -0.00596; # Beam at floor 3 bay 1
+	eleLoad -ele 1030100 -type -beamUniform   -2.14399; # Beam at floor 3 bay 1
 	# Floor 4
 
 	#  MR Frame: Point loads on columns

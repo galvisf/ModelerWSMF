@@ -10,7 +10,7 @@ axisNum = bldgData.axisNum;
 
 % Name of the input file (delete existing files with same name)                   
 filename = analysisFile;
-if isfile(filename)
+if exist(filename, 'file')
     delete(filename)
 end
 INP = fopen(filename,'w+');

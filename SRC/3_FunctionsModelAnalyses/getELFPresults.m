@@ -110,7 +110,7 @@ end
 dc_ratio_cols = zeros(size(MnCol));
 k = 1;
 for Axis = 1:axisNum
-    storiesDone = zeros(storyNum, 0); % counter for columns spanning multiple stories
+    storiesDone = zeros(storyNum, 1); % counter for columns spanning multiple stories
     for Story = 1:storyNum
         if ~isempty(colSize{Story, Axis}) && ~ismember(Story, storiesDone)
             % Floor bottom end

@@ -46,7 +46,7 @@ for i = 1:storyNum
             ZyCol(i, j) = props.Zy; % around weak axis
             
             orientation = colOrientations(i, j);
-            if contains(colSize{i, j}, 'BOX')
+            if ~isempty(strfind(colSize{i, j}, 'BOX'))
                 isBox = true;
             else
                 isBox = false;

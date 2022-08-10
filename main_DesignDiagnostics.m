@@ -2,10 +2,12 @@
 
 % Add functions
 close all; clear; clc;
-addpath('SRC\0_Databases')
-addpath('SRC\1_FunctionsModelGeneration')
-addpath('SRC\2_TemplateOpenSeesfiles')
-addpath('SRC\3_FunctionsModelAnalyses')
+currFolder = pwd;
+addpath([currFolder filesep 'SRC' filesep '0_Databases'])
+addpath([currFolder filesep 'SRC' filesep '1_FunctionsModelGeneration'])
+addpath([currFolder filesep 'SRC' filesep '3_FunctionsModelAnalyses'])
+
+sourceFolder = ['SRC' filesep '2_TemplateOpenSeesfiles'];
 
 %% GENERAL INPUTS
 isPushover = false;
@@ -19,13 +21,12 @@ geomFN    = 'inputs_frame1C_grid16.xlsx';
 Code_Year = 1986;
 spl_ratio = 1; % ratio of welded flange thickness
 frameType = 'Perimeter'; % 'Space' 'Perimeter' 'Intermediate'
-MRF_X = 1; % frames parallel to X resisting WL together
+MRF_X     = 1; % frames parallel to X resisting WL together
 frameLengthY = 30*12; % [in] tributary width for WL to the MRF_X number of frames
 
 % Basic paths
 folderInputFiles = 'INPUTS'; % Input files per building
-modelFolderPath = 'OUTPUTS/DESIGN_DIAGNOSTICS'; % Folder to store results
-currFolder = pwd;
+folderPath = ['OUTPUTS' filesep 'DESIGN_DIAGNOSTICS']; % Folder to store results
 
 % Figure inputs
 font = 9;
@@ -45,7 +46,7 @@ explicitMethod  = false; % add small mass to all DOF for explicit solution metho
 modelSetUp      = 'Generic'; % Generic    EE-UQ    Sherlock
 
 %%% Equivalent Gravity Frame Stiffness %%%
-addEGF = true; 
+addEGF = false; 
 
 %%% Material properties %%%
 Es     = 29000;
@@ -126,17 +127,12 @@ buildingDiagnostics.stress_ratio_splice = [];
 
 %% Process each building
 
-% Create folder to store model
-bldgName = ['ID',num2str(buildingInventory.OBJECTID(bldg_i))];
-folderPath = [modelFolderPath,'/',bldgName];
-mkdir(folderPath);
-
 % Copy all necessary OpenSees helper files
 copyOpenSeesHelper(sourceFolder, folderPath, isPushover)
 modelFN = 'ElasticModel.tcl';
 
 %%%%%%% Generate elastic model per building and direction %%%%%%%%
-[AllNodes, AllEle, bldgData] = write_FrameModel(folderPath, geomFN, modelFN, ...
+[AllNodes, AllEle, bldgData] = write_FrameModel(folderPath, [folderInputFiles filesep geomFN], modelFN, ...
     AISC_v14p1, Es, mu_poisson, FyBeam, FyCol, ...
     TransformationX, backbone, SH_PZ, panelZoneModel, ...
     composite, Comp_I, Comp_I_GC, ...
@@ -147,6 +143,8 @@ modelFN = 'ElasticModel.tcl';
     fractureElement, slabFiberMaterials, fracSecMaterials, ...                
     FI_lim_type, cvn_a0_type, flangeProp, cvn_col, ...
     generation, connType, degradation, c);            
+
+
 
 %%%%%%%% Design diagnostics %%%%%%%%
 secProps = getSectionProps(bldgData, AISC_v14p1, Es, FyBeam, FyCol);

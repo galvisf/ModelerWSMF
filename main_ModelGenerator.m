@@ -3,9 +3,9 @@
 % close all;
 clear; clc;
 
-addpath('SRC\0_Databases')
-addpath('SRC\1_FunctionsModelGeneration')
-addpath('SRC\2_TemplateOpenSeesfiles')
+addpath(['SRC' filesep '0_Databases'])
+addpath(['SRC' filesep '1_FunctionsModelGeneration'])
+addpath(['SRC' filesep '2_TemplateOpenSeesfiles'])
 folderInputFiles = 'INPUTS';
 currFolder = pwd;
 
