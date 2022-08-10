@@ -17,10 +17,8 @@ AISC_info = AISC_v14p1(1, :)';
 % Building input data
 geomFN    = 'inputs_frame1C_grid16.xlsx';
 Code_Year = 1986;
-spl_ratio = 1; % ratio of welded flange thickness
-frameType = 'Perimeter'; % 'Space' 'Perimeter' 'Intermediate'
-MRF_X = 1; % frames parallel to X resisting WL together
-frameLengthY = 30*12; % [in] tributary width for WL to the MRF_X number of frames
+spl_ratio = 0;
+
 
 % Basic paths
 folderInputFiles = 'INPUTS'; % Input files per building
@@ -113,7 +111,7 @@ buildingDiagnostics.T            = [];
 buildingDiagnostics.mass_part    = [];
 buildingDiagnostics.CsEQd        = [];
 buildingDiagnostics.CsWLd        = [];
-buildingDiagnostics.CsEQ_ASCE    = [];
+buildingDiagnostics.CsEQ_ASCE   = [];
 buildingDiagnostics.CsFirstMpEQ  = [];
 buildingDiagnostics.PZratio      = []; % median of the interior pz's
 buildingDiagnostics.SCWB         = [];
@@ -167,11 +165,12 @@ Icol_ratio = getIcol_ratio(bldgData, secProps);
 cd(folderPath)
 
 % %% EQ %%
+frameType = buildingInventory.Lateral_System_Type{bldg_i};   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% frameType
 % Compute equivalent lateral load
-if Code_Year <= 1973
+if Code_Year <= 1973 
     Fx_EQ = EQ_UBC1961(bldgData, Z, frameType);
     EQ_pattern = 'EQ_UBC1961';
-elseif Code_Year <= 1982 
+elseif buildingInventory.Code_Year(bldg_i) <= 1982 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Code_Year
     Fx_EQ = EQ_UBC1973(bldgData, Z, frameType);
     EQ_pattern = 'EQ_UBC1973';
 else
@@ -194,12 +193,14 @@ SDR_EQ = SDR_EQ/0.67; % per UBC1982 SDR from prescriptive lateral loads should b
 SDR_EQ = SDR_EQ*Cd;         
 
 % %% WL %%
+MRF_X = eval(buildingInventory.Moment_Resisting_Frames_X{bldg_i}); % frames parallel to X  %%%%%%%%%%%%%%%%%%%%%%%%% MRF_X
+frameLengthY = eval(buildingInventory.frameLengthY{bldg_i}); %%%%%%%%%%%%%%%%%%%%%%%%% frameLengthY
 % Compute lateral load
-if Code_Year <= 1973
+if buildingInventory.Code_Year(bldg_i) <= 1973
     Fx_WL = WL_UBC1961_1973(bldgData, MRF_X, frameLengthY, wpa);
     WL_pattern = 'WL_UBC1961_1973';
     WL_label = 'UBC1961';
-elseif Code_Year <= 1982
+elseif buildingInventory.Code_Year(bldg_i) <= 1982
     Fx_WL = WL_UBC1961_1973(bldgData, MRF_X, frameLengthY, wpa);
     WL_pattern = 'WL_UBC1961_1973';
     WL_label = 'UBC1973';

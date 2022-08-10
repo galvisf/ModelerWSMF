@@ -4,7 +4,7 @@
 clear; clc;
 
 addpath('SRC\0_Databases')
-addpath('SRC\1_Functions')
+addpath('SRC\1_FunctionsModelGeneration')
 addpath('SRC\2_TemplateOpenSeesfiles')
 folderInputFiles = 'INPUTS';
 currFolder = pwd;
