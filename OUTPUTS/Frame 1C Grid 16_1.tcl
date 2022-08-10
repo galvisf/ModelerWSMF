@@ -9,7 +9,7 @@
 # Generation:                Pre_Northridge
 # Composite beams:           True
 # Fracturing fiber sections: False
-# Gravity system stiffness:  True
+# Gravity system stiffness:  False
 # Column splices included:   False
 # Rigid diaphragm:           False
 # Plastic hinge type:        PN
@@ -32,7 +32,6 @@ source hingeBeamColumn.tcl;
 source matHysteretic.tcl;
 source matIMKBilin.tcl;
 source matBilin02.tcl;
-source Spring_Pinching.tcl;
 source modalAnalysis.tcl;
 
 ####################################################################################################
@@ -64,9 +63,6 @@ uniaxialMaterial Elastic  $rigMatTag [expr 50*50*29000];  #Rigid Material [using
 set  DampModeI 1;
 set  DampModeJ 3;
 set  zeta 0.020;
-
-# GRAVITY FRAME MODEL
-set gap 0.08; # Gap to consider binding in gravity frame beam connections
 
 # GEOMETRIC TRANSFORMATIONS IDs
 geomTransf Linear 		 1;
@@ -129,6 +125,22 @@ set WFrame 360.00;
 node 10100   $Axis1  $Floor1;
 node 10200   $Axis2  $Floor1;
 
+
+#LEANING COLUMN NODES
+#column lower node label: story_i*10000+(axisNum+1)*100 + 2;
+#column upper node label: story_i*10000+(axisNum+1)*100 + 4;
+node 10302  720.000    0.000;
+node 10304  720.000  224.040;
+node 20302  720.000  224.040;
+node 20304  720.000  446.040;
+node 30302  720.000  446.040;
+node 30304  720.000  773.040;
+
+#Pin the nodes for leaning column, floor 2
+equalDOF 20302 10304 1 2;
+
+#Pin the nodes for leaning column, floor 3
+equalDOF 30302 20304 1 2;
 ###################################################################################################
 #                                  PANEL ZONE NODES & ELEMENTS                                    #
 ###################################################################################################
@@ -157,14 +169,14 @@ ConstructPanel_Rectangle  2 4 $Axis2 $Floor4 $Es $A_Stiff $I_Stiff 18.30 23.90 $
 # COMMAND SYNTAX 
 # PanelZoneSpring    eleID NodeI NodeJ Es mu Fy dc bc tcf tcw tdp db Ic Acol alpha Pr trib ts pzModelTag isExterior Composite
 # Panel zones floor2
-PanelZoneSpring 9020100 4020109 4020110 $Es $mu $FyCol 18.30 16.60  2.85  1.77  0.00 37.30 6000.00 117.000 $SH_PZ 194.068 $trib $tslab $pzModelTag 1 $Composite;
-PanelZoneSpring 9020200 4020209 4020210 $Es $mu $FyCol 18.30 16.60  2.85  1.77  0.00 37.30 6000.00 117.000 $SH_PZ 194.068 $trib $tslab $pzModelTag 1 $Composite;
+PanelZoneSpring 9020100 4020109 4020110 $Es $mu $FyCol 18.30 16.60  2.85  1.77  2.75 37.30 6000.00 117.000 $SH_PZ 198.193 $trib $tslab $pzModelTag 1 $Composite;
+PanelZoneSpring 9020200 4020209 4020210 $Es $mu $FyCol 18.30 16.60  2.85  1.77  2.75 37.30 6000.00 117.000 $SH_PZ 198.193 $trib $tslab $pzModelTag 1 $Composite;
 # Panel zones floor3
-PanelZoneSpring 9030100 4030109 4030110 $Es $mu $FyCol 18.30 16.60  2.85  1.77  0.00 37.10 6000.00 117.000 $SH_PZ 135.768 $trib $tslab $pzModelTag 1 $Composite;
-PanelZoneSpring 9030200 4030209 4030210 $Es $mu $FyCol 18.30 16.60  2.85  1.77  0.00 37.10 6000.00 117.000 $SH_PZ 135.768 $trib $tslab $pzModelTag 1 $Composite;
+PanelZoneSpring 9030100 4030109 4030110 $Es $mu $FyCol 18.30 16.60  2.85  1.77  1.75 37.10 6000.00 117.000 $SH_PZ 139.893 $trib $tslab $pzModelTag 1 $Composite;
+PanelZoneSpring 9030200 4030209 4030210 $Es $mu $FyCol 18.30 16.60  2.85  1.77  1.75 37.10 6000.00 117.000 $SH_PZ 139.893 $trib $tslab $pzModelTag 1 $Composite;
 # Panel zones floor4
-PanelZoneSpring 9040100 4040109 4040110 $Es $mu $FyCol 18.30 16.60  2.85  1.77  0.00 23.90 6000.00 117.000 $SH_PZ 56.375 $trib $tslab $pzModelTag 1 $Composite;
-PanelZoneSpring 9040200 4040209 4040210 $Es $mu $FyCol 18.30 16.60  2.85  1.77  0.00 23.90 6000.00 117.000 $SH_PZ 56.375 $trib $tslab $pzModelTag 1 $Composite;
+PanelZoneSpring 9040100 4040109 4040110 $Es $mu $FyCol 18.30 16.60  2.85  1.77  0.00 23.90 6000.00 117.000 $SH_PZ 60.500 $trib $tslab $pzModelTag 1 $Composite;
+PanelZoneSpring 9040200 4040209 4040210 $Es $mu $FyCol 18.30 16.60  2.85  1.77  0.00 23.90 6000.00 117.000 $SH_PZ 60.500 $trib $tslab $pzModelTag 1 $Composite;
 
 
 ####################################################################################################
@@ -207,35 +219,53 @@ hingeBeamColumn 1040100 4040104 4040202 "Horizontal" $trans_selected $n $Es $FyB
 # (no splice) hingeBeamColumn        ElementID node_i node_j eleDir, ... A, Ieff
 
 # Columns at story 1 axis 1
-set secInfo_i {772.9109   1.2774   0.8684   0.0710   0.0624   0.1543   0.0000};
-set secInfo_j {772.9109   1.2774   0.8684   0.0710   0.0624   0.1543   0.0000};
+set secInfo_i {772.3138   1.2772   0.8678   0.0709   0.0623   0.1540   0.0000};
+set secInfo_j {772.3138   1.2772   0.8678   0.0709   0.0623   0.1540   0.0000};
 hingeBeamColumn 2010100 10100 4020101 "Vertical" $trans_selected $n $Es $FyCol $rigMatTag 117.000 5617.449 $degradation $c $secInfo_i $secInfo_j 0 0;
 
 # Columns at story 2 axis 1
-set secInfo_i {781.3492   1.3245   0.8779   0.0767   0.0686   0.1682   0.0000};
-set secInfo_j {781.3492   1.3245   0.8779   0.0767   0.0686   0.1682   0.0000};
+set secInfo_i {780.7521   1.3241   0.8772   0.0766   0.0685   0.1678   0.0000};
+set secInfo_j {780.7521   1.3241   0.8772   0.0766   0.0685   0.1678   0.0000};
 hingeBeamColumn 2020100 4020103 4030101 "Vertical" $trans_selected $n $Es $FyCol $rigMatTag 117.000 5533.957 $degradation $c $secInfo_i $secInfo_j 0 0;
 
 # Columns at story 3 axis 1
-set secInfo_i {792.8403   1.1677   0.8908   0.0615   0.0515   0.1301   0.0000};
-set secInfo_j {792.8403   1.1677   0.8908   0.0615   0.0515   0.1301   0.0000};
+set secInfo_i {792.2433   1.1676   0.8902   0.0614   0.0514   0.1299   0.0000};
+set secInfo_j {792.2433   1.1676   0.8902   0.0614   0.0514   0.1299   0.0000};
 hingeBeamColumn 2030100 4030103 4040101 "Vertical" $trans_selected $n $Es $FyCol $rigMatTag 117.000 5811.305 $degradation $c $secInfo_i $secInfo_j 0 0;
 
 # Columns at story 1 axis 2
-set secInfo_i {772.9109   1.2774   0.8684   0.0710   0.0624   0.1543   0.0000};
-set secInfo_j {772.9109   1.2774   0.8684   0.0710   0.0624   0.1543   0.0000};
+set secInfo_i {772.3138   1.2772   0.8678   0.0709   0.0623   0.1540   0.0000};
+set secInfo_j {772.3138   1.2772   0.8678   0.0709   0.0623   0.1540   0.0000};
 hingeBeamColumn 2010200 10200 4020201 "Vertical" $trans_selected $n $Es $FyCol $rigMatTag 117.000 5617.449 $degradation $c $secInfo_i $secInfo_j 0 0;
 
 # Columns at story 2 axis 2
-set secInfo_i {781.3492   1.3245   0.8779   0.0767   0.0686   0.1682   0.0000};
-set secInfo_j {781.3492   1.3245   0.8779   0.0767   0.0686   0.1682   0.0000};
+set secInfo_i {780.7521   1.3241   0.8772   0.0766   0.0685   0.1678   0.0000};
+set secInfo_j {780.7521   1.3241   0.8772   0.0766   0.0685   0.1678   0.0000};
 hingeBeamColumn 2020200 4020203 4030201 "Vertical" $trans_selected $n $Es $FyCol $rigMatTag 117.000 5533.957 $degradation $c $secInfo_i $secInfo_j 0 0;
 
 # Columns at story 3 axis 2
-set secInfo_i {792.8403   1.1677   0.8908   0.0615   0.0515   0.1301   0.0000};
-set secInfo_j {792.8403   1.1677   0.8908   0.0615   0.0515   0.1301   0.0000};
+set secInfo_i {792.2433   1.1676   0.8902   0.0614   0.0514   0.1299   0.0000};
+set secInfo_j {792.2433   1.1676   0.8902   0.0614   0.0514   0.1299   0.0000};
 hingeBeamColumn 2030200 4030203 4040201 "Vertical" $trans_selected $n $Es $FyCol $rigMatTag 117.000 5811.305 $degradation $c $secInfo_i $secInfo_j 0 0;
 
+####################################################################################################
+#                                              FLOOR LINKS                                         #
+####################################################################################################
+
+# Command Syntax 
+# element truss $ElementID $iNode $jNode $Area $matID
+element truss 1004 4040204 30304 $A_Stiff $rigMatTag;
+element truss 1003 4030204 20304 $A_Stiff $rigMatTag;
+element truss 1002 4020204 10304 $A_Stiff $rigMatTag;
+
+####################################################################################################
+#                                          EGF COLUMNS AND BEAMS                                   #
+####################################################################################################
+
+# LEANING COLUMN
+element elasticBeamColumn 2010300 10302 10304 $A_Stiff $Es $I_Stiff $trans_selected;
+element elasticBeamColumn 2020300 20302 20304 $A_Stiff $Es $I_Stiff $trans_selected;
+element elasticBeamColumn 2030300 30302 30304 $A_Stiff $Es $I_Stiff $trans_selected;
 ###################################################################################################
 #                                       BOUNDARY CONDITIONS                                       #
 ###################################################################################################
@@ -244,6 +274,8 @@ hingeBeamColumn 2030200 4030203 4040201 "Vertical" $trans_selected $n $Es $FyCol
 fix 10100 1 1 1;
 fix 10200 1 1 1;
 
+# LEANING COLUMN SUPPORT
+fix 10302 1 1 0;
 ###################################################################################################
 ###################################################################################################
                                          puts "
@@ -266,9 +298,14 @@ mass 4020203 0.1510  0.0015 16.3077;
 mass 4030103 0.2056  0.0021 22.2077;
 mass 4030203 0.2056  0.0021 22.2077;
 # Panel zones floor4
-mass 4040103 0.1460  0.0015 15.7692;
-mass 4040203 0.1460  0.0015 15.7692;
+mass 4040103 0.1567  0.0016 16.9231;
+mass 4040203 0.1567  0.0016 16.9231;
 
+# MASS ON THE GRAVITY SYSTEM
+
+mass 10304 2.8490  0.0285 307.6923;
+mass 20304 4.1440  0.0414 447.5524;
+mass 30304 0.7770  0.0078 83.9161;
 
 ###################################################################################################
 #                                            GRAVITY LOAD                                         #
@@ -291,8 +328,13 @@ pattern Plain 101 Linear {
 	load 4030103 0.0 -78.3750 0.0;
 	load 4030203 0.0 -78.3750 0.0;
 	# Floor4
-	load 4040103 0.0 -56.3750 0.0;
-	load 4040203 0.0 -56.3750 0.0;
+	load 4040103 0.0 -60.5000 0.0;
+	load 4040203 0.0 -60.5000 0.0;
+
+	#  Gravity Frame: Point loads on columns
+	load 10304 0.0 -1100.0000 0.0;
+	load 20304 0.0 -1600.0000 0.0;
+	load 30304 0.0 -300.0000 0.0;
 
 }
 

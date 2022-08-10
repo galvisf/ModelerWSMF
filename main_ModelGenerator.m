@@ -36,7 +36,7 @@ explicitMethod  = false; % add small mass to all DOF for explicit solution metho
 modelSetUp      = 'EE-UQ'; % Generic    EE-UQ    Sherlock
 
 %%% Equivalent Gravity Frame %%%
-addEGF = true; 
+addEGF = false; 
 
 %%% Material properties %%%
 Es     = 29000;
