@@ -147,7 +147,7 @@ modelFN = 'ElasticModel.tcl';
 
 
 
-%%%%%%%% Design diagnostics %%%%%%%%
+%% %%%%%% Design diagnostics %%%%%%%%
 secProps = getSectionProps(bldgData, AISC_v14p1, Es, FyBeam, FyCol);
 
 %%% Get Strong column - weak beam ratio
@@ -298,7 +298,7 @@ set(gca, 'position', figure_size)
 subplot(3,4,[8,12])
 title_text = '';            
 x_label = ['Peak Story Drift ($C_d=',num2str(Cd),'$) [\%]'];
-x_limits = [0, 4]; %ceil(max(max(SDR_EQ))*100)
+x_limits = [0, ceil(max(max(SDR_EQ))*100)];
 plotStair(SDR_EQ*100, color_specs(1,:), title_text, font, 0, x_label, x_limits);
 plotStair(SDR_EQ_ASCE7*100, color_specs(2,:), title_text, font, 0, x_label, x_limits);
 plotStair(SDR_WL*100, color_specs(3,:), title_text, font, 0, x_label, x_limits);            
