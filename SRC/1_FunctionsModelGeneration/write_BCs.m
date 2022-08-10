@@ -5,7 +5,7 @@
 % Stanford University
 % Parts of the code from Prof. Ahmed Elkady
 % 
-function write_BCs(INP, bldgData, addEGF, rigidFloor)
+function write_BCs(INP, bldgData, fixedBase, addEGF, rigidFloor)
 %% Read relevant variables
 storyNum  = bldgData.storyNum;
 floorNum  = bldgData.floorNum;
@@ -28,7 +28,11 @@ fprintf(INP, '# FRAME BASE SUPPORTS\n');
 for Axis = 1:axisNum
     if ~isempty(colSize{1, Axis})
         nodeID = 1*10000+Axis*100;
-        fprintf(INP, 'fix %d 1 1 1;\n', nodeID);
+        if fixedBase
+            fprintf(INP, 'fix %d 1 1 1;\n', nodeID);
+        else
+            fprintf(INP, 'fix %d 1 1 0;\n', nodeID);
+        end
     end
 end
 fprintf(INP, '\n');

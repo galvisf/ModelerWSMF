@@ -10,7 +10,7 @@ function AllNodes = write_Mass(INP, AllNodes, bldgData, addEGF, ...
 %% Read relevant variables
 floorNum  = bldgData.floorNum;
 storyNum  = bldgData.storyNum;
-bayLgth  = bldgData.bayLgth;
+bayLgth   = bldgData.bayLgth;
 bayNum    = bldgData.bayNum;
 axisNum   = bldgData.axisNum;
 colSize   = bldgData.colSize;

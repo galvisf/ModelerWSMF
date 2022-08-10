@@ -1,0 +1,85 @@
+# MODAL ANALYSIS REPORT
+
+* 1. DOMAIN SIZE:
+# This is the size of the problem: 2 for 2D problems, 3 for 3D problems.
+2
+
+
+* 2. EIGENVALUE ANALYSIS:
+#          MODE        LAMBDA         OMEGA     FREQUENCY        PERIOD
+# ------------- ------------- ------------- ------------- -------------
+              1       10.3556         3.218      0.512161       1.95251
+              2       84.1739       9.17464       1.46019      0.684843
+              3       291.295       17.0674       2.71636       0.36814
+
+
+* 3. TOTAL MASS OF THE STRUCTURE:
+# The total masses (translational and rotational) of the structure
+# including the masses at fixed DOFs (if any).
+#            MX            MY           RMZ
+# ------------- ------------- -------------
+         7.7701        0.0776        210482
+
+
+* 4. TOTAL FREE MASS OF THE STRUCTURE:
+# The total masses (translational and rotational) of the structure
+# including only the masses at free DOFs.
+#            MX            MY           RMZ
+# ------------- ------------- -------------
+         7.7701        0.0776        210482
+
+
+* 5. CENTER OF MASS:
+# The center of mass of the structure, calculated from free masses.
+#             X             Y
+# ------------- -------------
+        628.027       400.567
+
+
+* 6. MODAL PARTICIPATION FACTORS:
+# The participation factor for a certain mode 'a' in a certain direction 'i'
+# indicates how strongly displacement along (or rotation about)
+# the global axes is represented in the eigenvector of that mode.
+#          MODE            MX            MY           RMZ
+# ------------- ------------- ------------- -------------
+              1      -1.32196   2.85146e-09       37.3363
+              2     -0.399909   -6.6467e-09       -403.34
+              3      0.128221   7.36142e-09       94.9492
+
+
+* 7. MODAL PARTICIPATION MASSES:
+# The modal participation masses for each mode.
+#          MODE            MX            MY           RMZ
+# ------------- ------------- ------------- -------------
+              1       7.53356             0       6009.31
+              2      0.155653             0        158335
+              3     0.0757294             0       41527.1
+
+
+* 8. MODAL PARTICIPATION MASSES (cumulative):
+# The cumulative modal participation masses for each mode.
+#          MODE            MX            MY           RMZ
+# ------------- ------------- ------------- -------------
+              1       7.53356             0       6009.31
+              2       7.68921             0        164345
+              3       7.76494             0        205872
+
+
+* 9. MODAL PARTICIPATION MASS RATIOS (%):
+# The modal participation mass ratios (%) for each mode.
+#          MODE            MX            MY           RMZ
+# ------------- ------------- ------------- -------------
+              1       96.9558             0       2.85503
+              2       2.00323             0       75.2253
+              3      0.974626             0       19.7296
+
+
+* 10. MODAL PARTICIPATION MASS RATIOS (%) (cumulative):
+# The cumulative modal participation mass ratios (%) for each mode.
+#          MODE            MX            MY           RMZ
+# ------------- ------------- ------------- -------------
+              1       96.9558             0       2.85503
+              2        98.959             0       78.0803
+              3       99.9336             0       97.8099
+
+

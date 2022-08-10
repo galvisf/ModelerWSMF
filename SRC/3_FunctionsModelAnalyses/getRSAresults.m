@@ -139,7 +139,7 @@ dc_ratio_cols_bot = zeros(size(MnCol));
 dc_ratio_cols_top = zeros(size(MnCol));
 k = 1;
 for Axis = 1:axisNum
-    storiesDone = zeros(storyNum, 0); % counter for columns spanning multiple stories
+    storiesDone = zeros(storyNum, 1); % counter for columns spanning multiple stories
     for Story = 1:storyNum
         if ~isempty(colSize{Story, Axis}) && ~ismember(Story, storiesDone)
             % Floor bottom end
@@ -171,27 +171,31 @@ Cs_FirstMp = baseShearFirstMp/weigthTotal;
 %% Get splice force results
 fid  = fopen([output_dir,'/force_splice.out'], 'r');
 mode = 1;
-while ~feof(fid)
-    try % Stop if finds an issue reading the data (means analysis didn't converge)
-        line = fgets(fid);
-        result(mode,:) = sscanf(line,'%f')'.^2; % read each mode and square
-        mode = mode + 1;
-    catch
-        break
+if fid < 0 % no splices in model
+    M_splice = 0;    
+else    
+    while ~feof(fid)
+        try % Stop if finds an issue reading the data (means analysis didn't converge)
+            line = fgets(fid);
+            result(mode,:) = sscanf(line,'%f')'.^2; % read each mode and square
+            mode = mode + 1;
+        catch
+            break
+        end
     end
+    fclose(fid);
+    % complete SRSS
+    M_splice = sqrt(abs(sum(result, 1)));
+    M_splice = M_splice*ampFactor;
+    clear result
 end
-fclose(fid);
-% complete SRSS
-M_splice = sqrt(abs(sum(result, 1)));
-M_splice = M_splice*ampFactor;
-clear result
 
 %% Compute splice moment / columns Mp
 dc_ratio_spl = zeros(size(colSplice));
 stress_ratio_spl = zeros(size(colSplice));
 k = 1;
 for Axis = 1:axisNum
-    storiesDone = zeros(storyNum, 0); % counter for columns spanning multiple stories
+    storiesDone = zeros(storyNum, 1); % counter for columns spanning multiple stories
     for Story = 1:storyNum
         if ~isempty(colSize{Story, Axis}) && ~ismember(Story, storiesDone)
             % Floor bottom end

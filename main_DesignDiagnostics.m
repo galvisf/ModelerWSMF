@@ -35,6 +35,7 @@ color_specs = linspecer(4);
 %% Modeling considerations
 %%% General %%%
 TransformationX = 2; %1: linear; 2:pdelta; 3:corotational
+fixedBase       = false; % false = pin
 rigidFloor      = false;
 addSplices      = false;
 dampingType     = 'Rayleigh_k0_beams_cols_springs'; % Rayleigh_k0_beams_cols_springs  Rayleigh_k0_all
@@ -50,8 +51,8 @@ addEGF = false;
 
 %%% Material properties %%%
 Es     = 29000;
-FyCol  = 47.3; % A572, Gr.50, based on SAC guidelines
-FyBeam = 47.3; % A36, based on SAC guidelines
+FyCol  = 44; % A572, Gr.50, based on SAC guidelines
+FyBeam = 44; % A36, based on SAC guidelines
 
 %%% Beams and Columns %%%
 backbone  = 'Elastic'; % 'Elastic' 'NIST2017', 'ASCE41'
@@ -101,9 +102,9 @@ I        = 1.0;
 Ts       = 2.5; % period of the soil column (UBC allow assuming 2.5 if the structural period T > 2.5s)
 
 % ASCE7
-Ss = 1.5;
-S1 = 0.6;
-TL = 12;
+Ss = 1.2211;
+S1 = 0.6934;
+TL = 8;
 Ro = 8;
 Cd = 5.5;
 n_modes_RSA = 20;
@@ -137,7 +138,7 @@ modelFN = 'ElasticModel.tcl';
     TransformationX, backbone, SH_PZ, panelZoneModel, ...
     composite, Comp_I, Comp_I_GC, ...
     dampingType, DampModeI, DampModeJ, zeta, ...
-    addEGF, addSplices, rigidFloor, g, ...
+    fixedBase, addEGF, addSplices, rigidFloor, g, ...
     outdir, addBasicRecorders, addDetailedRecorders, isRHA, explicitMethod, modelSetUp, ...
     compBackboneFactors, n, ...
     fractureElement, slabFiberMaterials, fracSecMaterials, ...                
@@ -237,9 +238,10 @@ SDR_EQ_ASCE7 = SDR_EQ_ASCE7*Cd;
 
 
 cd(currFolder);
-%%% Diagnostics plot %%%
-H = figure('position', [0, 40, 800, 800]);
+%% %%% Diagnostics plot %%%
+%H = figure('position', [0, 40, 800, 800]);
 
+figure
 output_dir = [folderPath, '/Output'];
 numModes = 3; % Number of modes
 scale = 500; % max length for deformed shapes
@@ -309,20 +311,21 @@ set(gca, 'position', figure_size)
 
 % Save figure
 if ~composite && ~addEGF
-    figFileName = [folderPath, '/_Diagnostics_', bldgName,'_noComposite_noEGF'];
+    figFileName = [folderPath, '/_Diagnostics_noComposite_noEGF'];
 elseif ~composite && addEGD
-    figFileName = [folderPath, '/_Diagnostics_', bldgName,'_noComposite'];            
+    figFileName = [folderPath, '/_Diagnostics_noComposite'];            
 else
-    figFileName = [folderPath, '/_Diagnostics_', bldgName];
+    figFileName = [folderPath, '/_Diagnostics'];
 end
+
 %             savefig(H,figFileName,'compact')
 %             saveas(H, [figFileName, '.svg'])
-exportgraphics(gcf,[figFileName, '.png'],'Resolution',300)
+% exportgraphics(gcf,[figFileName, '.png'],'Resolution',300)
 set(gcf,'PaperOrientation','landscape');
 print(figFileName,'-dpdf','-bestfit')                   
-close all
+% close all
 
-% Store in cell for comparisons across buildings
+%% Store in cell for comparisons across buildings
 weightFloor = (sum(bldgData.wgtOnBeam,2) + sum(bldgData.wgtOnCol,2) + bldgData.wgtOnEGF);
 totalWeigth = sum(weightFloor);
 

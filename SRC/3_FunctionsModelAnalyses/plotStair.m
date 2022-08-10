@@ -1,4 +1,4 @@
-function plotStair(y, color_specs, title_text, font, legend_text, x_label, x_limits)
+function plotStair(y, color_specs, title_text, fontSize, legend_text, x_label, x_limits)
 % INPUTS
 %   in           = structure with all information of the frame
 %                  AllNodes
@@ -7,7 +7,7 @@ function plotStair(y, color_specs, title_text, font, legend_text, x_label, x_lim
 %                  plotting deformed frame
 %   plot_nodes   = True/False
 %   plot_leaning = True/False
-%   font         = text size
+%   fontSize     = text size
 % 
 %% Plot frame
 hold on;
@@ -24,7 +24,12 @@ if iscell(legend_text)
 end
 
 % Formatting
-PlotGrayScaleForPaper(-999,'vertical',title_text,[0.5 1],'normal',font)
-set(get(gca,'legend'),'box','off')
+titlePos = [0.5 1];
+yLabelDir = 'vertical';
+uniformDigits = [1,1,1];
+FormatNiceFigure(title_text, fontSize, titlePos, yLabelDir, uniformDigits, color_specs)
+if iscell(legend_text)
+    set(get(gca,'legend'),'box','off')
+end
 
 end
