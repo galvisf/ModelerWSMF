@@ -93,11 +93,12 @@ dX = max(Xs)/4;
 plot([- dX, max(Xs) + dX], [0, 0], 'LineWidth', 5, 'Color', [0.6350 0.0780 0.1840])
 
 % Formatting
-titlePos = [0.5 1];
-uniformDigits = [1,1,1];
-yLabelDir = 'vertical';
-FormatNiceFigure(title_text, fontSize, titlePos, yLabelDir, uniformDigits, ...
-    color_lines)
+% titlePos = [0.5 1];
+% uniformDigits = [1,1,1];
+% yLabelDir = 'vertical';
+% FormatNiceFigure(title_text, fontSize, titlePos, yLabelDir, uniformDigits, ...
+%     color_lines)
+PlotGrayScaleForPaper(-999,'vertical',title_text,[0.5 1],'normal',fontSize)
 axis off
 axis equal
 

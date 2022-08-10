@@ -24,10 +24,11 @@ if iscell(legend_text)
 end
 
 % Formatting
-titlePos = [0.5 1];
-yLabelDir = 'vertical';
-uniformDigits = [1,1,1];
-FormatNiceFigure(title_text, fontSize, titlePos, yLabelDir, uniformDigits, color_specs)
+% titlePos = [0.5 1];
+% yLabelDir = 'vertical';
+% uniformDigits = [1,1,1];
+% FormatNiceFigure(title_text, fontSize, titlePos, yLabelDir, uniformDigits, color_specs)
+PlotGrayScaleForPaper(-999,'vertical',title_text,[0.5 1],'normal',fontSize)
 if iscell(legend_text)
     set(get(gca,'legend'),'box','off')
 end
