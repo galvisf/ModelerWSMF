@@ -19,7 +19,7 @@ n_models = 1;
 
 % Building input file
 modelName = 'Frame1C_Grid16';
-folderPath = ['OUTPUTS' filesep 'NLRHA_FiberCVN8ftlb'];
+folderPath = ['OUTPUTS' filesep 'NLRHA'];
 geomFN = 'inputs_frame1C_grid16.xlsx';
 
 %% Modeling considerations

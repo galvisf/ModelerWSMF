@@ -237,7 +237,7 @@ elseif strcmp(backbone, 'ASCE41')
     % Corrected plastic rotation capacity
     thetaCap = max(thetaCap*f_cp*f_pz*f_std*f_slen, 0.001); % assumed a minimum of 0.1%
     thetaUlt = max(thetaUlt*f_cp*f_pz*f_std*f_slen, 1.1*thetaCap); % assumed lower bound to avoid convergence issues
-    thetaPC = 3*(thetaUlt - thetaCap)/4; % assumed to avoid convergence issues
+    thetaPC = 1*(thetaUlt - thetaCap)/6; % assumed to avoid convergence issues
 
 elseif strcmp(backbone, 'AISC342')
     
