@@ -3,7 +3,8 @@
 % content
 % 1. Get capacity curve
 %
-function [BaseShearCoefficient, RoofDisp] = getPushoverResults(output_dir, bldgData, plot_pushover)
+function [BaseShearCoefficient, RoofDisp] = getPushoverResults(output_dir, ...
+    bldgData, plot_pushover, EQ_pattern)
 
 storyNum = bldgData.storyNum;
 storyHgt = bldgData.storyHgt;
@@ -48,13 +49,16 @@ RoofDrift = RoofDisp/sum(storyHgt)*100;
 
 if plot_pushover    
     hold on
-    plot(RoofDrift, BaseShearCoefficient, 'linewidth', 2)
+%     plot(RoofDrift, BaseShearCoefficient, 'linewidth', 2)
 %     plot([0, max(RoofDrift)],base_shear_coeff_first_Mp*[1, 1], '--k')
-    xlabel('Roof drift [\%]');
+%     xlabel('Roof drift [\%]');
+
+    plot(RoofDisp, BaseShearCoefficient, 'linewidth', 2)
+    xlabel('Roof displacement [in]');
     ylabel('Base shear coefficient');
     font = 9;
 %     legend('ASCE7 Load Pattern', 'Base shear to first Mp', 'Location', 'southoutside')
-    title_text = 'Pushover curve';
+    title_text = ['Pushover curve - ', EQ_pattern];
     PlotGrayScaleForPaper(-999,'vertical',title_text,[0.5 1],'normal',font)
 end
 

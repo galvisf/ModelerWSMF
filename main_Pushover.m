@@ -10,7 +10,8 @@ addpath([currFolder filesep 'SRC' filesep '3_FunctionsModelAnalyses'])
 sourceFolder = ['SRC' filesep '2_TemplateOpenSeesfiles'];
 
 %% GENERAL INPUTS
-isPushover = false;
+isPushover = true;
+plot_pushover = true;
 
 % Import AISC section data
 load('AISC_v14p1.mat');
@@ -31,6 +32,23 @@ folderPath = ['OUTPUTS' filesep 'PUSHOVER']; % Folder to store results
 % Figure inputs
 font = 9;
 color_specs = linspecer(4);
+
+%% Pushover parameters 
+roofDrift = 0.035;
+signPush = 1;
+
+% Lateral load pattern
+LatLoadPattern = 'ASCE_ELF'; % 'ASCE_ELF' 'Manual'
+% ASCE7 ELF
+Ss = 1.22;
+S1 = 0.6934;
+TL = 8;
+Cv = 5.5;
+Ro = 8; 
+% Manual (from mode shape)
+Fx_norm = [0.30079548645068654444
+0.37945845860644245029
+0.45127653767981551480]*100;
 
 %% Modeling considerations
 %%% General %%%
@@ -114,8 +132,10 @@ compBackboneFactors.theta_pc_N_comp = 0.95;
 slabFiberMaterials.fc     = -3;
 slabFiberMaterials.epsc0  = -0.002;
 slabFiberMaterials.epsU   = -0.01;
-slabFiberMaterials.fy     = 78;
+slabFiberMaterials.fy     = 60;
 slabFiberMaterials.degrad = -0.10;
+slabFiberMaterials.caRatio = 0.35; % fraction of composite action
+slabFiberMaterials.La      = 5; % girder separation [ft]
 
 fracSecMaterials.FyFiber = 150;
 fracSecMaterials.EsFiber = 29000;
@@ -145,25 +165,10 @@ else
     end
 end
 
-%% Pushover parameters 
-roofDrift = 0.04;
-signPush = 1;
-
-% Lateral load pattern
-% ASCE7
-Ss = 1.5;
-S1 = 0.6;
-TL = 12;
-Cv = 5.5;
-Ro = 8; 
-
 %% Process each building
 
 % Copy all necessary OpenSees helper files
 copyOpenSeesHelper(sourceFolder, folderPath, isPushover)
-
-% Start figure
-H = figure('position', [0, 40, 800, 400]);
 
 %%%%%%%% identify input.xls %%%%%%%%
 modelFN = 'InelasticModel.tcl';
@@ -184,9 +189,21 @@ modelFN = 'InelasticModel.tcl';
 %%%%%%%% Run pushover %%%%%%%%
 cd(folderPath)
 
-% Compute lateral load pattern (ASCE7)
-Fx_EQ = EQ_ASCE7(bldgData, Ss, S1, TL, Cv, Ro, g);
-EQ_pattern = 'EQ_ASCE7';
+% Compute lateral load pattern
+if strcmp(LatLoadPattern, 'ASCE_ELF')
+    Fx_EQ = EQ_ASCE7(bldgData, Ss, S1, TL, Cv, Ro, g);
+    EQ_pattern = 'EQ_ASCE7';
+else
+    % Save lateral load patter file 
+    fid_r = fopen('EQ_Mode1.tcl', 'wt');
+    fprintf(fid_r, 'set iFi {\n');
+    for i = 1:length(Fx_norm)
+        fprintf(fid_r, '\t%f\n', Fx_norm(i));
+    end
+    fprintf(fid_r,'}');
+    fclose(fid_r);
+    EQ_pattern = 'EQ_Mode1';
+end
 
 % Create running file
 analysisFile = 'Pushover_analysis.tcl';
@@ -196,10 +213,22 @@ cmd = sprintf(['OpenSees ',analysisFile]);
 tic
 system(cmd);
 toc
-% Collect and plot results
-subplot(1,2,1)
-[baseShearCoeff, RoofDisp] = getPushoverResults(outdir, bldgData, plot_pushover);
 
+%% Collect and plot results
+H = figure;%('position', [0, 40, 800, 400]);
+[baseShearCoeff, RoofDisp] = getPushoverResults(outdir, bldgData, plot_pushover, EQ_pattern);
 cd(currFolder);
 
-xlim([0,3])
+%% Save figure
+if ~composite && ~addEGF
+    figFileName = [folderPath, '/_Pushover_noComposite_noEGF_', EQ_pattern];
+elseif ~composite && addEGD
+    figFileName = [folderPath, '/_Pushover_noComposite_',EQ_pattern];            
+else
+    figFileName = [folderPath, '/_Pushover_',EQ_pattern];
+end
+%             savefig(H,figFileName,'compact')
+%             saveas(H, [figFileName, '.svg'])
+% exportgraphics(gcf,[figFileName, '.png'],'Resolution',300)
+set(gcf,'PaperOrientation','landscape');
+print(figFileName,'-dpdf','-bestfit')  

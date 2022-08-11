@@ -10,7 +10,8 @@ addpath([currFolder filesep 'SRC' filesep '3_FunctionsModelAnalyses'])
 sourceFolder = ['SRC' filesep '2_TemplateOpenSeesfiles'];
 
 %% GENERAL INPUTS
-isPushover = false;
+isPushover = true;
+plot_pushover = true;
 
 % Import AISC section data
 load('AISC_v14p1.mat');
@@ -32,6 +33,23 @@ folderPath = ['OUTPUTS' filesep 'PUSHOVER']; % Folder to store results
 font = 9;
 color_specs = linspecer(4);
 
+%% Pushover parameters 
+roofDrift = 0.04;
+signPush = 1;
+
+% Lateral load pattern
+LatLoadPattern = 'Manual'; % 'ASCE_ELF' 'Manual'
+% ASCE7 ELF
+Ss = 1.22;
+S1 = 0.6934;
+TL = 8;
+Cv = 5.5;
+Ro = 8; 
+% Manual (from mode shape)
+Fx_norm = [0.30079548645068654444
+0.37945845860644245029
+0.45127653767981551480]*100;
+
 %% Modeling considerations
 %%% General %%%
 TransformationX = 2; %1: linear; 2:pdelta; 3:corotational
@@ -42,6 +60,7 @@ dampingType     = 'Rayleigh_k0_beams_cols_springs'; % Rayleigh_k0_beams_cols_spr
 outdir          = 'Output';
 addBasicRecorders    = true;
 addDetailedRecorders = true;
+isRHA           = false; % does not add a dt to recorders to avoid issues with RSA output
 explicitMethod  = false; % add small mass to all DOF for explicit solution method 
 modelSetUp      = 'Generic'; % Generic    EE-UQ    Sherlock
 
@@ -66,8 +85,8 @@ panelZoneModel = 'Elkady2021'; % 'None', 'Gupta1999', NIST2017, 'Kim2015' 'Elkad
 SH_PZ = 0.015; % strain-hardening for the panel zone
 
 %%% Connection information %%%
-cvn_a0_type = 'byFloor'; % Constant Uniform  byFloor  byConnection
-cvn = 16;
+cvn_a0_type = 'Constant'; % Constant Uniform  byFloor  byConnection
+cvn = 8;
 a0  = 0.1;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 switch cvn_a0_type
@@ -113,8 +132,10 @@ compBackboneFactors.theta_pc_N_comp = 0.95;
 slabFiberMaterials.fc     = -3;
 slabFiberMaterials.epsc0  = -0.002;
 slabFiberMaterials.epsU   = -0.01;
-slabFiberMaterials.fy     = 78;
+slabFiberMaterials.fy     = 60;
 slabFiberMaterials.degrad = -0.10;
+slabFiberMaterials.caRatio = 0.35; % fraction of composite action
+slabFiberMaterials.La      = 5; % girder separation [ft]
 
 fracSecMaterials.FyFiber = 150;
 fracSecMaterials.EsFiber = 29000;
@@ -144,75 +165,70 @@ else
     end
 end
 
-%% Pushover parameters 
-roofDrift = 0.04;
-signPush = 1;
-
-% Lateral load pattern
-% ASCE7
-Ss = 1.5;
-S1 = 0.6;
-TL = 12;
-Cv = 5.5;
-Ro = 8; 
-
 %% Process each building
-for bldg_i = [33] %1:nBuildings % 64 does not run, need a fix on the podium interpretation
-    
-    if ~isempty(buildingInventory.Column_Location_Exterior{bldg_i}) && ...
-            ~isempty(buildingInventory.Column_Location_Interior{bldg_i}) && ...
-            ~isempty(buildingInventory.Beam_Location{bldg_i})
-        
-        % Create folder to store model
-        bldgName = ['ID',num2str(buildingInventory.OBJECTID(bldg_i))];
-        folderPath = [modelFolderPath,'/',bldgName];
-        mkdir(folderPath);
-        
-        % Copy all necessary OpenSees helper files
-        copyOpenSeesHelper(sourceFolder, folderPath, isPushover)
-        
-        % Start figure
-        H = figure('position', [0, 40, 800, 400]);
-        
-        for frameDir = ['X', 'Y']
-            %%%%%%%% identify input.xls %%%%%%%%   
-            modelFN = ['InelasticModel_',frameDir,'.tcl'];
-            geomFN = ['inputs_', bldgName,'_dir',frameDir,'.xlsx'];
-            
-            %%%%%%% Generate inelastic model per building and direction %%%%%%%%
-            [AllNodes, AllEle, bldgData] = write_FrameModel(folderPath, geomFN, modelFN, ...
-                AISC_v14p1, Es, mu_poisson, FyBeam, FyCol, ...
-                TransformationX, backbone, SH_PZ, panelZoneModel, ...
-                composite, Comp_I, Comp_I_GC, ...
-                dampingType, DampModeI, DampModeJ, zeta, ...
-                addEGF, addSplices, rigidFloor, g, ...
-                outdir, addBasicRecorders, addDetailedRecorders, explicitMethod, modelSetUp, ...
-                compBackboneFactors, n, fractureElement, slabFiberMaterials,...
-                fracSecMaterials, FI_lim_type, cvn_a0_type, flangeProp, ...
-                cvn_col, generation, connType, degradation, c);
-            
-            %%%%%%%% Run pushover %%%%%%%% 
-            cd(folderPath)
-            
-            % Compute lateral load pattern (ASCE7)
-            Fx_EQ = EQ_ASCE7(bldgData, Ss, S1, TL, Cv, Ro, g);
-            EQ_pattern = 'EQ_ASCE7';
-            
-            % Create running file
-            analysisFile = 'Pushover_analysis.tcl';
-            pushoverAnalysis(analysisFile, modelFN, EQ_pattern, roofDrift, signPush, bldgData)                    
-            % Run the analysis
-            cmd = sprintf(['OpenSees_SimetricSteelFractureDI ',analysisFile]);
-            tic
-            system(cmd);
-            toc
-            % Collect and plot results
-            subplot(1,2,1)
-            [baseShearCoeff, RoofDisp] = getPushoverResults(outdir, bldgData, plot_pushover);                  
-            
-            cd(currFolder);
-        end 
-        legend('X','Y','location','best')
-        xlim([0,3])
+
+% Copy all necessary OpenSees helper files
+copyOpenSeesHelper(sourceFolder, folderPath, isPushover)
+
+%%%%%%%% identify input.xls %%%%%%%%
+modelFN = 'InelasticModel.tcl';
+
+%%%%%%% Generate elastic model per building and direction %%%%%%%%
+[AllNodes, AllEle, bldgData] = write_FrameModel(folderPath, [folderInputFiles filesep geomFN], modelFN, ...
+    AISC_v14p1, Es, mu_poisson, FyBeam, FyCol, ...
+    TransformationX, backbone, SH_PZ, panelZoneModel, ...
+    composite, Comp_I, Comp_I_GC, ...
+    dampingType, DampModeI, DampModeJ, zeta, ...
+    fixedBase, addEGF, addSplices, rigidFloor, g, ...
+    outdir, addBasicRecorders, addDetailedRecorders, isRHA, explicitMethod, modelSetUp, ...
+    compBackboneFactors, n, ...
+    fractureElement, slabFiberMaterials, fracSecMaterials, ...                
+    FI_lim_type, cvn_a0_type, flangeProp, cvn_col, ...
+    generation, connType, degradation, c); 
+
+%%%%%%%% Run pushover %%%%%%%%
+cd(folderPath)
+
+% Compute lateral load pattern
+if strcmp(LatLoadPattern, 'ASCE_ELF')
+    Fx_EQ = EQ_ASCE7(bldgData, Ss, S1, TL, Cv, Ro, g);
+    EQ_pattern = 'EQ_ASCE7';
+else
+    % Save lateral load patter file 
+    fid_r = fopen('EQ_Manual.tcl', 'wt');
+    fprintf(fid_r, 'set iFi {\n');
+    for i = 1:length(Fx_norm)
+        fprintf(fid_r, '\t%f\n', Fx_norm(i));
     end
+    fprintf(fid_r,'}');
+    fclose(fid_r);
+    EQ_pattern = 'EQ_Manual';
 end
+
+% Create running file
+analysisFile = 'Pushover_analysis.tcl';
+pushoverAnalysis(analysisFile, modelFN, EQ_pattern, roofDrift, signPush, bldgData)
+% Run the analysis
+cmd = sprintf(['OpenSees ',analysisFile]);
+tic
+system(cmd);
+toc
+
+%% Collect and plot results
+H = figure;%('position', [0, 40, 800, 400]);
+[baseShearCoeff, RoofDisp] = getPushoverResults(outdir, bldgData, plot_pushover);
+cd(currFolder);
+
+%% Save figure
+if ~composite && ~addEGF
+    figFileName = [folderPath, '/_Pushover_noComposite_noEGF'];
+elseif ~composite && addEGD
+    figFileName = [folderPath, '/_Pushover_noComposite'];            
+else
+    figFileName = [folderPath, '/_Pushover'];
+end
+%             savefig(H,figFileName,'compact')
+%             saveas(H, [figFileName, '.svg'])
+% exportgraphics(gcf,[figFileName, '.png'],'Resolution',300)
+set(gcf,'PaperOrientation','landscape');
+print(figFileName,'-dpdf','-bestfit')  
