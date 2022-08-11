@@ -20,13 +20,9 @@ set numpts 5375; # GM number of points
 set serial 1;  # GM tag
 set solvertag 1
 
-
-# Define the recorder directory
-set recorderdir $outdir
-
 # Define the drift recorders
 for {set story 1} {$story <= $num_stories} {incr story} {
-    recorder Drift -file $recorderdir/story${story}_drift.out -dT 0.01 -time -iNode [lindex $ctrl_nodes \
+    recorder Drift -file $outdir/story${story}_drift.out -dT 0.01 -time -iNode [lindex $ctrl_nodes \
             [expr {$story - 1}]] -jNode [lindex $ctrl_nodes $story] -dof 1 -perpDirn 2
 }
 
@@ -43,7 +39,7 @@ pattern UniformExcitation $eq_load_pattern 1 -accel [expr {10 + $serial}]
 
 # Define acceleration recorders (must be defined after the GM to get absolute acc)
 for {set story 1} {$story <= $num_stories} {incr story} {
-    recorder EnvelopeNode -file $recorderdir/story${story}_acc_env.out -timeSeries [expr {10 + $serial}] \
+    recorder EnvelopeNode -file $outdir/story${story}_acc_env.out -timeSeries [expr {10 + $serial}] \
         -node [lindex $ctrl_nodes $story] -dof 1 accel
 }
 

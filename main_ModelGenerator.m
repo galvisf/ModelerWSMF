@@ -59,7 +59,7 @@ SH_PZ = 0.015; % strain-hardening for the panel zone
 
 %%% Connection information %%%
 cvn_a0_type = 'Constant'; % Constant Uniform  byFloor  byConnection
-cvn = 8; % 16 12 8
+cvn = 12; % 16 12 8
 a0  = 0.1; % 0.1 0.2
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 switch cvn_a0_type
