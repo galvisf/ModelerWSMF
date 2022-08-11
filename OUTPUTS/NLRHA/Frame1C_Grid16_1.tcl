@@ -188,22 +188,22 @@ PanelZoneSpring 9040200 4040209 4040210 $Es $mu $FyCol 18.30 16.60  2.85  1.77  
 # hingeBeamColumn  ElementID node_i node_j eleDir, ... A, Ieff
 
 # Beams at floor 2 bay 1
-set secInfo_i {1280.0000   1.0124   0.2000   0.0016   0.0087   0.0132   0.0000};
-set secInfo_j {1280.0000   1.0124   0.2000   0.0016   0.0087   0.0132   0.0000};
+set secInfo_i {1280.0000   1.0124   0.2000   0.0016   0.0019   0.0132   0.0000};
+set secInfo_j {1280.0000   1.0124   0.2000   0.0016   0.0019   0.0132   0.0000};
 set compBackboneFactors [lreplace $compBackboneFactors 0 0   1.0000];# MpP/Mp
 set compBackboneFactors [lreplace $compBackboneFactors 1 1   1.0000];# MpN/Mp
 hingeBeamColumn 1020100 4020104 4020202 "Horizontal" $trans_selected $n $Es $FyBeam $rigMatTag 89.000 [expr 19515.550*$Comp_I] $degradation $c $secInfo_i $secInfo_j $Composite $compBackboneFactors;
 
 # Beams at floor 3 bay 1
-set secInfo_i {936.0000   1.0135   0.2000   0.0022   0.0108   0.0166   0.0000};
-set secInfo_j {936.0000   1.0135   0.2000   0.0022   0.0108   0.0166   0.0000};
+set secInfo_i {936.0000   1.0135   0.2000   0.0022   0.0024   0.0166   0.0000};
+set secInfo_j {936.0000   1.0135   0.2000   0.0022   0.0024   0.0166   0.0000};
 set compBackboneFactors [lreplace $compBackboneFactors 0 0   1.0000];# MpP/Mp
 set compBackboneFactors [lreplace $compBackboneFactors 1 1   1.0000];# MpN/Mp
 hingeBeamColumn 1030100 4030104 4030202 "Horizontal" $trans_selected $n $Es $FyBeam $rigMatTag 68.000 [expr 14129.237*$Comp_I] $degradation $c $secInfo_i $secInfo_j $Composite $compBackboneFactors;
 
 # Beams at floor 4 bay 1
-set secInfo_i {163.0825   1.0809   0.2000   0.0159   0.0052   0.0229   0.0000};
-set secInfo_j {163.0825   1.0809   0.2000   0.0159   0.0052   0.0229   0.0000};
+set secInfo_i {163.0825   1.0809   0.2000   0.0159   0.0012   0.0229   0.0000};
+set secInfo_j {163.0825   1.0809   0.2000   0.0159   0.0012   0.0229   0.0000};
 set compBackboneFactors [lreplace $compBackboneFactors 0 0   1.0000];# MpP/Mp
 set compBackboneFactors [lreplace $compBackboneFactors 1 1   1.0000];# MpN/Mp
 hingeBeamColumn 1040100 4040104 4040202 "Horizontal" $trans_selected $n $Es $FyBeam $rigMatTag 22.400 [expr 2048.462*$Comp_I] $degradation $c $secInfo_i $secInfo_j $Composite $compBackboneFactors;

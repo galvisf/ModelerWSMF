@@ -19,7 +19,7 @@ n_models = 1;
 
 % Building input file
 modelName = 'Frame1C_Grid16';
-folderPath = ['OUTPUTS' filesep 'NLRHA_FiberCVN8ftlb'];
+folderPath = ['OUTPUTS' filesep 'NLRHA'];
 geomFN = 'inputs_frame1C_grid16.xlsx';
 
 %% Modeling considerations
@@ -45,7 +45,7 @@ FyCol  = 47.3; % A572, Gr.50, based on SAC guidelines
 FyBeam = 47.3; % A36, based on SAC guidelines
 
 %%% Beams and Columns %%%
-fractureElement = true;
+fractureElement = false;
 generation      = 'Pre_Northridge'; %'Pre_Northridge' 'Post_Northridge'
 backbone        = 'ASCE41'; % 'Elastic' 'NIST2017', 'ASCE41'
 connType        = 'non_RBS'; % 'non_RBS', 'RBS'
