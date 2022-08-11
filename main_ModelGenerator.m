@@ -45,7 +45,7 @@ FyCol  = 47.3; % A572, Gr.50, based on SAC guidelines
 FyBeam = 47.3; % A36, based on SAC guidelines
 
 %%% Beams and Columns %%%
-fractureElement = true;
+fractureElement = false;
 generation      = 'Pre_Northridge'; %'Pre_Northridge' 'Post_Northridge'
 backbone        = 'ASCE41'; % 'Elastic' 'NIST2017', 'ASCE41'
 connType        = 'non_RBS'; % 'non_RBS', 'RBS'
