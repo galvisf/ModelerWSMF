@@ -18,8 +18,8 @@ AISC_info = AISC_v14p1(1, :)';
 n_models = 1;
 
 % Building input file
-modelName = 'Frame 1C Grid 16';
-folderPath = 'OUTPUTS';
+modelName = 'Frame1C_Grid16';
+folderPath = ['OUTPUTS' filesep 'NLRHA_FiberCVN8ftlb'];
 geomFN = 'inputs_frame1C_grid16.xlsx';
 
 %% Modeling considerations
@@ -31,7 +31,7 @@ addSplices      = false;
 dampingType     = 'Rayleigh_k0_beams_cols_springs'; % Rayleigh_k0_beams_cols_springs  Rayleigh_k0_all
 outdir          = 'Output';
 addBasicRecorders    = true;
-addDetailedRecorders = false;
+addDetailedRecorders = true;
 isRHA           = true; % add dt for recorders (to avoid large output files when analysis reduces dt)
 explicitMethod  = false; % add small mass to all DOF for explicit solution method 
 modelSetUp      = 'EE-UQ'; % Generic    EE-UQ    Sherlock
@@ -45,7 +45,7 @@ FyCol  = 47.3; % A572, Gr.50, based on SAC guidelines
 FyBeam = 47.3; % A36, based on SAC guidelines
 
 %%% Beams and Columns %%%
-fractureElement = false;
+fractureElement = true;
 generation      = 'Pre_Northridge'; %'Pre_Northridge' 'Post_Northridge'
 backbone        = 'ASCE41'; % 'Elastic' 'NIST2017', 'ASCE41'
 connType        = 'non_RBS'; % 'non_RBS', 'RBS'
@@ -59,7 +59,7 @@ SH_PZ = 0.015; % strain-hardening for the panel zone
 
 %%% Connection information %%%
 cvn_a0_type = 'Constant'; % Constant Uniform  byFloor  byConnection
-cvn = 12; % 16 12 8
+cvn = 8; % 16 12 8
 a0  = 0.1; % 0.1 0.2
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 switch cvn_a0_type

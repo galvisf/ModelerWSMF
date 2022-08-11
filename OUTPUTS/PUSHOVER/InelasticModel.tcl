@@ -277,6 +277,14 @@ fix 10200 1 1 0;
 
 # LEANING COLUMN SUPPORT
 fix 10302 1 1 0;
+
+
+# ADDITIONAL SPRINGS
+node 10205 360.000 [expr 224.040+37.3/2]
+fix 10205 1 1 1
+set springMatTag 98
+uniaxialMaterial Elastic $springMatTag 35;
+element zeroLength 1 10205 4020203 -mat $springMatTag -dir 1
 ###################################################################################################
 ###################################################################################################
                                          puts "

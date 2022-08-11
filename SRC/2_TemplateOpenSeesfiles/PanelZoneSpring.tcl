@@ -298,7 +298,7 @@ proc Spring_PZ {SpringID NodeI NodeJ E mu fy  tw_Col tdp d_Col d_Beam tf_Col bf_
 	# Composite Interior Steel Panel Zone
 		
 	# puts "$M1_P"
-	# puts "$gamma1"
+	puts "gammaY_PX = $gamma1"
 	# puts "$M2_P"	
 	# puts "$gamma2"
 	# puts "$M3_P"

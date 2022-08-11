@@ -34,11 +34,11 @@ font = 9;
 color_specs = linspecer(4);
 
 %% Pushover parameters 
-roofDrift = 0.035;
+roofDrift = 0.025;
 signPush = 1;
 
 % Lateral load pattern
-LatLoadPattern = 'ASCE_ELF'; % 'ASCE_ELF' 'Manual'
+LatLoadPattern = 'Manual'; % 'ASCE_ELF' 'Manual'
 % ASCE7 ELF
 Ss = 1.22;
 S1 = 0.6934;
@@ -46,9 +46,9 @@ TL = 8;
 Cv = 5.5;
 Ro = 8; 
 % Manual (from mode shape)
-Fx_norm = [0.30079548645068654444
-0.37945845860644245029
-0.45127653767981551480]*100;
+Fx_norm = [0.28407492029104258746
+0.38160272008700779622
+0.48340264520126863257]*100;
 
 %% Modeling considerations
 %%% General %%%
@@ -165,13 +165,13 @@ else
     end
 end
 
-%% Process each building
+%% Create model
 
 % Copy all necessary OpenSees helper files
 copyOpenSeesHelper(sourceFolder, folderPath, isPushover)
 
 %%%%%%%% identify input.xls %%%%%%%%
-modelFN = 'InelasticModel.tcl';
+modelFN = 'InelasticModel_ph.tcl';
 
 %%%%%%% Generate elastic model per building and direction %%%%%%%%
 [AllNodes, AllEle, bldgData] = write_FrameModel(folderPath, [folderInputFiles filesep geomFN], modelFN, ...
@@ -186,7 +186,9 @@ modelFN = 'InelasticModel.tcl';
     FI_lim_type, cvn_a0_type, flangeProp, cvn_col, ...
     generation, connType, degradation, c); 
 
-%%%%%%%% Run pushover %%%%%%%%
+modelFN = 'InelasticModel.tcl';
+
+%% %%%%%% Run pushover %%%%%%%%
 cd(folderPath)
 
 % Compute lateral load pattern
@@ -209,7 +211,7 @@ end
 analysisFile = 'Pushover_analysis.tcl';
 pushoverAnalysis(analysisFile, modelFN, EQ_pattern, roofDrift, signPush, bldgData)
 % Run the analysis
-cmd = sprintf(['OpenSees ',analysisFile]);
+cmd = sprintf(['OpenSees_3_0 ',analysisFile]);
 tic
 system(cmd);
 toc
