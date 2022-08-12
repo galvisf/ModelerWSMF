@@ -247,4 +247,15 @@ end
 
 theta_y = Mp*Lbeam/(6*EIeff); % Yielding rotation
 
+
+figure
+fontSize = 12;
+x = [0, theta_y, theta_y+thetaCap, theta_y+thetaCap, theta_y+thetaUlt, theta_y+thetaUlt];
+y = [0, Mp, Mp*MmaxOverMp, MrOverMp*Mp, MrOverMp*Mp, 0];
+plot(x, y, 'linewidth', 3)
+xlabel('Rotation [rad]')
+ylabel('Moment [kip-in]')
+xlim([0, 0.16])
+PlotGrayScaleForPaper(-999,'vertical','',[0.5 1],'normal',fontSize)
+
 end

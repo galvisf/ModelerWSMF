@@ -19,8 +19,8 @@ n_models = 1;
 
 % Building input file
 modelName = 'Frame1C_Grid16';
-folderPath = ['OUTPUTS' filesep 'NLRHA_FiberCVN12ftlb_RetrofitColumn'];
-geomFN = 'inputs_frame1C_grid16_retrofitCol1.xlsx';
+folderPath = ['OUTPUTS' filesep 'NLRHA'];
+geomFN = 'inputs_frame1C_grid16.xlsx';
 
 %% Modeling considerations
 %%% General %%%
@@ -41,8 +41,8 @@ addEGF = false;
 
 %%% Material properties %%%
 Es     = 29000;
-FyCol  = 47.3; % A572, Gr.50, based on SAC guidelines
-FyBeam = 47.3; % A36, based on SAC guidelines
+FyCol  = 44; % A572, Gr.50, based on SAC guidelines
+FyBeam = 44; % A36, based on SAC guidelines
 
 %%% Beams and Columns %%%
 fractureElement = true;
@@ -124,7 +124,7 @@ fracSecMaterials.FuBolt = 68;
 fracSecMaterials.FyTab  = 47;
 fracSecMaterials.FuTab  = 70;
 
-FI_lim_type = 'Random'; % Constant  Random
+FI_lim_type = 'Constant'; % Constant  Random
 if strcmp(FI_lim_type, 'Constant')
     flangeProp.FI_lim = 1.0;
 else

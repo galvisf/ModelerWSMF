@@ -10,10 +10,10 @@ set(gca,'ticklabelinterpreter','latex')
 set(get(gca,'xlabel'),'interpreter','latex')
 set(get(gca,'ylabel'),'interpreter','latex')
 set(get(gca,'zlabel'),'interpreter','latex')
-set(get(gca,'legend'),'interpreter','latex')
+% set(get(gca,'legend'),'interpreter','latex')
 
 
-set(get(gca,'legend'),'autoupdate','off')
+% set(get(gca,'legend'),'autoupdate','off')
 p1 = findobj(gca,'linestyle','-');
 p1 = p1(1:end);
 p2 = findobj(gca,'linestyle','--');
@@ -52,13 +52,13 @@ for i = 1:length(ticksX)
 	y(i) = digits_debugged(ticksX(i));
 end
 MAX_Y = max(y(y<4));
-% labels_updated = cell(length(ticksX),1);
-% for i = 1:length(ticksX)
-%     labels_updated{i}= num2str(ticksX(i),['%0.' num2str(MAX_Y) 'f']);
-% end
-% % labels_updated{i} = sprintf(['%0.' num2str(MAX_Y) 'f|'], ticksX);
-% set(gca,'xticklabel',labels_updated);
-xtickformat(['%0.' num2str(MAX_Y) 'f'])
+labels_updated = cell(length(ticksX),1);
+for i = 1:length(ticksX)
+    labels_updated{i}= num2str(ticksX(i),['%0.' num2str(MAX_Y) 'f']);
+end
+% labels_updated{i} = sprintf(['%0.' num2str(MAX_Y) 'f|'], ticksX);
+set(gca,'xticklabel',labels_updated);
+% xtickformat(['%0.' num2str(MAX_Y) 'f'])
 % xtickformat(['%0.0f'])
 
 ticksY = get(gca,'ytick');
@@ -67,16 +67,16 @@ for i = 1:length(ticksY)
 	y(i) = digits_debugged(ticksY(i));
 end
 MAX_Y = max(y(y<8));
-% labels_updated = cell(length(ticksY),1);
-% for i = 1:length(ticksY)
-%     labels_updated{i}= num2str(ticksY(i),['%0.' num2str(MAX_Y) 'f']);
-% end
-% % labels_updated = sprintf(['%0.' num2str(MAX_Y) 'f|'], ticksY);
-if ~(strcmp(get(gca,'Yscale'),'log') && logScaleY)
-%     set(gca,'yticklabel',labels_updated);
-    ytickformat(['%0.' num2str(MAX_Y) 'f'])
-%     ytickformat(['%0.1f'])
+labels_updated = cell(length(ticksY),1);
+for i = 1:length(ticksY)
+    labels_updated{i}= num2str(ticksY(i),['%0.' num2str(MAX_Y) 'f']);
 end
+% labels_updated = sprintf(['%0.' num2str(MAX_Y) 'f|'], ticksY);
+% if ~(strcmp(get(gca,'Yscale'),'log') && logScaleY)
+% %     set(gca,'yticklabel',labels_updated);
+%     ytickformat(['%0.' num2str(MAX_Y) 'f'])
+% %     ytickformat(['%0.1f'])
+% end
 
 
 ticksZ = get(gca,'ztick');
@@ -85,7 +85,11 @@ for i = 1:length(ticksZ)
 	y(i) = digits_debugged(ticksZ(i));
 end
 MAX_Y = max(y(y<4));
-ztickformat(['%0.' num2str(MAX_Y) 'f'])
+% ztickformat(['%0.' num2str(MAX_Y) 'f'])
+labels_updated = cell(length(ticksZ),1);
+for i = 1:length(ticksZ)
+    labels_updated{i}= num2str(ticksZ(i),['%0.' num2str(MAX_Y) 'f']);
+end
 
 
 if strcmp('horizontal',ylabeldir)
@@ -133,12 +137,12 @@ if ~strcmp('NO',name)
         'FontWeight', 'normal', 'interpreter', 'latex')
 end
 
-set(get(gca,'legend'),'autoupdate','on')
-
-if ~isempty(get(gca,'legend'))
-    hl = legend;
-    set(hl,'edgecolor','none')
-end
+% set(get(gca,'legend'),'autoupdate','on')
+% 
+% if ~isempty(get(gca,'legend'))
+%     hl = legend;
+%     set(hl,'edgecolor','none')
+% end
 
 % set(gca,'FontName','times')
 
