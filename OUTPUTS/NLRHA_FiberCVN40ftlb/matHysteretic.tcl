@@ -20,11 +20,12 @@
 # compBackboneFactors 	list with the factors that modify the backbone from bare to composite
 #						{MpP/Mp MpN/Mp Mc/MpP Mc/MpN Mr/MpP Mr/MpN D_P D_N theta_p_P_comp 
 #						theta_p_N_comp theta_pc_P_comp theta_pc_P_comp}
+# pinching              boolean if pinching
 #
 # Written by: Francisco Galvis, Stanford University
 # Based on OpenSees examples available online
 #
-proc matHysteretic { matTag EIeff eleLength n Mp McMp theta_p theta_pc MrMp Composite compBackboneFactors} {
+proc matHysteretic { matTag EIeff eleLength n Mp McMp theta_p theta_pc MrMp Composite compBackboneFactors Pinching} {
 
 	if {$Composite} {
 		# Modify backbone for composite action
@@ -106,10 +107,17 @@ proc matHysteretic { matTag EIeff eleLength n Mp McMp theta_p theta_pc MrMp Comp
 	# puts "$McMpN"
 	# puts "$MrMpN"	
 	
-	# Create the material model		
-	uniaxialMaterial Hysteretic $matTag $MpP $theta_y_p [expr $McMpP*$MpP] [expr $theta_p_P + $theta_y_p] \
-	[expr $MrMpP*$MpP] [expr $theta_res_P + $theta_p_P + $theta_y_p] [expr -$MpN] [expr -$theta_y_n] [expr -$McMpN*$MpN] [expr -($theta_p_N + $theta_y_n)] \
-	[expr -$MrMpN*$MpN] [expr -($theta_res_N + $theta_p_N + $theta_y_n)] 1.00 1.00 0.00 0.00
+	# Create the material model
+	if {$Pinching} {
+		uniaxialMaterial Hysteretic $matTag $MpP $theta_y_p [expr $McMpP*$MpP] [expr $theta_p_P + $theta_y_p] \
+		0 [expr $theta_res_P + $theta_p_P + $theta_y_p] [expr -$MpN] [expr -$theta_y_n] [expr -$McMpN*$MpN] [expr -($theta_p_N + $theta_y_n)] \
+		0 [expr -($theta_res_N + $theta_p_N + $theta_y_n)] 0.80 0.20 0.00 0.00	
+	} else {
+		uniaxialMaterial Hysteretic $matTag $MpP $theta_y_p [expr $McMpP*$MpP] [expr $theta_p_P + $theta_y_p] \
+		[expr $MrMpP*$MpP] [expr $theta_res_P + $theta_p_P + $theta_y_p] [expr -$MpN] [expr -$theta_y_n] [expr -$McMpN*$MpN] [expr -($theta_p_N + $theta_y_n)] \
+		[expr -$MrMpN*$MpN] [expr -($theta_res_N + $theta_p_N + $theta_y_n)] 1.00 1.00 0.00 0.00
+	}
+
 	
 
 	

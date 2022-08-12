@@ -206,9 +206,17 @@ proc hingeBeamColumnFracture { eleTag node1 node2 eleDir transfTag n Es Fy rigMa
 		# matIMKBilin $hingeSecTag_j $EIeff $eleLength $n $Mp_j $McMp_j $theta_p_j $theta_pc_j $theta_u_j $lambda_j $c $MrMp_j $Composite $compBackboneFactors		
 
 	} else {
+		if {$theta_p_i < 0.01} {
+			# brittle connections assumed with pinching
+			set Pinching 1
+		} else {
+			# more ductile connections assumed without pinching
+			set Pinching 0
+		}
+		puts "Pinching=$Pinching"
 		# Model without cyclic degradation so uses first-cycle backbone
-		matHysteretic $hingeSecTag_i $EIeff $eleLength $n $Mp_i $McMp_i $theta_p_i $theta_pc_i $MrMp_i  $Composite $compBackboneFactors 
-		matHysteretic $hingeSecTag_j $EIeff $eleLength $n $Mp_j $McMp_j $theta_p_j $theta_pc_j $MrMp_j  $Composite $compBackboneFactors
+		matHysteretic $hingeSecTag_i $EIeff $eleLength $n $Mp_i $McMp_i $theta_p_i $theta_pc_i $MrMp_i  $Composite $compBackboneFactors $Pinching
+		matHysteretic $hingeSecTag_j $EIeff $eleLength $n $Mp_j $McMp_j $theta_p_j $theta_pc_j $MrMp_j  $Composite $compBackboneFactors $Pinching
 
 	}
 	
