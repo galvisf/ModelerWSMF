@@ -30,7 +30,7 @@ The repository has three main scripts that use the supporting functions and data
 
 ## License
 
-ModelerWSMF is distributed under the MIT license, see [LICENSE](https://github.com/annehulsey/cranes/blob/main/LICENSE).
+ModelerWSMF is distributed under the MIT license, see [LICENSE](https://opensource.org/licenses/MIT).
 
 ## Contact
 
