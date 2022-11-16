@@ -26,8 +26,8 @@ The repository has three main scripts that use the supporting functions and data
 - *main_DesignDiagnostics.m: Takes the input file for the frame, calculates typical design checks that serve to diagnose the frame seismic performance. Examples of these diagnistics are: Strong-Column-to-Weak-Beam ratio per floor, axial load ratios per column, panel zone strenght ratios, period and mode shapes, and wind and seismic drift profiles. To estimat the modal parameters and the drift profiles, the script generates linear OpenSees models of the frame and applies the equivalent lateral force corresponding to the applicable UBC associated to the year of construction of the frame. The script summarizes all these information in a single dashboard (See example in Figure 2). All the supporting files and final summary figure are stores in the ***OUTPUTS*** folder.
 
 - *main_Pushover.m: Takes the input file for the frame, produces a nonlinear OpenSees model, and runs a pushover analysis using a lateral force pattern equal to the first mode shape. The pushover results and the model are stored in the ***OUTPUTS*** folder.
-
-<p align="center"> <img src="https://user-images.githubusercontent.com/35354704/202243013-f85823dc-1b3c-486d-896f-83b116749e5e.png" align="middle" height=500 /></p>
+  
+<p align="center"> <img src="https://user-images.githubusercontent.com/35354704/202243408-361accfd-56d0-4e37-ace5-61936db8a28b.png" align="middle" height=400 /></p>
 <p align="center"> Figure 2. Example of the design diagnostics dashboard. 
 
 ## License
