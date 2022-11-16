@@ -1,7 +1,8 @@
 %%%%% POST-PROCESSING BUILDING DATABASE AND NONLINEAR MODEL GENERATOR %%%%%
 
 % Add functions
-close all; clear; clc;
+% close all; 
+clear; clc;
 currFolder = pwd;
 addpath([currFolder filesep 'SRC' filesep '0_Databases'])
 addpath([currFolder filesep 'SRC' filesep '1_FunctionsModelGeneration'])

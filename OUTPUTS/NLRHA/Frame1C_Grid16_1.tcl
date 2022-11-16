@@ -8,11 +8,11 @@
 # UNITS:                     kip, in
 # Generation:                Pre_Northridge
 # Composite beams:           True
-# Fracturing fiber sections: True
+# Fracturing fiber sections: False
 # Gravity system stiffness:  False
 # Column splices included:   False
 # Rigid diaphragm:           False
-# Plastic hinge type:        non_RBS
+# Plastic hinge type:        PN
 # Backbone type:             ASCE41
 # Cyclic degradation:        False
 # Web connection type:       Bolted
@@ -28,10 +28,6 @@ model basic -ndm 2 -ndf 3
 
 source ConstructPanel_Rectangle.tcl;
 source PanelZoneSpring.tcl;
-source fracSectionBolted.tcl;
-source hingeBeamColumnFracture.tcl;
-source sigCrNIST2017.tcl;
-source fracSectionWelded.tcl;
 source hingeBeamColumn.tcl;
 source matHysteretic.tcl;
 source matIMKBilin.tcl;
@@ -102,31 +98,6 @@ set slabFiberMaterials {-3.000 -0.002 -0.010 60.000 -0.100};
 set degradation 0;
 set c 0.000; # Exponent for degradation in plastic hinges
 
-# MATERIAL PROPERTIES FOR FRACURING FIBER-SECTIONS
-set alpha 7.6; # Calibration constant to compute KIC (Stillmaker et al. 2017)
-set T_service_F 70; # Temperature at service [F]
-set FyWeld 70; # Yielding strength for sigCr calculations (Use 70ksi to be consistent with Galvis et al. 2021 calibrations)
-# fracSecMaterials {FyFiber EsFiber betaC_B betaC_T sigMin FuBolt FyTab FuTab};
-set fracSecMaterials {150.000 29000.000 0.500 0.800 17.600 68.000 47.000 70.000};
-
-# FRACTURE INDEX LIMIT FOR FRACTURE PER FLANGE AND CONNECTION
-# Left-Bottom                       Left-Top                            Right-Bottom                       Right-Top
-set FI_limB_bay1_floor2_i 1.000;	set FI_limT_bay1_floor2_i 1.000;	set FI_limB_bay1_floor2_j 1.000;	set FI_limT_bay1_floor2_j 1.000;	
-set FI_limB_bay1_floor3_i 1.000;	set FI_limT_bay1_floor3_i 1.000;	set FI_limB_bay1_floor3_j 1.000;	set FI_limT_bay1_floor3_j 1.000;	
-set FI_limB_bay1_floor4_i 1.000;	set FI_limT_bay1_floor4_i 1.000;	set FI_limB_bay1_floor4_j 1.000;	set FI_limT_bay1_floor4_j 1.000;	
-
-# CVN PER FLANGE AND CONNECTION
-# Left connection               Right connection
-set cvn_bay1_floor2_i 12.000;	set cvn_bay1_floor2_j 12.000;	
-set cvn_bay1_floor3_i 12.000;	set cvn_bay1_floor3_j 12.000;	
-set cvn_bay1_floor4_i 12.000;	set cvn_bay1_floor4_j 12.000;	
-
-# a0 PER FLANGE AND CONNECTION
-# Left connection           Right connection
-set a0_bay1_floor2_i 0.168;	set a0_bay1_floor2_j 0.168;	
-set a0_bay1_floor3_i 0.157;	set a0_bay1_floor3_j 0.157;	
-set a0_bay1_floor4_i 0.068;	set a0_bay1_floor4_j 0.068;	
-
 ####################################################################################################
 #                                          PRE-CALCULATIONS                                        #
 ####################################################################################################
@@ -142,20 +113,6 @@ set Axis2 360.00;
 
 set HBuilding 773.04;
 set WFrame 360.00;
-
-# SIGMA CRITICAL PER FLANGE AND CONNECTION
-set sigCrB_bay1_floor2_i [sigCrNIST2017 "bottom" $cvn_bay1_floor2_i $a0_bay1_floor2_i $alpha $T_service_F $Es $FyWeld];
-set sigCrT_bay1_floor2_i [sigCrNIST2017 "top" $cvn_bay1_floor2_i $a0_bay1_floor2_i $alpha $T_service_F $Es $FyWeld];
-set sigCrB_bay1_floor2_j [sigCrNIST2017 "bottom" $cvn_bay1_floor2_j $a0_bay1_floor2_j $alpha $T_service_F $Es $FyWeld];
-set sigCrT_bay1_floor2_j [sigCrNIST2017 "top" $cvn_bay1_floor2_j $a0_bay1_floor2_j $alpha $T_service_F $Es $FyWeld];
-set sigCrB_bay1_floor3_i [sigCrNIST2017 "bottom" $cvn_bay1_floor3_i $a0_bay1_floor3_i $alpha $T_service_F $Es $FyWeld];
-set sigCrT_bay1_floor3_i [sigCrNIST2017 "top" $cvn_bay1_floor3_i $a0_bay1_floor3_i $alpha $T_service_F $Es $FyWeld];
-set sigCrB_bay1_floor3_j [sigCrNIST2017 "bottom" $cvn_bay1_floor3_j $a0_bay1_floor3_j $alpha $T_service_F $Es $FyWeld];
-set sigCrT_bay1_floor3_j [sigCrNIST2017 "top" $cvn_bay1_floor3_j $a0_bay1_floor3_j $alpha $T_service_F $Es $FyWeld];
-set sigCrB_bay1_floor4_i [sigCrNIST2017 "bottom" $cvn_bay1_floor4_i $a0_bay1_floor4_i $alpha $T_service_F $Es $FyWeld];
-set sigCrT_bay1_floor4_i [sigCrNIST2017 "top" $cvn_bay1_floor4_i $a0_bay1_floor4_i $alpha $T_service_F $Es $FyWeld];
-set sigCrB_bay1_floor4_j [sigCrNIST2017 "bottom" $cvn_bay1_floor4_j $a0_bay1_floor4_j $alpha $T_service_F $Es $FyWeld];
-set sigCrT_bay1_floor4_j [sigCrNIST2017 "top" $cvn_bay1_floor4_j $a0_bay1_floor4_j $alpha $T_service_F $Es $FyWeld];
 
 ####################################################################################################
 #                                                  NODES                                           #
@@ -228,21 +185,302 @@ PanelZoneSpring 9040200 4040209 4040210 $Es $mu $FyCol 18.30 16.60  2.85  1.77  
 
 # COMMAND SYNTAX 
 # secInfo  Zp, Mc/Mp, Mr/Mp, theta_p, theta_pc, theta_u, lambda
-# (Welded web) fracSecGeometry  d, bf, tf, ttab, tabLength, dtab
-# (Bolted web) fracSecGeometry  d, bf, tf, ttab, tabLength, str, boltDiameter, Lc
-# hingeBeamColumnFracture  ElementID node_i node_j eleDir, ... A, Ieff, ... webConnection
 # hingeBeamColumn  ElementID node_i node_j eleDir, ... A, Ieff
 
 # Beams at floor 2 bay 1
-set secInfo_i {1280.0000   1.1177   0.2000   0.0142   0.0013   0.0220   0.0000};
-set secInfo_j {1280.0000   1.1177   0.2000   0.0142   0.0013   0.0220   0.0000};
+set secInfo_i {1280.0000   1.0133   0.2000   0.0016   0.0019   0.0132   0.0000};
+set secInfo_j {1280.0000   1.0133   0.2000   0.0016   0.0019   0.0132   0.0000};
 set compBackboneFactors [lreplace $compBackboneFactors 0 0   1.0000];# MpP/Mp
 set compBackboneFactors [lreplace $compBackboneFactors 1 1   1.0000];# MpN/Mp
+hingeBeamColumn 1020100 4020104 4020202 "Horizontal" $trans_selected $n $Es $FyBeam $rigMatTag 89.000 [expr 19515.550*$Comp_I] $degradation $c $secInfo_i $secInfo_j $Composite $compBackboneFactors;
 
 # Beams at floor 3 bay 1
-set secInfo_i {936.0000   1.1178   0.2000   0.0180   0.0016   0.0277   0.0000};
-set secInfo_j {936.0000   1.1178   0.2000   0.0180   0.0016   0.0277   0.0000};
+set secInfo_i {936.0000   1.0145   0.2000   0.0022   0.0024   0.0166   0.0000};
+set secInfo_j {936.0000   1.0145   0.2000   0.0022   0.0024   0.0166   0.0000};
 set compBackboneFactors [lreplace $compBackboneFactors 0 0   1.0000];# MpP/Mp
 set compBackboneFactors [lreplace $compBackboneFactors 1 1   1.0000];# MpN/Mp
+hingeBeamColumn 1030100 4030104 4030202 "Horizontal" $trans_selected $n $Es $FyBeam $rigMatTag 68.000 [expr 14129.237*$Comp_I] $degradation $c $secInfo_i $secInfo_j $Composite $compBackboneFactors;
 
 # Beams at floor 4 bay 1
+set secInfo_i {175.3136   1.0809   0.2000   0.0159   0.0012   0.0229   0.0000};
+set secInfo_j {175.3136   1.0809   0.2000   0.0159   0.0012   0.0229   0.0000};
+set compBackboneFactors [lreplace $compBackboneFactors 0 0   1.0000];# MpP/Mp
+set compBackboneFactors [lreplace $compBackboneFactors 1 1   1.0000];# MpN/Mp
+hingeBeamColumn 1040100 4040104 4040202 "Horizontal" $trans_selected $n $Es $FyBeam $rigMatTag 22.400 [expr 2048.462*$Comp_I] $degradation $c $secInfo_i $secInfo_j $Composite $compBackboneFactors;
+
+####################################################################################################
+#                                            COLUMNS ELEMENTS                                      #
+####################################################################################################
+
+# COMMAND SYNTAX 
+# secInfo  Zp, Mc/Mp, Mr/Mp, theta_p, theta_pc, theta_u, lambda
+# spliceSecGeometry  min(d_i, d_j), min(bf_i, bf_j), min(tf_i, tf_j), min(tw_i, tw_j)
+# (splice)    hingeBeamColumnSplice  ElementID node_i node_j eleDir, ... A, Ieff, ... 
+# (no splice) hingeBeamColumn        ElementID node_i node_j eleDir, ... A, Ieff
+
+# Columns at story 1 axis 1
+set secInfo_i {761.2495   1.2924   0.8553   0.0686   0.0602   0.1488   0.0000};
+set secInfo_j {761.2495   1.2924   0.8553   0.0686   0.0602   0.1488   0.0000};
+hingeBeamColumn 2010100 10100 4020101 "Vertical" $trans_selected $n $Es $FyCol $rigMatTag 117.000 5617.449 $degradation $c $secInfo_i $secInfo_j 0 0;
+
+# Columns at story 2 axis 1
+set secInfo_i {775.2841   1.3453   0.8711   0.0753   0.0673   0.1651   0.0000};
+set secInfo_j {775.2841   1.3453   0.8711   0.0753   0.0673   0.1651   0.0000};
+hingeBeamColumn 2020100 4020103 4030101 "Vertical" $trans_selected $n $Es $FyCol $rigMatTag 117.000 5533.957 $degradation $c $secInfo_i $secInfo_j 0 0;
+
+# Columns at story 3 axis 1
+set secInfo_i {792.2284   1.1801   0.8901   0.0614   0.0514   0.1299   0.0000};
+set secInfo_j {792.2284   1.1801   0.8901   0.0614   0.0514   0.1299   0.0000};
+hingeBeamColumn 2030100 4030103 4040101 "Vertical" $trans_selected $n $Es $FyCol $rigMatTag 117.000 5811.305 $degradation $c $secInfo_i $secInfo_j 0 0;
+
+# Columns at story 1 axis 2
+set secInfo_i {761.2495   1.2924   0.8553   0.0686   0.0602   0.1488   0.0000};
+set secInfo_j {761.2495   1.2924   0.8553   0.0686   0.0602   0.1488   0.0000};
+hingeBeamColumn 2010200 10200 4020201 "Vertical" $trans_selected $n $Es $FyCol $rigMatTag 117.000 5617.449 $degradation $c $secInfo_i $secInfo_j 0 0;
+
+# Columns at story 2 axis 2
+set secInfo_i {775.2841   1.3453   0.8711   0.0753   0.0673   0.1651   0.0000};
+set secInfo_j {775.2841   1.3453   0.8711   0.0753   0.0673   0.1651   0.0000};
+hingeBeamColumn 2020200 4020203 4030201 "Vertical" $trans_selected $n $Es $FyCol $rigMatTag 117.000 5533.957 $degradation $c $secInfo_i $secInfo_j 0 0;
+
+# Columns at story 3 axis 2
+set secInfo_i {792.2284   1.1801   0.8901   0.0614   0.0514   0.1299   0.0000};
+set secInfo_j {792.2284   1.1801   0.8901   0.0614   0.0514   0.1299   0.0000};
+hingeBeamColumn 2030200 4030203 4040201 "Vertical" $trans_selected $n $Es $FyCol $rigMatTag 117.000 5811.305 $degradation $c $secInfo_i $secInfo_j 0 0;
+
+####################################################################################################
+#                                              FLOOR LINKS                                         #
+####################################################################################################
+
+# Command Syntax 
+# element truss $ElementID $iNode $jNode $Area $matID
+element truss 1004 4040204 30304 $A_Stiff $rigMatTag;
+element truss 1003 4030204 20304 $A_Stiff $rigMatTag;
+element truss 1002 4020204 10304 $A_Stiff $rigMatTag;
+
+####################################################################################################
+#                                          EGF COLUMNS AND BEAMS                                   #
+####################################################################################################
+
+# LEANING COLUMN
+element elasticBeamColumn 2010300 10302 10304 $A_Stiff $Es $I_Stiff $trans_selected;
+element elasticBeamColumn 2020300 20302 20304 $A_Stiff $Es $I_Stiff $trans_selected;
+element elasticBeamColumn 2030300 30302 30304 $A_Stiff $Es $I_Stiff $trans_selected;
+###################################################################################################
+#                                       BOUNDARY CONDITIONS                                       #
+###################################################################################################
+
+# FRAME BASE SUPPORTS
+fix 10100 1 1 0;
+fix 10200 1 1 0;
+
+# LEANING COLUMN SUPPORT
+fix 10302 1 1 0;
+###################################################################################################
+###################################################################################################
+                                         puts "
+
+"                                               
+                                      puts "Model Built"                                           
+###################################################################################################
+###################################################################################################
+
+###################################################################################################
+#                                              NODAL MASS                                         #
+###################################################################################################
+
+# MASS ON THE MOMENT FRAME
+
+# Panel zones floor2
+mass 4020103 0.2336  0.0023 25.2308;
+mass 4020203 0.2336  0.0023 25.2308;
+# Panel zones floor3
+mass 4030103 0.2821  0.0028 30.4615;
+mass 4030203 0.2821  0.0028 30.4615;
+# Panel zones floor4
+mass 4040103 0.1460  0.0015 15.7692;
+mass 4040203 0.1460  0.0015 15.7692;
+
+# MASS ON THE GRAVITY SYSTEM
+
+mass 10304 2.3818  0.0238 257.2308;
+mass 20304 3.5799  0.0358 386.6294;
+mass 30304 0.4850  0.0048 52.3776;
+
+###################################################################################################
+#                                            GRAVITY LOAD                                         #
+###################################################################################################
+
+pattern Plain 101 Linear {
+
+	# MR Frame: Distributed beam element loads
+	# Floor 2
+	eleLoad -ele 1020100 -type -beamUniform   -0.19315; # Beam at floor 2 bay 1
+	# Floor 3
+	eleLoad -ele 1030100 -type -beamUniform   -0.17867; # Beam at floor 3 bay 1
+	# Floor 4
+
+	#  MR Frame: Point loads on columns
+	# Floor2
+	load 4020103 0.0 -57.2000 0.0;
+	load 4020203 0.0 -57.2000 0.0;
+	# Floor3
+	load 4030103 0.0 -78.3750 0.0;
+	load 4030203 0.0 -78.3750 0.0;
+	# Floor4
+	load 4040103 0.0 -56.3750 0.0;
+	load 4040203 0.0 -56.3750 0.0;
+
+	#  Gravity Frame: Point loads on columns
+	load 10304 0.0 -919.6000 0.0;
+	load 20304 0.0 -1382.2000 0.0;
+	load 30304 0.0 -187.2500 0.0;
+
+}
+
+# ----- Gravity analyses commands ----- #
+constraints Transformation;
+numberer RCM;
+system BandGeneral;
+test RelativeEnergyIncr 1.0e-05 20;
+algorithm Newton;
+integrator LoadControl 0.10;
+analysis Static;
+if {[analyze 10]} {puts "Application of gravity load failed"};
+loadConst -time 0.0;
+remove recorders;
+
+###################################################################################################
+###################################################################################################
+                                        puts "Gravity Done"                                        
+###################################################################################################
+###################################################################################################
+
+###################################################################################################
+#                                            CONTROL NODES                                        #
+###################################################################################################
+
+set ctrl_nodes {
+	10200
+	4020203
+	4030203
+	4040203
+};
+
+set hVector {
+	2.240400e+02
+	222
+	327
+};
+
+###################################################################################################
+#                                        EIGEN VALUE ANALYSIS                                     #
+###################################################################################################
+
+set num_modes 3
+set dof 1
+set ctrl_nodes2 $ctrl_nodes
+set filename_eigen ""
+set omegas [modal $num_modes $filename_eigen]
+
+###################################################################################################
+###################################################################################################
+                                   puts "Eigen Analysis Done"                                      
+###################################################################################################
+###################################################################################################
+
+###################################################################################################
+#                                               DAMPING                                           #
+###################################################################################################
+
+# Calculate Rayleigh Damping constnats
+set wI [lindex $omegas $DampModeI-1]
+set wJ [lindex $omegas $DampModeJ-1]
+set a0 [expr $zeta*2.0*$wI*$wJ/($wI+$wJ)];
+set a1 [expr $zeta*2.0/($wI+$wJ)];
+set a1_mod [expr $a1*(1.0+$n)/$n];
+
+
+# Beam elastic elements
+region 1 -ele 1020100 1030100 1040100 -rayleigh 0.0 0.0 $a1_mod 0.0;
+
+# Column elastic elements
+region 2 -ele 2010100 2020100 2030100 2010200 2020200 2030200 -rayleigh 0.0 0.0 $a1_mod 0.0;
+
+# Hinge elements [beam springs, column springs]
+region 3 -ele 1020101 1020102 1030101 1030102 1040101 1040102 2010101 2010102 2020101 2020102 2030101 2030102 2010201 2010202 2020201 2020202 2030201 2030202 -rayleigh 0.0 0.0 [expr $a1_mod/$n] 0.0;
+
+# Nodes with mass
+region 4 -nodes 4020103 4020203 4030103 4030203 4040103 4040203 -rayleigh $a0 0.0 0.0 0.0;
+
+###################################################################################################
+#                                     DETAILED RECORDERS                                          #
+###################################################################################################
+
+if {$addBasicRecorders == 1} {
+
+	# Recorders for lateral displacement on each panel zone
+	recorder Node -file $outdir/all_disp.out -dT 0.01 -time -nodes 4020103 4020203 4030103 4030203 4040103 4040203 -dof 1 disp;
+
+}
+
+if {$addBasicRecorders == 1} {
+
+	# Recorders beam hinge element
+
+	# Left
+	recorder Element -file $outdir/hinge_left.out -dT 0.01 -ele 1020101 1030101 1040101 deformation;
+
+	# Right
+	recorder Element -file $outdir/hinge_right.out -dT 0.01 -ele 1020102 1030102 1040102 deformation;
+}
+
+if {$addDetailedRecorders == 1} {
+
+	recorder Element -file $outdir/hinge_right_force.out -dT 0.01 -ele 1020102 1030102 1040102 force;
+
+	recorder Element -file $outdir/hinge_left_force.out -dT 0.01 -ele 1020101 1030101 1040101 force;
+}
+
+if {$addDetailedRecorders == 1} {
+
+	# Recorders for beam internal forces
+	recorder Element -file $outdir/beam_forces.out -dT 0.01 -ele 1020100 1030100 1040100 globalForce;
+
+}
+
+if {$addDetailedRecorders == 1} {
+
+	# Recorders for column internal forces
+	recorder Element -file $outdir/column_forces.out -dT 0.01 -ele 2010100 2020100 2030100 2010200 2020200 2030200 globalForce;
+
+}
+
+if {$addBasicRecorders == 1} {
+
+	# Recorders column hinges
+	# Bottom
+	recorder Element -file $outdir/hinge_bot.out -dT 0.01 -ele 2010101 2020101 2030101 2010201 2020201 2030201 deformation;
+	# Top
+	recorder Element -file $outdir/hinge_top.out -dT 0.01 -ele 2010102 2020102 2030102 2010202 2020202 2030202 deformation;
+}
+
+if {$addDetailedRecorders == 1} {
+
+	# Bottom
+	recorder Element -file $outdir/hinge_bot_force.out -dT 0.01 -ele 2010101 2020101 2030101 2010201 2020201 2030201 force;
+	# Top
+	recorder Element -file $outdir/hinge_top_force.out -dT 0.01 -ele 2010102 2020102 2030102 2010202 2020202 2030202 force;
+}
+
+if {$addBasicRecorders == 1} {
+
+	# Recorders panel zone elements
+	recorder Element -file $outdir/pz_rot.out -dT 0.01 -ele 9010100 9010200 9020100 9020200 9030100 9030200 9040100 9040200 deformation;
+}
+
+if {$addDetailedRecorders == 1} {
+
+	recorder Element -file $outdir/pz_M.out -dT 0.01 -ele 9010100 9010200 9020100 9020200 9030100 9030200 9040100 9040200 force;
+}
+

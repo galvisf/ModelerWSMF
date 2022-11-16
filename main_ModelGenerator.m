@@ -1,6 +1,6 @@
 %%%%% POST-PROCESSING BUILDING DATABASE AND NONLINEAR MODEL GENERATOR %%%%%
 
-% close all;
+close all;
 clear; clc;
 
 addpath(['SRC' filesep '0_Databases'])
@@ -45,7 +45,7 @@ FyCol  = 44; % A572, Gr.50, based on SAC guidelines
 FyBeam = 44; % A36, based on SAC guidelines
 
 %%% Beams and Columns %%%
-fractureElement = true;
+fractureElement = false;
 generation      = 'Pre_Northridge'; %'Pre_Northridge' 'Post_Northridge'
 backbone        = 'ASCE41'; % 'Elastic' 'NIST2017', 'ASCE41'
 connType        = 'non_RBS'; % 'non_RBS', 'RBS'
@@ -124,7 +124,7 @@ fracSecMaterials.FuBolt = 68;
 fracSecMaterials.FyTab  = 47;
 fracSecMaterials.FuTab  = 70;
 
-FI_lim_type = 'Constant'; % Constant  Random
+FI_lim_type = 'Random'; % Constant  Random
 if strcmp(FI_lim_type, 'Constant')
     flangeProp.FI_lim = 1.0;
 else

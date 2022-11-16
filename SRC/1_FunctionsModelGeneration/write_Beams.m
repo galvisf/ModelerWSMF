@@ -230,7 +230,7 @@ function AllEle = write_Beams(INP,AllEle,bldgData,AISC_v14p1,connType,backbone,.
                     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
 
                         % Fracture base section geometry
-                        connDataIdx = find(contains(webConnection.Size, beamSize{Floor-1, Bay})); 
+                        connDataIdx = find(~isempty(strfind(webConnection.Size, beamSize{Floor-1, Bay}))); 
                         typeWeb = webConnection.Type{connDataIdx};
                         if strcmp(typeWeb, 'Welded')
                             % Welded web

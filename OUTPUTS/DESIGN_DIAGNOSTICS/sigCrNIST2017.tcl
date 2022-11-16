@@ -49,7 +49,9 @@ proc sigCrNIST2017 {flange cvn a0 alpha T_service_F Es FyWeld} {
 		set F_a0 [expr 0.5 + 2.0 * $a0];
 		set sigcr [expr $k_ic_median/$F_a0];
 	}
-		
+	
+    puts "sigCr=$sigcr"
+
 	return $sigcr
 	
 }
