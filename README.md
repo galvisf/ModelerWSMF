@@ -3,8 +3,8 @@
 ## What is it?
 ModelerWSMF is an open-source Matlab-based package that facilitates the automatic generation of 2D OpenSees (.tcl) models of moment resisiting frames with special emphasis on welded steel moment frames (WSMF).
 The package is capable of generating state-of-the-art non-linear models that consider high-fidelity simulations of panel zones, welded beam-to-column connections, and columns splices as depicted in Figure 1.
-  
-<p align="center"> <img src="https://raw.githubusercontent.com/galvisf/ModelerWSMF/main/SRC/readme_figures/frame_model.SVG" align="middle" height=75 /></p>
+
+<p align="center"> <img src="https://user-images.githubusercontent.com/35354704/202242564-2c0335b3-5606-4451-9961-990533ad0e56.png" align="middle" height=500 /></p>
 <p align="center"> Figure 1. OpenSees 2D frame modeling details. 
 
 This code extends already available open-source packages (notably https://github.com/amaelkady/FM-2D) by including the capabilities to model irregular buildings that might have setbacks, atypical story heights, MEP floors, interrupted column lines, atriums, and podiums. These capabililities are envision to be included in FM-2D in the near future.
@@ -26,8 +26,8 @@ The repository has three main scripts that use the supporting functions and data
 - *main_DesignDiagnostics.m: Takes the input file for the frame, calculates typical design checks that serve to diagnose the frame seismic performance. Examples of these diagnistics are: Strong-Column-to-Weak-Beam ratio per floor, axial load ratios per column, panel zone strenght ratios, period and mode shapes, and wind and seismic drift profiles. To estimat the modal parameters and the drift profiles, the script generates linear OpenSees models of the frame and applies the equivalent lateral force corresponding to the applicable UBC associated to the year of construction of the frame. The script summarizes all these information in a single dashboard (See example in Figure 2). All the supporting files and final summary figure are stores in the ***OUTPUTS*** folder.
 
 - *main_Pushover.m: Takes the input file for the frame, produces a nonlinear OpenSees model, and runs a pushover analysis using a lateral force pattern equal to the first mode shape. The pushover results and the model are stored in the ***OUTPUTS*** folder.
- 
-<p align="center"> <img src="ModelerWSMF/SRC/readme_figures/design_diagnostics_example.svg" align="middle" height=75 /></p>
+
+<p align="center"> <img src="https://user-images.githubusercontent.com/35354704/202243013-f85823dc-1b3c-486d-896f-83b116749e5e.png" align="middle" height=500 /></p>
 <p align="center"> Figure 2. Example of the design diagnostics dashboard. 
 
 ## License
