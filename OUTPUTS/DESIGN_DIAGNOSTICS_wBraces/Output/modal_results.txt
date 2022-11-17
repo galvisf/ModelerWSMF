@@ -1,0 +1,25 @@
+MODAL ANALYSIS REPORT
+
+PROBELM SIZE IS 2D
+
+EIGENVALUE ANALYSIS
+            MODE          LAMBDA           OMEGA       FREQUENCY          PERIOD
+               1         355.009         18.8417         2.99875        0.333472
+               2         4608.53         67.8861         10.8044       0.0925548
+               3           19004         137.855         21.9403       0.0455782
+
+TOTAL MASS OF THE STRUCTURE
+              MX              MY             MRZ
+          0.0275               0          0.0553
+
+MODAL PARTICIPATION MASSES (%)
+            MODE              MX              MY             MRZ
+               1         94.9145               0       0.0115937
+               2         4.35824               0         0.01426
+               3        0.603027               0      0.00304642
+
+CUMULATIVE MODAL PARTICIPATION MASSES (%)
+            MODE              MX              MY             MRZ
+               1         94.9145               0       0.0115937
+               2         99.2728               0       0.0258537
+               3         99.8758               0       0.0289001

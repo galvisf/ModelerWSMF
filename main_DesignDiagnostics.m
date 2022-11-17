@@ -27,7 +27,7 @@ frameLengthY = 3*12; % [in] tributary width for WL to the MRF_X number of frames
 
 % Basic paths
 folderInputFiles = 'INPUTS'; % Input files per building
-folderPath = ['OUTPUTS' filesep 'DESIGN_DIAGNOSTICS']; % Folder to store results
+folderPath = ['OUTPUTS' filesep 'DESIGN_DIAGNOSTICS_wBraces']; % Folder to store results
 
 % Figure inputs
 font = 9;
@@ -131,7 +131,7 @@ buildingDiagnostics.stress_ratio_splice = [];
 
 % Copy all necessary OpenSees helper files
 copyOpenSeesHelper(sourceFolder, folderPath, isPushover)
-modelFN = 'ElasticModel.tcl';
+modelFN = 'ElasticModel_ph.tcl';
 
 %%%%%%% Generate elastic model per building and direction %%%%%%%%
 [AllNodes, AllEle, bldgData] = write_FrameModel(folderPath, [folderInputFiles filesep geomFN], modelFN, ...
@@ -146,7 +146,7 @@ modelFN = 'ElasticModel.tcl';
     FI_lim_type, cvn_a0_type, flangeProp, cvn_col, ...
     generation, connType, degradation, c);            
 
-
+modelFN = 'ElasticModel.tcl';
 
 %% %%%%%% Design diagnostics %%%%%%%%
 secProps = getSectionProps(bldgData, AISC_v14p1, Es, FyBeam, FyCol);
