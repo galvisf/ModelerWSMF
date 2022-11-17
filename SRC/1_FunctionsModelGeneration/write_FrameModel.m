@@ -134,7 +134,7 @@ function [AllNodes, AllEle, bldgData] = write_FrameModel(folderPath, geomFN, mod
 bldgData = readInput(geomFN);
 
 % Name of the input file (delete existing files with same name)                   
-filename = [folderPath,'/',modelFN];
+filename = [folderPath filesep modelFN];
 if exist(filename, 'file')
     delete(filename)
 end

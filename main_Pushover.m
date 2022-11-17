@@ -28,6 +28,7 @@ frameLengthY = 3*12; % [in] tributary width for WL to the MRF_X number of frames
 % Basic paths
 folderInputFiles = 'INPUTS'; % Input files per building
 folderPath = ['OUTPUTS' filesep 'PUSHOVER']; % Folder to store results
+mkdir(folderPath)
 
 % Figure inputs
 font = 9;
@@ -54,7 +55,7 @@ Fx_norm = [0.28407492029104258746
 %% Modeling considerations
 %%% General %%%
 TransformationX = 2; %1: linear; 2:pdelta; 3:corotational
-fixedBase       = false; % false = pin
+fixedBase       = true; % false = pin
 rigidFloor      = false;
 addSplices      = false;
 dampingType     = 'Rayleigh_k0_beams_cols_springs'; % Rayleigh_k0_beams_cols_springs  Rayleigh_k0_all

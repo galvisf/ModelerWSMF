@@ -338,9 +338,9 @@ element elasticBeamColumn 2040400 40402 40404 $A_Stiff $Es $I_Stiff $trans_selec
 ###################################################################################################
 
 # FRAME BASE SUPPORTS
-fix 10100 1 1 0;
-fix 10200 1 1 0;
-fix 10300 1 1 0;
+fix 10100 1 1 1;
+fix 10200 1 1 1;
+fix 10300 1 1 1;
 
 # LEANING COLUMN SUPPORT
 fix 10402 1 1 0;
