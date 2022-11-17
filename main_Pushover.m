@@ -173,7 +173,7 @@ end
 copyOpenSeesHelper(sourceFolder, folderPath, isPushover)
 
 %%%%%%%% identify input.xls %%%%%%%%
-modelFN = 'InelasticModel.tcl';
+modelFN = 'InelasticModel_ph.tcl';
 
 %%%%%%% Generate elastic model per building and direction %%%%%%%%
 [AllNodes, AllEle, bldgData] = write_FrameModel(folderPath, [folderInputFiles filesep geomFN], modelFN, ...
@@ -187,6 +187,8 @@ modelFN = 'InelasticModel.tcl';
     fractureElement, slabFiberMaterials, fracSecMaterials, ...                
     FI_lim_type, cvn_a0_type, flangeProp, cvn_col, ...
     generation, connType, degradation, c); 
+
+modelFN = 'InelasticModel.tcl';
 
 %% %%%%%% Run pushover %%%%%%%%
 cd(folderPath)
