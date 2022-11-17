@@ -318,7 +318,7 @@ hingeBeamColumn 2040300 4040303 4050301 "Vertical" $trans_selected $n $Es $FyCol
 ####################################################################################################
 
 # INELASTIC MATERIAL FOR BRACES
-set elMatTag 98
+set braceMatTag 98
 set A   0.22
 set L	55
 set fy [expr $A*$FyBeam]
