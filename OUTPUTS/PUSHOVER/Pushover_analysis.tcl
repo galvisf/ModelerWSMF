@@ -4,7 +4,7 @@ source InelasticModel.tcl
 set sign 1
 set CtrlNode [lindex $ctrl_nodes end]
 set CtrlDOF 1
-set Dmax [expr $sign*0.025000*7.730400e+02];	# maximum displacement of pushover
+set Dmax [expr $sign*0.025000*1.417323e+02];	# maximum displacement of pushover
 set Dincr [expr 0.005*$Dmax ];	# displacement increment
 
 # ----- LATERAL LOAD PATTERN ----- #
@@ -21,7 +21,7 @@ pattern Plain 300 Linear {;			# define load pattern
 }
 # ----- RECORDERS FOR ELF ----- #
 # Base shear columns recorders #
-recorder Element -file $outdir/baseShear.out -ele 2010100 2010200 globalForce;
+recorder Element -file $outdir/baseShear.out -ele 2010100 2010200 2010300 globalForce;
 
 # Displacement recorders #
 for {set story 1} {$story <= $num_stories} {incr story} {

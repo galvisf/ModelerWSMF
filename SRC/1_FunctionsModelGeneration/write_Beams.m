@@ -181,7 +181,7 @@ function AllEle = write_Beams(INP,AllEle,bldgData,AISC_v14p1,connType,backbone,.
                     
                     % Get average story height (needed for ASCE41 backbone calculations)
                     if Floor < floorNum
-                        LcolAvg = mean(storyHgt(Floor-1), storyHgt(Floor));
+                        LcolAvg = mean([storyHgt(Floor-1), storyHgt(Floor)]);
                     else
                         LcolAvg = storyHgt(Floor-1);
                     end

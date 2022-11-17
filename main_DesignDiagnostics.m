@@ -23,7 +23,7 @@ Code_Year = 1986;
 spl_ratio = 1; % ratio of welded flange thickness
 frameType = 'Perimeter'; % 'Space' 'Perimeter' 'Intermediate'
 MRF_X     = 1; % frames parallel to X resisting WL together
-frameLengthY = 30*12; % [in] tributary width for WL to the MRF_X number of frames
+frameLengthY = 3*12; % [in] tributary width for WL to the MRF_X number of frames
 
 % Basic paths
 folderInputFiles = 'INPUTS'; % Input files per building
@@ -63,7 +63,7 @@ slabFiberMaterials.caRatio = 0.35; % fraction of composite action
 slabFiberMaterials.La      = 5; % girder separation [ft]
 
 %%% Panel zones %%%
-panelZoneModel = 'Elastic'; % 'None', 'Gupta1999', NIST2017, 'Kim2015' 'Elkady2021' 'Elastic'
+panelZoneModel = 'None'; % 'None', 'Gupta1999', NIST2017, 'Kim2015' 'Elkady2021' 'Elastic'
 SH_PZ = 0.015; % strain-hardening for the panel zone
 
 %%% Rayleigth damping %%%
@@ -245,7 +245,7 @@ cd(currFolder);
 figure
 output_dir = [folderPath, '/Output'];
 numModes = 3; % Number of modes
-scale = 500; % max length for deformed shapes
+scale = 50; % max length for deformed shapes
 
 % Plot model view
 subplot(3,4,1)

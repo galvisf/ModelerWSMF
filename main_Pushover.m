@@ -18,12 +18,12 @@ load('AISC_v14p1.mat');
 AISC_info = AISC_v14p1(1, :)';
 
 % Building input data
-geomFN    = 'inputs_frame1C_grid16.xlsx';
+geomFN    = 'inputs_bernalFrame.xlsx';
 Code_Year = 1986;
 spl_ratio = 1; % ratio of welded flange thickness
 frameType = 'Perimeter'; % 'Space' 'Perimeter' 'Intermediate'
 MRF_X     = 1; % frames parallel to X resisting WL together
-frameLengthY = 30*12; % [in] tributary width for WL to the MRF_X number of frames
+frameLengthY = 3*12; % [in] tributary width for WL to the MRF_X number of frames
 
 % Basic paths
 folderInputFiles = 'INPUTS'; % Input files per building
@@ -48,7 +48,8 @@ Ro = 8;
 % Manual (from mode shape)
 Fx_norm = [0.28407492029104258746
 0.38160272008700779622
-0.48340264520126863257]*100;
+0.48340264520126863257
+0.58]*100;
 
 %% Modeling considerations
 %%% General %%%
@@ -69,19 +70,19 @@ addEGF = false;
 
 %%% Material properties %%%
 Es     = 29000;
-FyCol  = 44; % A572, Gr.50, based on SAC guidelines
-FyBeam = 44; % A36, based on SAC guidelines
+FyCol  = 40; % A572, Gr.50, based on SAC guidelines
+FyBeam = 40; % A36, based on SAC guidelines
 
 %%% Beams and Columns %%%
 fractureElement = false;
-generation      = 'Pre_Northridge'; %'Pre_Northridge' 'Post_Northridge'
+generation      = 'Post_Northridge'; %'Pre_Northridge' 'Post_Northridge'
 backbone        = 'ASCE41'; % 'Elastic' 'NIST2017', 'ASCE41'
 connType        = 'non_RBS'; % 'non_RBS', 'RBS'
 degradation     = false;
-composite       = true;
+composite       = false;
 
 %%% Panel zones %%%
-panelZoneModel = 'Elkady2021'; % 'None', 'Gupta1999', NIST2017, 'Kim2015' 'Elkady2021' 'Elastic'
+panelZoneModel = 'None'; % 'None', 'Gupta1999', NIST2017, 'Kim2015' 'Elkady2021' 'Elastic'
 SH_PZ = 0.015; % strain-hardening for the panel zone
 
 %%% Connection information %%%
@@ -171,7 +172,7 @@ end
 copyOpenSeesHelper(sourceFolder, folderPath, isPushover)
 
 %%%%%%%% identify input.xls %%%%%%%%
-modelFN = 'InelasticModel_ph.tcl';
+modelFN = 'InelasticModel.tcl';
 
 %%%%%%% Generate elastic model per building and direction %%%%%%%%
 [AllNodes, AllEle, bldgData] = write_FrameModel(folderPath, [folderInputFiles filesep geomFN], modelFN, ...
@@ -185,8 +186,6 @@ modelFN = 'InelasticModel_ph.tcl';
     fractureElement, slabFiberMaterials, fracSecMaterials, ...                
     FI_lim_type, cvn_a0_type, flangeProp, cvn_col, ...
     generation, connType, degradation, c); 
-
-modelFN = 'InelasticModel.tcl';
 
 %% %%%%%% Run pushover %%%%%%%%
 cd(folderPath)
