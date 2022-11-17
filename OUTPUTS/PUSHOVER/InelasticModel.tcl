@@ -314,6 +314,49 @@ set secInfo_j {  2.7459   1.1057   0.4984   0.0177   0.0296   0.0572   0.0000};
 hingeBeamColumn 2040300 4040303 4050301 "Vertical" $trans_selected $n $Es $FyCol $rigMatTag 1.757 4.061 $degradation $c $secInfo_i $secInfo_j 0 0;
 
 ####################################################################################################
+#                                            BRACE ELEMENTS                                        #
+####################################################################################################
+
+# INELASTIC MATERIAL FOR BRACES
+set elMatTag 98
+set A   0.22
+set L	55
+set fy [expr $A*$FyBeam]
+set dy [expr $fy/($Es*$A/$L)]
+set du [expr 0.10*$L]
+uniaxialMaterial Hysteretic $braceMatTag $fy $dy [expr 1.1*$fy] $du 0.0 [expr 2*$du] [expr -0.05*$fy] [expr -$dy] 0.0 [expr 2*$du]
+
+set A_dummy   1
+
+# COMMAND SYNTAX 
+# element truss $eleTag $iNode $jNode $A $matTag <-rho $rho> <-cMass $cFlag> <-doRayleigh $rFlag>
+
+# Brace at story 1 bay 1
+
+element truss   3010100 10100 202 $A_dummy $braceMatTag
+
+# Brace at story 1 bay 2
+element truss   3010200 10300 202 $A_dummy $braceMatTag
+
+# Brace at story 2 bay 1
+element truss   3020100 201 302 $A_dummy $braceMatTag
+
+# Brace at story 2 bay 2
+element truss   3020200 203 302 $A_dummy $braceMatTag
+
+# Brace at story 3 bay 1
+element truss   3030100 301 402 $A_dummy $braceMatTag
+
+# Brace at story 3 bay 2
+element truss   3030200 303 402 $A_dummy $braceMatTag
+
+# Brace at story 4 bay 1
+element truss   3040100 401 502 $A_dummy $braceMatTag
+
+# Brace at story 4 bay 2
+element truss   3040200 403 502 $A_dummy $braceMatTag
+
+####################################################################################################
 #                                              FLOOR LINKS                                         #
 ####################################################################################################
 
