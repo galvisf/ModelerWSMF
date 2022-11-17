@@ -324,7 +324,7 @@ set L	55
 set fy [expr $A*$FyBeam]
 set dy [expr $fy/($Es*$A/$L)]
 set du [expr 0.10*$L]
-uniaxialMaterial Hysteretic $braceMatTag $fy $dy [expr 1.1*$fy] [expr -0.02*$fy] [expr -$dy] [expr -0.02*$fy] [expr -$du]
+uniaxialMaterial Hysteretic $braceMatTag $fy $dy [expr 1.1*$fy] [expr -0.02*$fy] [expr -$dy] [expr -0.02*$fy] [expr -$du] 1.00 1.00 0.00 0.00
 
 set A_dummy   1
 
