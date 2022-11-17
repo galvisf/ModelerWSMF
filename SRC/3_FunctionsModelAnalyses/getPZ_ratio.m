@@ -100,7 +100,7 @@ for Floor = 2:floorNum
             
             % Get average story height (needed for ASCE41 backbone calculations)
             if Floor < floorNum
-                LcolAvg = mean(storyHgt(Floor-1), storyHgt(Floor));
+                LcolAvg = mean([storyHgt(Floor-1), storyHgt(Floor)]);
             else
                 LcolAvg = storyHgt(Floor-1);
             end

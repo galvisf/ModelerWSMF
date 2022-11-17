@@ -15,7 +15,7 @@ pattern Plain 300 Linear {;			# define load pattern
 }
 # ----- RECORDERS FOR ELF ----- #
 # Base shear columns recorders #
-recorder Element -file $outdir/EPL_base.out -ele 2010100 2010200 globalForce;
+recorder Element -file $outdir/EPL_base.out -ele 2010100 2010200 2010300 globalForce;
 
 # Drift recorders #
 for {set story 1} {$story <= $num_stories} {incr story} {

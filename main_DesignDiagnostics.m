@@ -18,7 +18,7 @@ load('AISC_v14p1.mat');
 AISC_info = AISC_v14p1(1, :)';
 
 % Building input data
-geomFN    = 'inputs_frame1C_grid16.xlsx';
+geomFN    = 'inputs_bernalFrame.xlsx';
 Code_Year = 1986;
 spl_ratio = 1; % ratio of welded flange thickness
 frameType = 'Perimeter'; % 'Space' 'Perimeter' 'Intermediate'
@@ -57,7 +57,7 @@ FyBeam = 44; % A36, based on SAC guidelines
 
 %%% Beams and Columns %%%
 backbone  = 'Elastic'; % 'Elastic' 'NIST2017', 'ASCE41'
-composite = true;
+composite = false;
 slabFiberMaterials.fc      = -3;
 slabFiberMaterials.caRatio = 0.35; % fraction of composite action
 slabFiberMaterials.La      = 5; % girder separation [ft]
