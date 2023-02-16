@@ -7,7 +7,7 @@ The package is capable of generating state-of-the-art non-linear models that con
 <p align="center"> <img src="https://user-images.githubusercontent.com/35354704/202242564-2c0335b3-5606-4451-9961-990533ad0e56.png" align="middle" height=500 /></p>
 <p align="center"> Figure 1. OpenSees 2D frame modeling details. 
 
-This code extends already available open-source packages (notably https://github.com/amaelkady/FM-2D) by including the capabilities to model irregular buildings that might have setbacks, atypical story heights, MEP floors, interrupted column lines, atriums, and podiums. These capabililities are envision to be included in FM-2D in the near future.
+This code extends already available open-source packages (notably https://github.com/amaelkady/FM-2D) by including the capabilities to model irregular buildings that might have setbacks, atypical story heights, MEP floors, interrupted column lines, atriums, and podiums. These capabililities are envision to be included in FM-2D in the future.
 
 ModelerWSMF was the primary engine to generate the models that support the following publications:  
   
@@ -18,7 +18,7 @@ ModelerWSMF was the primary engine to generate the models that support the follo
 - *Galvis, F. A., Deierlein, G. G., Zsarnoczay3, A., and Molina Hutt, C., (2022). Seismic screening method for tall pre-Northridge welded steel moment frames based on the collapse risk of a realistic portfolio. (In preparation).*
   
 ## How can I use it?
-The first step of the modeling process is creating the frame input file in excel format and store it in the ***INPUTS*** folder. This file includes all the details of the frame to model (see example of irregular building for details).  
+The first step of the modeling process is creating the frame input file in excel format and store it in the ***INPUTS*** folder. This file includes all the details of the frame to model (see examples in the **INPUTs** folder for details).  
 The repository has three main scripts that use the supporting functions and databases stores in the ***SRC*** folder and the input excel file per frame to generate OpenSees models and run some analysis that help you check the model.
   
 - *main_ModelGenerator.m: Takes the input file for the frame and produces an OpenSees model that is stored in the ***OUTPUTS*** folder.
@@ -30,6 +30,31 @@ The repository has three main scripts that use the supporting functions and data
 <p align="center"> <img src="https://user-images.githubusercontent.com/35354704/202243408-361accfd-56d0-4e37-ace5-61936db8a28b.png" align="middle" height=400 /></p>
 <p align="center"> Figure 2. Example of the design diagnostics dashboard. 
 
+## Current structural modeling features
+
+This package supports linear and non-linear model generation using concentrated plasticity models using the backbones per any of the following documents (more details in **SRC/steelBeamHinge.m** and **SRC/steelColumnHinge.m**):
+  
+  - *NIST (2017). “Guidelines for Nonlinear Structural Analysis for Design of Buildings Part IIb – Concrete Moment Frames”* (first-cycle envelope or monotonic envelope+cyclic degradation using IMK hinges)
+  
+  - *ASCE/SEI 41 (2017). “Seismic Evaluation and Retrofit of Existing Buildings ”*
+  
+  - *AISC 342 - draft (2023). “Seismic Provisions for Evaluation and Retrofit of Existing Structural Steel Buildings ”* (Only for box columns)
+  
+Beams could be built-upwide-flange section and standard sections included in the extended database provided in **0_Databases**. Columns could be built-up wide-flange sections, standard wide-flange sections, or box columns. The format for the input file to specify the different type of sections is the following (more details in **SRC/getSteelSectionProps.m**):
+  
+  String with name of the section as is in **0_Databases/AISC_v14p1.mat**
+  Built-up wide flange sections (BUILT db-bf-tw-tf'): 'BUILT ##.##-##.##-#.###-#.###'
+  Box sections ('BOX db-bf-tw-tf'): 'BOX ##.##-##.##-#.###-#.###'
+  
+Panel zone behavior could be included using any of the following assumptions (mode details in **SRC/PanelZoneSpring.tcl**):
+  
+  - None (rigid connection)
+  - Elastic spring assuming only column web stiffness
+  - Nonlinear backbone per *Gupta and Krawinkler (1999)*
+  - Nonlinear backbone per *NIST (2017)*
+  - Nonlinear backbone per *Kim et al. (2015)*
+  - Nonlinear backbone per *Skiadopoulos et al. (2021)*
+  
 ## License
 
 ModelerWSMF is distributed under the MIT license, see [LICENSE](https://opensource.org/licenses/MIT).
