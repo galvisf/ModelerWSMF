@@ -42,9 +42,11 @@ This package supports linear and non-linear model generation using concentrated 
   
 Beams could be built-upwide-flange section and standard sections included in the extended database provided in **0_Databases**. Columns could be built-up wide-flange sections, standard wide-flange sections, or box columns. The format for the input file to specify the different type of sections is the following (more details in **SRC/getSteelSectionProps.m**):
   
-  String with name of the section as is in **0_Databases/AISC_v14p1.mat**
-  Built-up wide flange sections (BUILT db-bf-tw-tf'): 'BUILT ##.##-##.##-#.###-#.###'
-  Box sections ('BOX db-bf-tw-tf'): 'BOX ##.##-##.##-#.###-#.###'
+  - String with name of the section as is in **0_Databases/AISC_v14p1.mat**
+  
+  - Built-up wide flange sections (BUILT db-bf-tw-tf'): 'BUILT ##.##-##.##-#.###-#.###'
+  
+  - Box sections ('BOX db-bf-tw-tf'): 'BOX ##.##-##.##-#.###-#.###'
   
 Panel zone behavior could be included using any of the following assumptions (mode details in **SRC/PanelZoneSpring.tcl**):
   
