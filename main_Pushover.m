@@ -18,9 +18,9 @@ load('AISC_v14p1.mat');
 AISC_info = AISC_v14p1(1, :)';
 
 % Building input data
-geomFN    = 'inputs_bernalFrame.xlsx';
+geomFN    = 'inputs_4storyFrameOakland.xlsx';
 Code_Year = 1986;
-spl_ratio = 1; % ratio of welded flange thickness
+spl_ratio = 0.3; % ratio of welded flange thickness
 frameType = 'Perimeter'; % 'Space' 'Perimeter' 'Intermediate'
 MRF_X     = 1; % frames parallel to X resisting WL together
 frameLengthY = 3*12; % [in] tributary width for WL to the MRF_X number of frames
@@ -57,12 +57,12 @@ Fx_norm = [0.28407492029104258746
 TransformationX = 2; %1: linear; 2:pdelta; 3:corotational
 fixedBase       = true; % false = pin
 rigidFloor      = false;
-addSplices      = false;
+addSplices      = true;
 dampingType     = 'Rayleigh_k0_beams_cols_springs'; % Rayleigh_k0_beams_cols_springs  Rayleigh_k0_all
 outdir          = 'Output';
 addBasicRecorders    = true;
-addDetailedRecorders = true;
-isRHA           = false; % does not add a dt to recorders to avoid issues with RSA output
+addDetailedRecorders = false;
+isRHA           = true; % add dt for recorders (to avoid large output files when analysis reduces dt)
 explicitMethod  = false; % add small mass to all DOF for explicit solution method 
 modelSetUp      = 'Generic'; % Generic    EE-UQ    Sherlock
 
@@ -71,25 +71,26 @@ addEGF = false;
 
 %%% Material properties %%%
 Es     = 29000;
-FyCol  = 40; % A572, Gr.50, based on SAC guidelines
-FyBeam = 40; % A36, based on SAC guidelines
+FyCol  = 44; % A572, Gr.50, based on SAC guidelines
+FyBeam = 44; % A36, based on SAC guidelines
 
 %%% Beams and Columns %%%
 fractureElement = false;
-generation      = 'Post_Northridge'; %'Pre_Northridge' 'Post_Northridge'
+generation      = 'Pre_Northridge'; %'Pre_Northridge' 'Post_Northridge'
 backbone        = 'ASCE41'; % 'Elastic' 'NIST2017', 'ASCE41'
 connType        = 'non_RBS'; % 'non_RBS', 'RBS'
 degradation     = false;
-composite       = false;
-
+composite       = true;
+switchOrientation = false; % True: space frames switch the columns on weak-strong orientation
+                           % False: assume columns always in strong orientation, even for space frames
 %%% Panel zones %%%
-panelZoneModel = 'None'; % 'None', 'Gupta1999', NIST2017, 'Kim2015' 'Elkady2021' 'Elastic'
+panelZoneModel = 'Elkady2021'; % 'None', 'Gupta1999', NIST2017, 'Kim2015' 'Elkady2021' 'Elastic'
 SH_PZ = 0.015; % strain-hardening for the panel zone
 
 %%% Connection information %%%
 cvn_a0_type = 'Constant'; % Constant Uniform  byFloor  byConnection
-cvn = 8;
-a0  = 0.1;
+cvn = 12; % 16 12 8
+a0  = 0.1; % 0.1 0.2
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 switch cvn_a0_type
     case 'Constant'
@@ -112,7 +113,7 @@ DampModeJ = 3;
 
 % Constants
 g = 386.1;
-n = 10.0; % Stiffness multiplier for elements with springs at both ends
+n = 10; % Stiffness multiplier for elements with springs at both ends
 Comp_I     = 1.40; % stiffness factor for composite actions
 Comp_I_GC  = 1.40; % stiffness factor for composite actions (gravity frame)
 mu_poisson = 0.30; % poisson modulus
@@ -188,7 +189,7 @@ modelFN = 'InelasticModel_ph.tcl';
     FI_lim_type, cvn_a0_type, flangeProp, cvn_col, ...
     generation, connType, degradation, c); 
 
-modelFN = 'InelasticModel.tcl';
+% modelFN = 'InelasticModel.tcl';
 
 %% %%%%%% Run pushover %%%%%%%%
 cd(folderPath)

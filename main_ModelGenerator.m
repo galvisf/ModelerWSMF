@@ -9,6 +9,8 @@ addpath(['SRC' filesep '2_TemplateOpenSeesfiles'])
 folderInputFiles = 'INPUTS';
 currFolder = pwd;
 
+sourceFolder = ['SRC' filesep '2_TemplateOpenSeesfiles'];
+
 %% GENERAL INPUTS
 % Import AISC section data
 load('AISC_v14p1.mat'); % update to place inside 0_functions folder
@@ -18,23 +20,25 @@ AISC_info = AISC_v14p1(1, :)';
 n_models = 1;
 
 % Building input file
-modelName = 'Frame1C_Grid16';
+modelName = 'inputs_8storyFrameOakland';
 folderPath = ['OUTPUTS' filesep 'NLRHA'];
-geomFN = 'inputs_frame1C_grid16.xlsx';
+mkdir(folderPath)
+geomFN = 'inputs_8storyFrameOakland.xlsx';
+isPushover = false;
 
 %% Modeling considerations
 %%% General %%%
 TransformationX = 2; %1: linear; 2:pdelta; 3:corotational
-fixedBase       = false; % false = pin
+fixedBase       = true; % false = pin
 rigidFloor      = false;
 addSplices      = false;
 dampingType     = 'Rayleigh_k0_beams_cols_springs'; % Rayleigh_k0_beams_cols_springs  Rayleigh_k0_all
 outdir          = 'Output';
 addBasicRecorders    = true;
-addDetailedRecorders = true;
+addDetailedRecorders = false;
 isRHA           = true; % add dt for recorders (to avoid large output files when analysis reduces dt)
 explicitMethod  = false; % add small mass to all DOF for explicit solution method 
-modelSetUp      = 'EE-UQ'; % Generic    EE-UQ    Sherlock
+modelSetUp      = 'Sherlock'; % Generic    EE-UQ    Sherlock
 
 %%% Equivalent Gravity Frame %%%
 addEGF = false; 
@@ -139,6 +143,10 @@ else
 end
 
 %% Generate NL-model
+
+% Copy all necessary OpenSees helper files
+copyOpenSeesHelper(sourceFolder, folderPath, isPushover)
+
 for model_i = 1:n_models
     % Model filename
     modelFN = [modelName,'_',num2str(model_i),'.tcl'];

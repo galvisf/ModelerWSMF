@@ -18,7 +18,7 @@ load('AISC_v14p1.mat');
 AISC_info = AISC_v14p1(1, :)';
 
 % Building input data
-geomFN    = 'inputs_bernalFrame.xlsx';
+geomFN    = 'inputs_8storyFrameOakland.xlsx';
 Code_Year = 1986;
 spl_ratio = 1; % ratio of welded flange thickness
 frameType = 'Perimeter'; % 'Space' 'Perimeter' 'Intermediate'
@@ -36,9 +36,9 @@ color_specs = linspecer(4);
 %% Modeling considerations
 %%% General %%%
 TransformationX = 2; %1: linear; 2:pdelta; 3:corotational
-fixedBase       = false; % false = pin
+fixedBase       = true; % false = pin
 rigidFloor      = false;
-addSplices      = false;
+addSplices      = true;
 dampingType     = 'Rayleigh_k0_beams_cols_springs'; % Rayleigh_k0_beams_cols_springs  Rayleigh_k0_all
 outdir          = 'Output';
 addBasicRecorders    = true;
@@ -103,8 +103,8 @@ I        = 1.0;
 Ts       = 2.5; % period of the soil column (UBC allow assuming 2.5 if the structural period T > 2.5s)
 
 % ASCE7
-Ss = 1.2211;
-S1 = 0.6934;
+Ss = 1.559;
+S1 = 0.614;
 TL = 8;
 Ro = 8;
 Cd = 5.5;
@@ -133,6 +133,9 @@ buildingDiagnostics.stress_ratio_splice = [];
 copyOpenSeesHelper(sourceFolder, folderPath, isPushover)
 
 %%%%%%% Generate elastic model per building and direction %%%%%%%%
+% Model filename
+modelFN = 'ElasticModel.tcl';
+% Generate model    
 [AllNodes, AllEle, bldgData] = write_FrameModel(folderPath, [folderInputFiles filesep geomFN], modelFN, ...
     AISC_v14p1, Es, mu_poisson, FyBeam, FyCol, ...
     TransformationX, backbone, SH_PZ, panelZoneModel, ...
@@ -239,7 +242,7 @@ cd(currFolder);
 %% %%% Diagnostics plot %%%
 %H = figure('position', [0, 40, 800, 800]);
 
-figure
+figure('position', [0, 50, 1000, 700])
 output_dir = [folderPath, '/Output'];
 numModes = 3; % Number of modes
 scale = 50; % max length for deformed shapes

@@ -109,7 +109,7 @@ proc hingeBeamColumn { eleTag node_i node_j eleDir transfTag n Es Fy rigMatTag A
 			# more ductile connections assumed without pinching
 			set Pinching 0
 		}
-		puts "Pinching=$Pinching"
+		# puts "Pinching=$Pinching"
 		matHysteretic $hingeSecTag_i $EIeff $eleLength $n $Mp_i $McMp_i $theta_p_i $theta_pc_i $MrMp_i  $Composite $compBackboneFactors $Pinching
 		matHysteretic $hingeSecTag_j $EIeff $eleLength $n $Mp_j $McMp_j $theta_p_j $theta_pc_j $MrMp_j  $Composite $compBackboneFactors $Pinching
 

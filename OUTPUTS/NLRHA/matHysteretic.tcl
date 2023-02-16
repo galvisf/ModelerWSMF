@@ -108,15 +108,15 @@ proc matHysteretic { matTag EIeff eleLength n Mp McMp theta_p theta_pc MrMp Comp
 	# puts "$MrMpN"	
 	
 	# Create the material model
-	# if {$Pinching} {
-	uniaxialMaterial Hysteretic $matTag $MpP $theta_y_p [expr $McMpP*$MpP] [expr $theta_p_P + $theta_y_p] \
-	0 [expr $theta_res_P + $theta_p_P + $theta_y_p] [expr -$MpN] [expr -$theta_y_n] [expr -$McMpN*$MpN] [expr -($theta_p_N + $theta_y_n)] \
-	0 [expr -($theta_res_N + $theta_p_N + $theta_y_n)] 1.00 1.00 0.00 0.00	
-	# } else {
-		# uniaxialMaterial Hysteretic $matTag $MpP $theta_y_p [expr $McMpP*$MpP] [expr $theta_p_P + $theta_y_p] \
-		# [expr $MrMpP*$MpP] [expr $theta_res_P + $theta_p_P + $theta_y_p] [expr -$MpN] [expr -$theta_y_n] [expr -$McMpN*$MpN] [expr -($theta_p_N + $theta_y_n)] \
-		# [expr -$MrMpN*$MpN] [expr -($theta_res_N + $theta_p_N + $theta_y_n)] 1.00 1.00 0.00 0.00
-	# }
+	if {$Pinching} {
+		uniaxialMaterial Hysteretic $matTag $MpP $theta_y_p [expr $McMpP*$MpP] [expr $theta_p_P + $theta_y_p] \
+		0 [expr $theta_res_P + $theta_p_P + $theta_y_p] [expr -$MpN] [expr -$theta_y_n] [expr -$McMpN*$MpN] [expr -($theta_p_N + $theta_y_n)] \
+		0 [expr -($theta_res_N + $theta_p_N + $theta_y_n)] 1.00 1.00 0.00 0.00	
+	} else {
+		uniaxialMaterial Hysteretic $matTag $MpP $theta_y_p [expr $McMpP*$MpP] [expr $theta_p_P + $theta_y_p] \
+		[expr $MrMpP*$MpP] [expr $theta_res_P + $theta_p_P + $theta_y_p] [expr -$MpN] [expr -$theta_y_n] [expr -$McMpN*$MpN] [expr -($theta_p_N + $theta_y_n)] \
+		[expr -$MrMpN*$MpN] [expr -($theta_res_N + $theta_p_N + $theta_y_n)] 1.00 1.00 0.00 0.00
+	}
 
 	
 

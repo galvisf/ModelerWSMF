@@ -130,8 +130,8 @@ proc hingeBeamColumnSpliceZLS { eleTag node_i node_j eleDir transfTag n Es Fy ri
 
 	} else {
 		# Model without cyclic degradation so uses first-cycle backbone
-		matHysteretic $hingeSecTag_i $EIeff $eleLength $n $Mp_i $McMp_i $theta_p_i $theta_pc_i $MrMp_i  0 0 
-		matHysteretic $hingeSecTag_j $EIeff $eleLength $n $Mp_j $McMp_j $theta_p_j $theta_pc_j $MrMp_j  0 0
+		matHysteretic $hingeSecTag_i $EIeff $eleLength $n $Mp_i $McMp_i $theta_p_i $theta_pc_i $MrMp_i  0 0 0
+		matHysteretic $hingeSecTag_j $EIeff $eleLength $n $Mp_j $McMp_j $theta_p_j $theta_pc_j $MrMp_j  0 0 0
 
 	}
 	
