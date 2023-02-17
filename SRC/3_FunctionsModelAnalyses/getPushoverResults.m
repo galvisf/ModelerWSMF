@@ -52,9 +52,14 @@ if plot_pushover
 %     plot(RoofDrift, BaseShearCoefficient, 'linewidth', 2)
 %     plot([0, max(RoofDrift)],base_shear_coeff_first_Mp*[1, 1], '--k')
 %     xlabel('Roof drift [\%]');
-
-    plot(RoofDisp, BaseShearCoefficient, 'linewidth', 2)
-    xlabel('Roof displacement [in]');
+    
+    if BaseShearCoefficient(end) > 1
+        % if last convergence is unrealistic ignore that point
+        plot(RoofDrift(1:end-1), BaseShearCoefficient(1:end-1), 'linewidth', 2)
+    else
+        plot(RoofDrift, BaseShearCoefficient, 'linewidth', 2)
+    end
+    xlabel('Roof drift');
     ylabel('Base shear coefficient');
     font = 9;
 %     legend('ASCE7 Load Pattern', 'Base shear to first Mp', 'Location', 'southoutside')

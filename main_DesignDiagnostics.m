@@ -4,6 +4,7 @@
 % close all; 
 clear; clc;
 currFolder = pwd;
+addpath([currFolder filesep 'SRC'])
 addpath([currFolder filesep 'SRC' filesep '0_Databases'])
 addpath([currFolder filesep 'SRC' filesep '1_FunctionsModelGeneration'])
 addpath([currFolder filesep 'SRC' filesep '3_FunctionsModelAnalyses'])

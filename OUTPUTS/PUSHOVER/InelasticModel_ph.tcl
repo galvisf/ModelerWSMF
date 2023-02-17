@@ -8,11 +8,11 @@
 # UNITS:                     kip, in
 # Generation:                Pre_Northridge
 # Composite beams:           True
-# Fracturing fiber sections: False
+# Fracturing fiber sections: True
 # Gravity system stiffness:  False
 # Column splices included:   True
 # Rigid diaphragm:           False
-# Plastic hinge type:        PN
+# Plastic hinge type:        non_RBS
 # Backbone type:             ASCE41
 # Cyclic degradation:        False
 # Web connection type:       Bolted
@@ -28,6 +28,9 @@ model basic -ndm 2 -ndf 3
 
 source ConstructPanel_Rectangle.tcl;
 source PanelZoneSpring.tcl;
+source fracSectionBolted.tcl;
+source hingeBeamColumnFracture.tcl;
+source sigCrNIST2017.tcl;
 source fracSectionWelded.tcl;
 source fracSectionSplice.tcl;
 source hingeBeamColumnSpliceZLS.tcl;
@@ -67,7 +70,7 @@ uniaxialMaterial Elastic  $rigMatTag [expr 50*50*29000];  #Rigid Material [using
 # RAYLEIGH DAMPING PARAMETERS
 set  DampModeI 1;
 set  DampModeJ 3;
-set  zeta 0.020;
+set  zeta 0.015;
 
 # GEOMETRIC TRANSFORMATIONS IDs
 geomTransf Linear 		 1;
@@ -106,6 +109,118 @@ set c 0.000; # Exponent for degradation in plastic hinges
 # COLUMN SPLICES
 set spliceLoc        48.000;
 
+# MATERIAL PROPERTIES FOR FRACURING FIBER-SECTIONS
+set alpha 7.6; # Calibration constant to compute KIC (Stillmaker et al. 2017)
+set T_service_F 70; # Temperature at service [F]
+set FyWeld 70; # Yielding strength for sigCr calculations (Use 70ksi to be consistent with Galvis et al. 2021 calibrations)
+# fracSecMaterials {FyFiber EsFiber betaC_B betaC_T sigMin FuBolt FyTab FuTab};
+set fracSecMaterials {150.000 29000.000 0.500 0.800 17.600 68.000 47.000 70.000};
+
+# FRACTURE INDEX LIMIT FOR FRACTURE PER FLANGE AND CONNECTION
+# Left-Bottom                       Left-Top                            Right-Bottom                       Right-Top
+set FI_limB_bay1_floor2_i 0.962;	set FI_limT_bay1_floor2_i 1.164;	set FI_limB_bay1_floor2_j 1.143;	set FI_limT_bay1_floor2_j 0.782;	
+set FI_limB_bay2_floor2_i 0.692;	set FI_limT_bay2_floor2_i 0.785;	set FI_limB_bay2_floor2_j 0.712;	set FI_limT_bay2_floor2_j 1.013;	
+set FI_limB_bay3_floor2_i 0.906;	set FI_limT_bay3_floor2_i 0.922;	set FI_limB_bay3_floor2_j 0.721;	set FI_limT_bay3_floor2_j 1.187;	
+set FI_limB_bay4_floor2_i 1.111;	set FI_limT_bay4_floor2_i 0.980;	set FI_limB_bay4_floor2_j 1.278;	set FI_limT_bay4_floor2_j 0.825;	
+set FI_limB_bay1_floor3_i 1.105;	set FI_limT_bay1_floor3_i 1.080;	set FI_limB_bay1_floor3_j 1.087;	set FI_limT_bay1_floor3_j 0.852;	
+set FI_limB_bay2_floor3_i 1.082;	set FI_limT_bay2_floor3_i 0.893;	set FI_limB_bay2_floor3_j 0.806;	set FI_limT_bay2_floor3_j 0.767;	
+set FI_limB_bay3_floor3_i 1.283;	set FI_limT_bay3_floor3_i 0.830;	set FI_limB_bay3_floor3_j 0.959;	set FI_limT_bay3_floor3_j 0.767;	
+set FI_limB_bay4_floor3_i 0.931;	set FI_limT_bay4_floor3_i 0.491;	set FI_limB_bay4_floor3_j 0.770;	set FI_limT_bay4_floor3_j 0.731;	
+set FI_limB_bay1_floor4_i 0.784;	set FI_limT_bay1_floor4_i 0.954;	set FI_limB_bay1_floor4_j 0.925;	set FI_limT_bay1_floor4_j 1.534;	
+set FI_limB_bay2_floor4_i 0.872;	set FI_limT_bay2_floor4_i 0.946;	set FI_limB_bay2_floor4_j 0.686;	set FI_limT_bay2_floor4_j 0.900;	
+set FI_limB_bay3_floor4_i 0.725;	set FI_limT_bay3_floor4_i 1.007;	set FI_limB_bay3_floor4_j 1.227;	set FI_limT_bay3_floor4_j 1.093;	
+set FI_limB_bay4_floor4_i 0.845;	set FI_limT_bay4_floor4_i 0.699;	set FI_limB_bay4_floor4_j 1.420;	set FI_limT_bay4_floor4_j 1.570;	
+set FI_limB_bay1_floor5_i 1.029;	set FI_limT_bay1_floor5_i 0.804;	set FI_limB_bay1_floor5_j 1.333;	set FI_limT_bay1_floor5_j 0.878;	
+set FI_limB_bay2_floor5_i 0.893;	set FI_limT_bay2_floor5_i 1.215;	set FI_limB_bay2_floor5_j 0.717;	set FI_limT_bay2_floor5_j 0.650;	
+set FI_limB_bay3_floor5_i 1.106;	set FI_limT_bay3_floor5_i 1.092;	set FI_limB_bay3_floor5_j 1.023;	set FI_limT_bay3_floor5_j 1.115;	
+set FI_limB_bay4_floor5_i 1.297;	set FI_limT_bay4_floor5_i 1.238;	set FI_limB_bay4_floor5_j 0.872;	set FI_limT_bay4_floor5_j 1.195;	
+set FI_limB_bay1_floor6_i 1.042;	set FI_limT_bay1_floor6_i 0.895;	set FI_limB_bay1_floor6_j 0.751;	set FI_limT_bay1_floor6_j 1.153;	
+set FI_limB_bay2_floor6_i 0.919;	set FI_limT_bay2_floor6_i 1.010;	set FI_limB_bay2_floor6_j 0.827;	set FI_limT_bay2_floor6_j 0.711;	
+set FI_limB_bay3_floor6_i 1.042;	set FI_limT_bay3_floor6_i 0.986;	set FI_limB_bay3_floor6_j 1.333;	set FI_limT_bay3_floor6_j 1.193;	
+set FI_limB_bay4_floor6_i 1.288;	set FI_limT_bay4_floor6_i 0.848;	set FI_limB_bay4_floor6_j 0.799;	set FI_limT_bay4_floor6_j 0.756;	
+set FI_limB_bay1_floor7_i 1.127;	set FI_limT_bay1_floor7_i 1.847;	set FI_limB_bay1_floor7_j 1.191;	set FI_limT_bay1_floor7_j 0.844;	
+set FI_limB_bay2_floor7_i 1.222;	set FI_limT_bay2_floor7_i 0.780;	set FI_limB_bay2_floor7_j 0.710;	set FI_limT_bay2_floor7_j 1.171;	
+set FI_limB_bay3_floor7_i 0.830;	set FI_limT_bay3_floor7_i 1.072;	set FI_limB_bay3_floor7_j 1.402;	set FI_limT_bay3_floor7_j 1.092;	
+set FI_limB_bay4_floor7_i 1.250;	set FI_limT_bay4_floor7_i 0.702;	set FI_limB_bay4_floor7_j 1.172;	set FI_limT_bay4_floor7_j 1.601;	
+set FI_limB_bay1_floor8_i 1.139;	set FI_limT_bay1_floor8_i 0.712;	set FI_limB_bay1_floor8_j 0.952;	set FI_limT_bay1_floor8_j 0.896;	
+set FI_limB_bay2_floor8_i 1.096;	set FI_limT_bay2_floor8_i 1.095;	set FI_limB_bay2_floor8_j 1.102;	set FI_limT_bay2_floor8_j 0.923;	
+set FI_limB_bay3_floor8_i 0.866;	set FI_limT_bay3_floor8_i 0.878;	set FI_limB_bay3_floor8_j 1.227;	set FI_limT_bay3_floor8_j 0.665;	
+set FI_limB_bay4_floor8_i 0.951;	set FI_limT_bay4_floor8_i 1.061;	set FI_limB_bay4_floor8_j 0.855;	set FI_limT_bay4_floor8_j 1.111;	
+set FI_limB_bay1_floor9_i 0.983;	set FI_limT_bay1_floor9_i 0.813;	set FI_limB_bay1_floor9_j 1.039;	set FI_limT_bay1_floor9_j 0.943;	
+set FI_limB_bay2_floor9_i 0.906;	set FI_limT_bay2_floor9_i 0.855;	set FI_limB_bay2_floor9_j 1.015;	set FI_limT_bay2_floor9_j 0.666;	
+set FI_limB_bay3_floor9_i 0.909;	set FI_limT_bay3_floor9_i 0.887;	set FI_limB_bay3_floor9_j 0.803;	set FI_limT_bay3_floor9_j 1.154;	
+set FI_limB_bay4_floor9_i 0.838;	set FI_limT_bay4_floor9_i 1.126;	set FI_limB_bay4_floor9_j 1.264;	set FI_limT_bay4_floor9_j 0.966;	
+
+# CVN PER FLANGE AND CONNECTION
+# Left connection               Right connection
+set cvn_bay1_floor2_i 12.000;	set cvn_bay1_floor2_j 12.000;	
+set cvn_bay2_floor2_i 12.000;	set cvn_bay2_floor2_j 12.000;	
+set cvn_bay3_floor2_i 12.000;	set cvn_bay3_floor2_j 12.000;	
+set cvn_bay4_floor2_i 12.000;	set cvn_bay4_floor2_j 12.000;	
+set cvn_bay1_floor3_i 12.000;	set cvn_bay1_floor3_j 12.000;	
+set cvn_bay2_floor3_i 12.000;	set cvn_bay2_floor3_j 12.000;	
+set cvn_bay3_floor3_i 12.000;	set cvn_bay3_floor3_j 12.000;	
+set cvn_bay4_floor3_i 12.000;	set cvn_bay4_floor3_j 12.000;	
+set cvn_bay1_floor4_i 12.000;	set cvn_bay1_floor4_j 12.000;	
+set cvn_bay2_floor4_i 12.000;	set cvn_bay2_floor4_j 12.000;	
+set cvn_bay3_floor4_i 12.000;	set cvn_bay3_floor4_j 12.000;	
+set cvn_bay4_floor4_i 12.000;	set cvn_bay4_floor4_j 12.000;	
+set cvn_bay1_floor5_i 12.000;	set cvn_bay1_floor5_j 12.000;	
+set cvn_bay2_floor5_i 12.000;	set cvn_bay2_floor5_j 12.000;	
+set cvn_bay3_floor5_i 12.000;	set cvn_bay3_floor5_j 12.000;	
+set cvn_bay4_floor5_i 12.000;	set cvn_bay4_floor5_j 12.000;	
+set cvn_bay1_floor6_i 12.000;	set cvn_bay1_floor6_j 12.000;	
+set cvn_bay2_floor6_i 12.000;	set cvn_bay2_floor6_j 12.000;	
+set cvn_bay3_floor6_i 12.000;	set cvn_bay3_floor6_j 12.000;	
+set cvn_bay4_floor6_i 12.000;	set cvn_bay4_floor6_j 12.000;	
+set cvn_bay1_floor7_i 12.000;	set cvn_bay1_floor7_j 12.000;	
+set cvn_bay2_floor7_i 12.000;	set cvn_bay2_floor7_j 12.000;	
+set cvn_bay3_floor7_i 12.000;	set cvn_bay3_floor7_j 12.000;	
+set cvn_bay4_floor7_i 12.000;	set cvn_bay4_floor7_j 12.000;	
+set cvn_bay1_floor8_i 12.000;	set cvn_bay1_floor8_j 12.000;	
+set cvn_bay2_floor8_i 12.000;	set cvn_bay2_floor8_j 12.000;	
+set cvn_bay3_floor8_i 12.000;	set cvn_bay3_floor8_j 12.000;	
+set cvn_bay4_floor8_i 12.000;	set cvn_bay4_floor8_j 12.000;	
+set cvn_bay1_floor9_i 12.000;	set cvn_bay1_floor9_j 12.000;	
+set cvn_bay2_floor9_i 12.000;	set cvn_bay2_floor9_j 12.000;	
+set cvn_bay3_floor9_i 12.000;	set cvn_bay3_floor9_j 12.000;	
+set cvn_bay4_floor9_i 12.000;	set cvn_bay4_floor9_j 12.000;	
+
+# a0 PER FLANGE AND CONNECTION
+# Left connection           Right connection
+set a0_bay1_floor2_i 0.093;	set a0_bay1_floor2_j 0.093;	
+set a0_bay2_floor2_i 0.093;	set a0_bay2_floor2_j 0.093;	
+set a0_bay3_floor2_i 0.093;	set a0_bay3_floor2_j 0.093;	
+set a0_bay4_floor2_i 0.093;	set a0_bay4_floor2_j 0.093;	
+set a0_bay1_floor3_i 0.093;	set a0_bay1_floor3_j 0.093;	
+set a0_bay2_floor3_i 0.093;	set a0_bay2_floor3_j 0.093;	
+set a0_bay3_floor3_i 0.093;	set a0_bay3_floor3_j 0.093;	
+set a0_bay4_floor3_i 0.093;	set a0_bay4_floor3_j 0.093;	
+set a0_bay1_floor4_i 0.083;	set a0_bay1_floor4_j 0.083;	
+set a0_bay2_floor4_i 0.083;	set a0_bay2_floor4_j 0.083;	
+set a0_bay3_floor4_i 0.083;	set a0_bay3_floor4_j 0.083;	
+set a0_bay4_floor4_i 0.083;	set a0_bay4_floor4_j 0.083;	
+set a0_bay1_floor5_i 0.083;	set a0_bay1_floor5_j 0.083;	
+set a0_bay2_floor5_i 0.083;	set a0_bay2_floor5_j 0.083;	
+set a0_bay3_floor5_i 0.083;	set a0_bay3_floor5_j 0.083;	
+set a0_bay4_floor5_i 0.083;	set a0_bay4_floor5_j 0.083;	
+set a0_bay1_floor6_i 0.074;	set a0_bay1_floor6_j 0.074;	
+set a0_bay2_floor6_i 0.074;	set a0_bay2_floor6_j 0.074;	
+set a0_bay3_floor6_i 0.074;	set a0_bay3_floor6_j 0.074;	
+set a0_bay4_floor6_i 0.074;	set a0_bay4_floor6_j 0.074;	
+set a0_bay1_floor7_i 0.074;	set a0_bay1_floor7_j 0.074;	
+set a0_bay2_floor7_i 0.074;	set a0_bay2_floor7_j 0.074;	
+set a0_bay3_floor7_i 0.074;	set a0_bay3_floor7_j 0.074;	
+set a0_bay4_floor7_i 0.074;	set a0_bay4_floor7_j 0.074;	
+set a0_bay1_floor8_i 0.074;	set a0_bay1_floor8_j 0.074;	
+set a0_bay2_floor8_i 0.074;	set a0_bay2_floor8_j 0.074;	
+set a0_bay3_floor8_i 0.074;	set a0_bay3_floor8_j 0.074;	
+set a0_bay4_floor8_i 0.074;	set a0_bay4_floor8_j 0.074;	
+set a0_bay1_floor9_i 0.074;	set a0_bay1_floor9_j 0.074;	
+set a0_bay2_floor9_i 0.074;	set a0_bay2_floor9_j 0.074;	
+set a0_bay3_floor9_i 0.074;	set a0_bay3_floor9_j 0.074;	
+set a0_bay4_floor9_i 0.074;	set a0_bay4_floor9_j 0.074;	
+
 ####################################################################################################
 #                                          PRE-CALCULATIONS                                        #
 ####################################################################################################
@@ -129,6 +244,136 @@ set Axis5 1200.00;
 
 set HBuilding 1248.00;
 set WFrame 1200.00;
+
+# SIGMA CRITICAL PER FLANGE AND CONNECTION
+set sigCrB_bay1_floor2_i [sigCrNIST2017 "bottom" $cvn_bay1_floor2_i $a0_bay1_floor2_i $alpha $T_service_F $Es $FyWeld];
+set sigCrT_bay1_floor2_i [sigCrNIST2017 "top" $cvn_bay1_floor2_i $a0_bay1_floor2_i $alpha $T_service_F $Es $FyWeld];
+set sigCrB_bay1_floor2_j [sigCrNIST2017 "bottom" $cvn_bay1_floor2_j $a0_bay1_floor2_j $alpha $T_service_F $Es $FyWeld];
+set sigCrT_bay1_floor2_j [sigCrNIST2017 "top" $cvn_bay1_floor2_j $a0_bay1_floor2_j $alpha $T_service_F $Es $FyWeld];
+set sigCrB_bay2_floor2_i [sigCrNIST2017 "bottom" $cvn_bay2_floor2_i $a0_bay2_floor2_i $alpha $T_service_F $Es $FyWeld];
+set sigCrT_bay2_floor2_i [sigCrNIST2017 "top" $cvn_bay2_floor2_i $a0_bay2_floor2_i $alpha $T_service_F $Es $FyWeld];
+set sigCrB_bay2_floor2_j [sigCrNIST2017 "bottom" $cvn_bay2_floor2_j $a0_bay2_floor2_j $alpha $T_service_F $Es $FyWeld];
+set sigCrT_bay2_floor2_j [sigCrNIST2017 "top" $cvn_bay2_floor2_j $a0_bay2_floor2_j $alpha $T_service_F $Es $FyWeld];
+set sigCrB_bay3_floor2_i [sigCrNIST2017 "bottom" $cvn_bay3_floor2_i $a0_bay3_floor2_i $alpha $T_service_F $Es $FyWeld];
+set sigCrT_bay3_floor2_i [sigCrNIST2017 "top" $cvn_bay3_floor2_i $a0_bay3_floor2_i $alpha $T_service_F $Es $FyWeld];
+set sigCrB_bay3_floor2_j [sigCrNIST2017 "bottom" $cvn_bay3_floor2_j $a0_bay3_floor2_j $alpha $T_service_F $Es $FyWeld];
+set sigCrT_bay3_floor2_j [sigCrNIST2017 "top" $cvn_bay3_floor2_j $a0_bay3_floor2_j $alpha $T_service_F $Es $FyWeld];
+set sigCrB_bay4_floor2_i [sigCrNIST2017 "bottom" $cvn_bay4_floor2_i $a0_bay4_floor2_i $alpha $T_service_F $Es $FyWeld];
+set sigCrT_bay4_floor2_i [sigCrNIST2017 "top" $cvn_bay4_floor2_i $a0_bay4_floor2_i $alpha $T_service_F $Es $FyWeld];
+set sigCrB_bay4_floor2_j [sigCrNIST2017 "bottom" $cvn_bay4_floor2_j $a0_bay4_floor2_j $alpha $T_service_F $Es $FyWeld];
+set sigCrT_bay4_floor2_j [sigCrNIST2017 "top" $cvn_bay4_floor2_j $a0_bay4_floor2_j $alpha $T_service_F $Es $FyWeld];
+set sigCrB_bay1_floor3_i [sigCrNIST2017 "bottom" $cvn_bay1_floor3_i $a0_bay1_floor3_i $alpha $T_service_F $Es $FyWeld];
+set sigCrT_bay1_floor3_i [sigCrNIST2017 "top" $cvn_bay1_floor3_i $a0_bay1_floor3_i $alpha $T_service_F $Es $FyWeld];
+set sigCrB_bay1_floor3_j [sigCrNIST2017 "bottom" $cvn_bay1_floor3_j $a0_bay1_floor3_j $alpha $T_service_F $Es $FyWeld];
+set sigCrT_bay1_floor3_j [sigCrNIST2017 "top" $cvn_bay1_floor3_j $a0_bay1_floor3_j $alpha $T_service_F $Es $FyWeld];
+set sigCrB_bay2_floor3_i [sigCrNIST2017 "bottom" $cvn_bay2_floor3_i $a0_bay2_floor3_i $alpha $T_service_F $Es $FyWeld];
+set sigCrT_bay2_floor3_i [sigCrNIST2017 "top" $cvn_bay2_floor3_i $a0_bay2_floor3_i $alpha $T_service_F $Es $FyWeld];
+set sigCrB_bay2_floor3_j [sigCrNIST2017 "bottom" $cvn_bay2_floor3_j $a0_bay2_floor3_j $alpha $T_service_F $Es $FyWeld];
+set sigCrT_bay2_floor3_j [sigCrNIST2017 "top" $cvn_bay2_floor3_j $a0_bay2_floor3_j $alpha $T_service_F $Es $FyWeld];
+set sigCrB_bay3_floor3_i [sigCrNIST2017 "bottom" $cvn_bay3_floor3_i $a0_bay3_floor3_i $alpha $T_service_F $Es $FyWeld];
+set sigCrT_bay3_floor3_i [sigCrNIST2017 "top" $cvn_bay3_floor3_i $a0_bay3_floor3_i $alpha $T_service_F $Es $FyWeld];
+set sigCrB_bay3_floor3_j [sigCrNIST2017 "bottom" $cvn_bay3_floor3_j $a0_bay3_floor3_j $alpha $T_service_F $Es $FyWeld];
+set sigCrT_bay3_floor3_j [sigCrNIST2017 "top" $cvn_bay3_floor3_j $a0_bay3_floor3_j $alpha $T_service_F $Es $FyWeld];
+set sigCrB_bay4_floor3_i [sigCrNIST2017 "bottom" $cvn_bay4_floor3_i $a0_bay4_floor3_i $alpha $T_service_F $Es $FyWeld];
+set sigCrT_bay4_floor3_i [sigCrNIST2017 "top" $cvn_bay4_floor3_i $a0_bay4_floor3_i $alpha $T_service_F $Es $FyWeld];
+set sigCrB_bay4_floor3_j [sigCrNIST2017 "bottom" $cvn_bay4_floor3_j $a0_bay4_floor3_j $alpha $T_service_F $Es $FyWeld];
+set sigCrT_bay4_floor3_j [sigCrNIST2017 "top" $cvn_bay4_floor3_j $a0_bay4_floor3_j $alpha $T_service_F $Es $FyWeld];
+set sigCrB_bay1_floor4_i [sigCrNIST2017 "bottom" $cvn_bay1_floor4_i $a0_bay1_floor4_i $alpha $T_service_F $Es $FyWeld];
+set sigCrT_bay1_floor4_i [sigCrNIST2017 "top" $cvn_bay1_floor4_i $a0_bay1_floor4_i $alpha $T_service_F $Es $FyWeld];
+set sigCrB_bay1_floor4_j [sigCrNIST2017 "bottom" $cvn_bay1_floor4_j $a0_bay1_floor4_j $alpha $T_service_F $Es $FyWeld];
+set sigCrT_bay1_floor4_j [sigCrNIST2017 "top" $cvn_bay1_floor4_j $a0_bay1_floor4_j $alpha $T_service_F $Es $FyWeld];
+set sigCrB_bay2_floor4_i [sigCrNIST2017 "bottom" $cvn_bay2_floor4_i $a0_bay2_floor4_i $alpha $T_service_F $Es $FyWeld];
+set sigCrT_bay2_floor4_i [sigCrNIST2017 "top" $cvn_bay2_floor4_i $a0_bay2_floor4_i $alpha $T_service_F $Es $FyWeld];
+set sigCrB_bay2_floor4_j [sigCrNIST2017 "bottom" $cvn_bay2_floor4_j $a0_bay2_floor4_j $alpha $T_service_F $Es $FyWeld];
+set sigCrT_bay2_floor4_j [sigCrNIST2017 "top" $cvn_bay2_floor4_j $a0_bay2_floor4_j $alpha $T_service_F $Es $FyWeld];
+set sigCrB_bay3_floor4_i [sigCrNIST2017 "bottom" $cvn_bay3_floor4_i $a0_bay3_floor4_i $alpha $T_service_F $Es $FyWeld];
+set sigCrT_bay3_floor4_i [sigCrNIST2017 "top" $cvn_bay3_floor4_i $a0_bay3_floor4_i $alpha $T_service_F $Es $FyWeld];
+set sigCrB_bay3_floor4_j [sigCrNIST2017 "bottom" $cvn_bay3_floor4_j $a0_bay3_floor4_j $alpha $T_service_F $Es $FyWeld];
+set sigCrT_bay3_floor4_j [sigCrNIST2017 "top" $cvn_bay3_floor4_j $a0_bay3_floor4_j $alpha $T_service_F $Es $FyWeld];
+set sigCrB_bay4_floor4_i [sigCrNIST2017 "bottom" $cvn_bay4_floor4_i $a0_bay4_floor4_i $alpha $T_service_F $Es $FyWeld];
+set sigCrT_bay4_floor4_i [sigCrNIST2017 "top" $cvn_bay4_floor4_i $a0_bay4_floor4_i $alpha $T_service_F $Es $FyWeld];
+set sigCrB_bay4_floor4_j [sigCrNIST2017 "bottom" $cvn_bay4_floor4_j $a0_bay4_floor4_j $alpha $T_service_F $Es $FyWeld];
+set sigCrT_bay4_floor4_j [sigCrNIST2017 "top" $cvn_bay4_floor4_j $a0_bay4_floor4_j $alpha $T_service_F $Es $FyWeld];
+set sigCrB_bay1_floor5_i [sigCrNIST2017 "bottom" $cvn_bay1_floor5_i $a0_bay1_floor5_i $alpha $T_service_F $Es $FyWeld];
+set sigCrT_bay1_floor5_i [sigCrNIST2017 "top" $cvn_bay1_floor5_i $a0_bay1_floor5_i $alpha $T_service_F $Es $FyWeld];
+set sigCrB_bay1_floor5_j [sigCrNIST2017 "bottom" $cvn_bay1_floor5_j $a0_bay1_floor5_j $alpha $T_service_F $Es $FyWeld];
+set sigCrT_bay1_floor5_j [sigCrNIST2017 "top" $cvn_bay1_floor5_j $a0_bay1_floor5_j $alpha $T_service_F $Es $FyWeld];
+set sigCrB_bay2_floor5_i [sigCrNIST2017 "bottom" $cvn_bay2_floor5_i $a0_bay2_floor5_i $alpha $T_service_F $Es $FyWeld];
+set sigCrT_bay2_floor5_i [sigCrNIST2017 "top" $cvn_bay2_floor5_i $a0_bay2_floor5_i $alpha $T_service_F $Es $FyWeld];
+set sigCrB_bay2_floor5_j [sigCrNIST2017 "bottom" $cvn_bay2_floor5_j $a0_bay2_floor5_j $alpha $T_service_F $Es $FyWeld];
+set sigCrT_bay2_floor5_j [sigCrNIST2017 "top" $cvn_bay2_floor5_j $a0_bay2_floor5_j $alpha $T_service_F $Es $FyWeld];
+set sigCrB_bay3_floor5_i [sigCrNIST2017 "bottom" $cvn_bay3_floor5_i $a0_bay3_floor5_i $alpha $T_service_F $Es $FyWeld];
+set sigCrT_bay3_floor5_i [sigCrNIST2017 "top" $cvn_bay3_floor5_i $a0_bay3_floor5_i $alpha $T_service_F $Es $FyWeld];
+set sigCrB_bay3_floor5_j [sigCrNIST2017 "bottom" $cvn_bay3_floor5_j $a0_bay3_floor5_j $alpha $T_service_F $Es $FyWeld];
+set sigCrT_bay3_floor5_j [sigCrNIST2017 "top" $cvn_bay3_floor5_j $a0_bay3_floor5_j $alpha $T_service_F $Es $FyWeld];
+set sigCrB_bay4_floor5_i [sigCrNIST2017 "bottom" $cvn_bay4_floor5_i $a0_bay4_floor5_i $alpha $T_service_F $Es $FyWeld];
+set sigCrT_bay4_floor5_i [sigCrNIST2017 "top" $cvn_bay4_floor5_i $a0_bay4_floor5_i $alpha $T_service_F $Es $FyWeld];
+set sigCrB_bay4_floor5_j [sigCrNIST2017 "bottom" $cvn_bay4_floor5_j $a0_bay4_floor5_j $alpha $T_service_F $Es $FyWeld];
+set sigCrT_bay4_floor5_j [sigCrNIST2017 "top" $cvn_bay4_floor5_j $a0_bay4_floor5_j $alpha $T_service_F $Es $FyWeld];
+set sigCrB_bay1_floor6_i [sigCrNIST2017 "bottom" $cvn_bay1_floor6_i $a0_bay1_floor6_i $alpha $T_service_F $Es $FyWeld];
+set sigCrT_bay1_floor6_i [sigCrNIST2017 "top" $cvn_bay1_floor6_i $a0_bay1_floor6_i $alpha $T_service_F $Es $FyWeld];
+set sigCrB_bay1_floor6_j [sigCrNIST2017 "bottom" $cvn_bay1_floor6_j $a0_bay1_floor6_j $alpha $T_service_F $Es $FyWeld];
+set sigCrT_bay1_floor6_j [sigCrNIST2017 "top" $cvn_bay1_floor6_j $a0_bay1_floor6_j $alpha $T_service_F $Es $FyWeld];
+set sigCrB_bay2_floor6_i [sigCrNIST2017 "bottom" $cvn_bay2_floor6_i $a0_bay2_floor6_i $alpha $T_service_F $Es $FyWeld];
+set sigCrT_bay2_floor6_i [sigCrNIST2017 "top" $cvn_bay2_floor6_i $a0_bay2_floor6_i $alpha $T_service_F $Es $FyWeld];
+set sigCrB_bay2_floor6_j [sigCrNIST2017 "bottom" $cvn_bay2_floor6_j $a0_bay2_floor6_j $alpha $T_service_F $Es $FyWeld];
+set sigCrT_bay2_floor6_j [sigCrNIST2017 "top" $cvn_bay2_floor6_j $a0_bay2_floor6_j $alpha $T_service_F $Es $FyWeld];
+set sigCrB_bay3_floor6_i [sigCrNIST2017 "bottom" $cvn_bay3_floor6_i $a0_bay3_floor6_i $alpha $T_service_F $Es $FyWeld];
+set sigCrT_bay3_floor6_i [sigCrNIST2017 "top" $cvn_bay3_floor6_i $a0_bay3_floor6_i $alpha $T_service_F $Es $FyWeld];
+set sigCrB_bay3_floor6_j [sigCrNIST2017 "bottom" $cvn_bay3_floor6_j $a0_bay3_floor6_j $alpha $T_service_F $Es $FyWeld];
+set sigCrT_bay3_floor6_j [sigCrNIST2017 "top" $cvn_bay3_floor6_j $a0_bay3_floor6_j $alpha $T_service_F $Es $FyWeld];
+set sigCrB_bay4_floor6_i [sigCrNIST2017 "bottom" $cvn_bay4_floor6_i $a0_bay4_floor6_i $alpha $T_service_F $Es $FyWeld];
+set sigCrT_bay4_floor6_i [sigCrNIST2017 "top" $cvn_bay4_floor6_i $a0_bay4_floor6_i $alpha $T_service_F $Es $FyWeld];
+set sigCrB_bay4_floor6_j [sigCrNIST2017 "bottom" $cvn_bay4_floor6_j $a0_bay4_floor6_j $alpha $T_service_F $Es $FyWeld];
+set sigCrT_bay4_floor6_j [sigCrNIST2017 "top" $cvn_bay4_floor6_j $a0_bay4_floor6_j $alpha $T_service_F $Es $FyWeld];
+set sigCrB_bay1_floor7_i [sigCrNIST2017 "bottom" $cvn_bay1_floor7_i $a0_bay1_floor7_i $alpha $T_service_F $Es $FyWeld];
+set sigCrT_bay1_floor7_i [sigCrNIST2017 "top" $cvn_bay1_floor7_i $a0_bay1_floor7_i $alpha $T_service_F $Es $FyWeld];
+set sigCrB_bay1_floor7_j [sigCrNIST2017 "bottom" $cvn_bay1_floor7_j $a0_bay1_floor7_j $alpha $T_service_F $Es $FyWeld];
+set sigCrT_bay1_floor7_j [sigCrNIST2017 "top" $cvn_bay1_floor7_j $a0_bay1_floor7_j $alpha $T_service_F $Es $FyWeld];
+set sigCrB_bay2_floor7_i [sigCrNIST2017 "bottom" $cvn_bay2_floor7_i $a0_bay2_floor7_i $alpha $T_service_F $Es $FyWeld];
+set sigCrT_bay2_floor7_i [sigCrNIST2017 "top" $cvn_bay2_floor7_i $a0_bay2_floor7_i $alpha $T_service_F $Es $FyWeld];
+set sigCrB_bay2_floor7_j [sigCrNIST2017 "bottom" $cvn_bay2_floor7_j $a0_bay2_floor7_j $alpha $T_service_F $Es $FyWeld];
+set sigCrT_bay2_floor7_j [sigCrNIST2017 "top" $cvn_bay2_floor7_j $a0_bay2_floor7_j $alpha $T_service_F $Es $FyWeld];
+set sigCrB_bay3_floor7_i [sigCrNIST2017 "bottom" $cvn_bay3_floor7_i $a0_bay3_floor7_i $alpha $T_service_F $Es $FyWeld];
+set sigCrT_bay3_floor7_i [sigCrNIST2017 "top" $cvn_bay3_floor7_i $a0_bay3_floor7_i $alpha $T_service_F $Es $FyWeld];
+set sigCrB_bay3_floor7_j [sigCrNIST2017 "bottom" $cvn_bay3_floor7_j $a0_bay3_floor7_j $alpha $T_service_F $Es $FyWeld];
+set sigCrT_bay3_floor7_j [sigCrNIST2017 "top" $cvn_bay3_floor7_j $a0_bay3_floor7_j $alpha $T_service_F $Es $FyWeld];
+set sigCrB_bay4_floor7_i [sigCrNIST2017 "bottom" $cvn_bay4_floor7_i $a0_bay4_floor7_i $alpha $T_service_F $Es $FyWeld];
+set sigCrT_bay4_floor7_i [sigCrNIST2017 "top" $cvn_bay4_floor7_i $a0_bay4_floor7_i $alpha $T_service_F $Es $FyWeld];
+set sigCrB_bay4_floor7_j [sigCrNIST2017 "bottom" $cvn_bay4_floor7_j $a0_bay4_floor7_j $alpha $T_service_F $Es $FyWeld];
+set sigCrT_bay4_floor7_j [sigCrNIST2017 "top" $cvn_bay4_floor7_j $a0_bay4_floor7_j $alpha $T_service_F $Es $FyWeld];
+set sigCrB_bay1_floor8_i [sigCrNIST2017 "bottom" $cvn_bay1_floor8_i $a0_bay1_floor8_i $alpha $T_service_F $Es $FyWeld];
+set sigCrT_bay1_floor8_i [sigCrNIST2017 "top" $cvn_bay1_floor8_i $a0_bay1_floor8_i $alpha $T_service_F $Es $FyWeld];
+set sigCrB_bay1_floor8_j [sigCrNIST2017 "bottom" $cvn_bay1_floor8_j $a0_bay1_floor8_j $alpha $T_service_F $Es $FyWeld];
+set sigCrT_bay1_floor8_j [sigCrNIST2017 "top" $cvn_bay1_floor8_j $a0_bay1_floor8_j $alpha $T_service_F $Es $FyWeld];
+set sigCrB_bay2_floor8_i [sigCrNIST2017 "bottom" $cvn_bay2_floor8_i $a0_bay2_floor8_i $alpha $T_service_F $Es $FyWeld];
+set sigCrT_bay2_floor8_i [sigCrNIST2017 "top" $cvn_bay2_floor8_i $a0_bay2_floor8_i $alpha $T_service_F $Es $FyWeld];
+set sigCrB_bay2_floor8_j [sigCrNIST2017 "bottom" $cvn_bay2_floor8_j $a0_bay2_floor8_j $alpha $T_service_F $Es $FyWeld];
+set sigCrT_bay2_floor8_j [sigCrNIST2017 "top" $cvn_bay2_floor8_j $a0_bay2_floor8_j $alpha $T_service_F $Es $FyWeld];
+set sigCrB_bay3_floor8_i [sigCrNIST2017 "bottom" $cvn_bay3_floor8_i $a0_bay3_floor8_i $alpha $T_service_F $Es $FyWeld];
+set sigCrT_bay3_floor8_i [sigCrNIST2017 "top" $cvn_bay3_floor8_i $a0_bay3_floor8_i $alpha $T_service_F $Es $FyWeld];
+set sigCrB_bay3_floor8_j [sigCrNIST2017 "bottom" $cvn_bay3_floor8_j $a0_bay3_floor8_j $alpha $T_service_F $Es $FyWeld];
+set sigCrT_bay3_floor8_j [sigCrNIST2017 "top" $cvn_bay3_floor8_j $a0_bay3_floor8_j $alpha $T_service_F $Es $FyWeld];
+set sigCrB_bay4_floor8_i [sigCrNIST2017 "bottom" $cvn_bay4_floor8_i $a0_bay4_floor8_i $alpha $T_service_F $Es $FyWeld];
+set sigCrT_bay4_floor8_i [sigCrNIST2017 "top" $cvn_bay4_floor8_i $a0_bay4_floor8_i $alpha $T_service_F $Es $FyWeld];
+set sigCrB_bay4_floor8_j [sigCrNIST2017 "bottom" $cvn_bay4_floor8_j $a0_bay4_floor8_j $alpha $T_service_F $Es $FyWeld];
+set sigCrT_bay4_floor8_j [sigCrNIST2017 "top" $cvn_bay4_floor8_j $a0_bay4_floor8_j $alpha $T_service_F $Es $FyWeld];
+set sigCrB_bay1_floor9_i [sigCrNIST2017 "bottom" $cvn_bay1_floor9_i $a0_bay1_floor9_i $alpha $T_service_F $Es $FyWeld];
+set sigCrT_bay1_floor9_i [sigCrNIST2017 "top" $cvn_bay1_floor9_i $a0_bay1_floor9_i $alpha $T_service_F $Es $FyWeld];
+set sigCrB_bay1_floor9_j [sigCrNIST2017 "bottom" $cvn_bay1_floor9_j $a0_bay1_floor9_j $alpha $T_service_F $Es $FyWeld];
+set sigCrT_bay1_floor9_j [sigCrNIST2017 "top" $cvn_bay1_floor9_j $a0_bay1_floor9_j $alpha $T_service_F $Es $FyWeld];
+set sigCrB_bay2_floor9_i [sigCrNIST2017 "bottom" $cvn_bay2_floor9_i $a0_bay2_floor9_i $alpha $T_service_F $Es $FyWeld];
+set sigCrT_bay2_floor9_i [sigCrNIST2017 "top" $cvn_bay2_floor9_i $a0_bay2_floor9_i $alpha $T_service_F $Es $FyWeld];
+set sigCrB_bay2_floor9_j [sigCrNIST2017 "bottom" $cvn_bay2_floor9_j $a0_bay2_floor9_j $alpha $T_service_F $Es $FyWeld];
+set sigCrT_bay2_floor9_j [sigCrNIST2017 "top" $cvn_bay2_floor9_j $a0_bay2_floor9_j $alpha $T_service_F $Es $FyWeld];
+set sigCrB_bay3_floor9_i [sigCrNIST2017 "bottom" $cvn_bay3_floor9_i $a0_bay3_floor9_i $alpha $T_service_F $Es $FyWeld];
+set sigCrT_bay3_floor9_i [sigCrNIST2017 "top" $cvn_bay3_floor9_i $a0_bay3_floor9_i $alpha $T_service_F $Es $FyWeld];
+set sigCrB_bay3_floor9_j [sigCrNIST2017 "bottom" $cvn_bay3_floor9_j $a0_bay3_floor9_j $alpha $T_service_F $Es $FyWeld];
+set sigCrT_bay3_floor9_j [sigCrNIST2017 "top" $cvn_bay3_floor9_j $a0_bay3_floor9_j $alpha $T_service_F $Es $FyWeld];
+set sigCrB_bay4_floor9_i [sigCrNIST2017 "bottom" $cvn_bay4_floor9_i $a0_bay4_floor9_i $alpha $T_service_F $Es $FyWeld];
+set sigCrT_bay4_floor9_i [sigCrNIST2017 "top" $cvn_bay4_floor9_i $a0_bay4_floor9_i $alpha $T_service_F $Es $FyWeld];
+set sigCrB_bay4_floor9_j [sigCrNIST2017 "bottom" $cvn_bay4_floor9_j $a0_bay4_floor9_j $alpha $T_service_F $Es $FyWeld];
+set sigCrT_bay4_floor9_j [sigCrNIST2017 "top" $cvn_bay4_floor9_j $a0_bay4_floor9_j $alpha $T_service_F $Es $FyWeld];
 
 ####################################################################################################
 #                                                  NODES                                           #
@@ -312,231 +557,394 @@ PanelZoneSpring 9090500 4090509 4090510 $Es $mu $FyCol 14.70 14.70  1.03  0.65  
 
 # COMMAND SYNTAX 
 # secInfo  Zp, Mc/Mp, Mr/Mp, theta_p, theta_pc, theta_u, lambda
+# (Welded web) fracSecGeometry  d, bf, tf, ttab, tabLength, dtab
+# (Bolted web) fracSecGeometry  d, bf, tf, ttab, tabLength, str, boltDiameter, Lc
+# hingeBeamColumnFracture  ElementID node_i node_j eleDir, ... A, Ieff, ... webConnection
 # hingeBeamColumn  ElementID node_i node_j eleDir, ... A, Ieff
 
 # Beams at floor 2 bay 1
-set secInfo_i { 46.5467   1.5402   0.2000   0.0099   0.0012   0.0170   0.0000};
-set secInfo_j { 46.5467   1.5402   0.2000   0.0099   0.0012   0.0170   0.0000};
+set secInfo_i { 46.5467   2.1925   0.2000   0.0219   0.0017   0.0322   0.0000};
+set secInfo_j { 46.5467   2.1925   0.2000   0.0219   0.0017   0.0322   0.0000};
 set compBackboneFactors [lreplace $compBackboneFactors 0 0   1.3000];# MpP/Mp
 set compBackboneFactors [lreplace $compBackboneFactors 1 1   1.1000];# MpN/Mp
-hingeBeamColumn 1020100 4020104 4020202 "Horizontal" $trans_selected $n $Es $FyBeam $rigMatTag 33.600 [expr 3884.700*$Comp_I] $degradation $c $secInfo_i $secInfo_j $Composite $compBackboneFactors;
+set fracSecGeometry { 27.3000  10.1000   0.9300   0.5700   0.3750   5.0000 { -7.5  -4.5  -1.5  1.5  4.5  7.5  }    0.625      1.5 1.0};
+set kBL 1.322
+set kTL 1.235
+set kBR 1.322
+set kTR 1.235
+hingeBeamColumnFracture 1020100 4020104 4020202 "Horizontal" $trans_selected $n $Es $FyBeam $rigMatTag 33.600 [expr 3884.700*$Comp_I] $degradation $c $secInfo_i $secInfo_j "Bolted" $fracSecGeometry $fracSecMaterials [expr $kBL*$sigCrB_bay1_floor2_i] [expr $kTL*$sigCrT_bay1_floor2_i] [expr $kBR*$sigCrB_bay1_floor2_j] [expr $kTR*$sigCrT_bay1_floor2_j] $FI_limB_bay1_floor2_i $FI_limT_bay1_floor2_i $FI_limB_bay1_floor2_j $FI_limT_bay1_floor2_j $Composite $compBackboneFactors $trib $tslab $bslab $AslabSteel $slabFiberMaterials;
 
 # Beams at floor 2 bay 2
-set secInfo_i { 46.5467   1.5402   0.2000   0.0099   0.0012   0.0170   0.0000};
-set secInfo_j { 46.5467   1.5402   0.2000   0.0099   0.0012   0.0170   0.0000};
+set secInfo_i { 46.5467   2.1925   0.2000   0.0219   0.0017   0.0322   0.0000};
+set secInfo_j { 46.5467   2.1925   0.2000   0.0219   0.0017   0.0322   0.0000};
 set compBackboneFactors [lreplace $compBackboneFactors 0 0   1.3000];# MpP/Mp
 set compBackboneFactors [lreplace $compBackboneFactors 1 1   1.1000];# MpN/Mp
-hingeBeamColumn 1020200 4020204 4020302 "Horizontal" $trans_selected $n $Es $FyBeam $rigMatTag 33.600 [expr 3884.700*$Comp_I] $degradation $c $secInfo_i $secInfo_j $Composite $compBackboneFactors;
+set fracSecGeometry { 27.3000  10.1000   0.9300   0.5700   0.3750   5.0000 { -7.5  -4.5  -1.5  1.5  4.5  7.5  }    0.625      1.5 1.0};
+set kBL 1.322
+set kTL 1.235
+set kBR 1.322
+set kTR 1.235
+hingeBeamColumnFracture 1020200 4020204 4020302 "Horizontal" $trans_selected $n $Es $FyBeam $rigMatTag 33.600 [expr 3884.700*$Comp_I] $degradation $c $secInfo_i $secInfo_j "Bolted" $fracSecGeometry $fracSecMaterials [expr $kBL*$sigCrB_bay2_floor2_i] [expr $kTL*$sigCrT_bay2_floor2_i] [expr $kBR*$sigCrB_bay2_floor2_j] [expr $kTR*$sigCrT_bay2_floor2_j] $FI_limB_bay2_floor2_i $FI_limT_bay2_floor2_i $FI_limB_bay2_floor2_j $FI_limT_bay2_floor2_j $Composite $compBackboneFactors $trib $tslab $bslab $AslabSteel $slabFiberMaterials;
 
 # Beams at floor 2 bay 3
-set secInfo_i { 46.5467   1.5402   0.2000   0.0099   0.0012   0.0170   0.0000};
-set secInfo_j { 46.5467   1.5402   0.2000   0.0099   0.0012   0.0170   0.0000};
+set secInfo_i { 46.5467   2.1925   0.2000   0.0219   0.0017   0.0322   0.0000};
+set secInfo_j { 46.5467   2.1925   0.2000   0.0219   0.0017   0.0322   0.0000};
 set compBackboneFactors [lreplace $compBackboneFactors 0 0   1.3000];# MpP/Mp
 set compBackboneFactors [lreplace $compBackboneFactors 1 1   1.1000];# MpN/Mp
-hingeBeamColumn 1020300 4020304 4020402 "Horizontal" $trans_selected $n $Es $FyBeam $rigMatTag 33.600 [expr 3884.700*$Comp_I] $degradation $c $secInfo_i $secInfo_j $Composite $compBackboneFactors;
+set fracSecGeometry { 27.3000  10.1000   0.9300   0.5700   0.3750   5.0000 { -7.5  -4.5  -1.5  1.5  4.5  7.5  }    0.625      1.5 1.0};
+set kBL 1.322
+set kTL 1.235
+set kBR 1.322
+set kTR 1.235
+hingeBeamColumnFracture 1020300 4020304 4020402 "Horizontal" $trans_selected $n $Es $FyBeam $rigMatTag 33.600 [expr 3884.700*$Comp_I] $degradation $c $secInfo_i $secInfo_j "Bolted" $fracSecGeometry $fracSecMaterials [expr $kBL*$sigCrB_bay3_floor2_i] [expr $kTL*$sigCrT_bay3_floor2_i] [expr $kBR*$sigCrB_bay3_floor2_j] [expr $kTR*$sigCrT_bay3_floor2_j] $FI_limB_bay3_floor2_i $FI_limT_bay3_floor2_i $FI_limB_bay3_floor2_j $FI_limT_bay3_floor2_j $Composite $compBackboneFactors $trib $tslab $bslab $AslabSteel $slabFiberMaterials;
 
 # Beams at floor 2 bay 4
-set secInfo_i { 46.5467   1.5402   0.2000   0.0099   0.0012   0.0170   0.0000};
-set secInfo_j { 46.5467   1.5402   0.2000   0.0099   0.0012   0.0170   0.0000};
+set secInfo_i { 46.5467   2.1925   0.2000   0.0219   0.0017   0.0322   0.0000};
+set secInfo_j { 46.5467   2.1925   0.2000   0.0219   0.0017   0.0322   0.0000};
 set compBackboneFactors [lreplace $compBackboneFactors 0 0   1.3000];# MpP/Mp
 set compBackboneFactors [lreplace $compBackboneFactors 1 1   1.1000];# MpN/Mp
-hingeBeamColumn 1020400 4020404 4020502 "Horizontal" $trans_selected $n $Es $FyBeam $rigMatTag 33.600 [expr 3884.700*$Comp_I] $degradation $c $secInfo_i $secInfo_j $Composite $compBackboneFactors;
+set fracSecGeometry { 27.3000  10.1000   0.9300   0.5700   0.3750   5.0000 { -7.5  -4.5  -1.5  1.5  4.5  7.5  }    0.625      1.5 1.0};
+set kBL 1.322
+set kTL 1.235
+set kBR 1.322
+set kTR 1.235
+hingeBeamColumnFracture 1020400 4020404 4020502 "Horizontal" $trans_selected $n $Es $FyBeam $rigMatTag 33.600 [expr 3884.700*$Comp_I] $degradation $c $secInfo_i $secInfo_j "Bolted" $fracSecGeometry $fracSecMaterials [expr $kBL*$sigCrB_bay4_floor2_i] [expr $kTL*$sigCrT_bay4_floor2_i] [expr $kBR*$sigCrB_bay4_floor2_j] [expr $kTR*$sigCrT_bay4_floor2_j] $FI_limB_bay4_floor2_i $FI_limT_bay4_floor2_i $FI_limB_bay4_floor2_j $FI_limT_bay4_floor2_j $Composite $compBackboneFactors $trib $tslab $bslab $AslabSteel $slabFiberMaterials;
 
 # Beams at floor 3 bay 1
-set secInfo_i { 46.5467   1.5402   0.2000   0.0099   0.0012   0.0170   0.0000};
-set secInfo_j { 46.5467   1.5402   0.2000   0.0099   0.0012   0.0170   0.0000};
+set secInfo_i { 46.5467   2.1925   0.2000   0.0219   0.0017   0.0322   0.0000};
+set secInfo_j { 46.5467   2.1925   0.2000   0.0219   0.0017   0.0322   0.0000};
 set compBackboneFactors [lreplace $compBackboneFactors 0 0   1.3000];# MpP/Mp
 set compBackboneFactors [lreplace $compBackboneFactors 1 1   1.1000];# MpN/Mp
-hingeBeamColumn 1030100 4030104 4030202 "Horizontal" $trans_selected $n $Es $FyBeam $rigMatTag 33.600 [expr 3884.700*$Comp_I] $degradation $c $secInfo_i $secInfo_j $Composite $compBackboneFactors;
+set fracSecGeometry { 27.3000  10.1000   0.9300   0.5700   0.3750   5.0000 { -7.5  -4.5  -1.5  1.5  4.5  7.5  }    0.625      1.5 1.0};
+set kBL 1.322
+set kTL 1.235
+set kBR 1.322
+set kTR 1.235
+hingeBeamColumnFracture 1030100 4030104 4030202 "Horizontal" $trans_selected $n $Es $FyBeam $rigMatTag 33.600 [expr 3884.700*$Comp_I] $degradation $c $secInfo_i $secInfo_j "Bolted" $fracSecGeometry $fracSecMaterials [expr $kBL*$sigCrB_bay1_floor3_i] [expr $kTL*$sigCrT_bay1_floor3_i] [expr $kBR*$sigCrB_bay1_floor3_j] [expr $kTR*$sigCrT_bay1_floor3_j] $FI_limB_bay1_floor3_i $FI_limT_bay1_floor3_i $FI_limB_bay1_floor3_j $FI_limT_bay1_floor3_j $Composite $compBackboneFactors $trib $tslab $bslab $AslabSteel $slabFiberMaterials;
 
 # Beams at floor 3 bay 2
-set secInfo_i { 46.5467   1.5402   0.2000   0.0099   0.0012   0.0170   0.0000};
-set secInfo_j { 46.5467   1.5402   0.2000   0.0099   0.0012   0.0170   0.0000};
+set secInfo_i { 46.5467   2.1925   0.2000   0.0219   0.0017   0.0322   0.0000};
+set secInfo_j { 46.5467   2.1925   0.2000   0.0219   0.0017   0.0322   0.0000};
 set compBackboneFactors [lreplace $compBackboneFactors 0 0   1.3000];# MpP/Mp
 set compBackboneFactors [lreplace $compBackboneFactors 1 1   1.1000];# MpN/Mp
-hingeBeamColumn 1030200 4030204 4030302 "Horizontal" $trans_selected $n $Es $FyBeam $rigMatTag 33.600 [expr 3884.700*$Comp_I] $degradation $c $secInfo_i $secInfo_j $Composite $compBackboneFactors;
+set fracSecGeometry { 27.3000  10.1000   0.9300   0.5700   0.3750   5.0000 { -7.5  -4.5  -1.5  1.5  4.5  7.5  }    0.625      1.5 1.0};
+set kBL 1.322
+set kTL 1.235
+set kBR 1.322
+set kTR 1.235
+hingeBeamColumnFracture 1030200 4030204 4030302 "Horizontal" $trans_selected $n $Es $FyBeam $rigMatTag 33.600 [expr 3884.700*$Comp_I] $degradation $c $secInfo_i $secInfo_j "Bolted" $fracSecGeometry $fracSecMaterials [expr $kBL*$sigCrB_bay2_floor3_i] [expr $kTL*$sigCrT_bay2_floor3_i] [expr $kBR*$sigCrB_bay2_floor3_j] [expr $kTR*$sigCrT_bay2_floor3_j] $FI_limB_bay2_floor3_i $FI_limT_bay2_floor3_i $FI_limB_bay2_floor3_j $FI_limT_bay2_floor3_j $Composite $compBackboneFactors $trib $tslab $bslab $AslabSteel $slabFiberMaterials;
 
 # Beams at floor 3 bay 3
-set secInfo_i { 46.5467   1.5402   0.2000   0.0099   0.0012   0.0170   0.0000};
-set secInfo_j { 46.5467   1.5402   0.2000   0.0099   0.0012   0.0170   0.0000};
+set secInfo_i { 46.5467   2.1925   0.2000   0.0219   0.0017   0.0322   0.0000};
+set secInfo_j { 46.5467   2.1925   0.2000   0.0219   0.0017   0.0322   0.0000};
 set compBackboneFactors [lreplace $compBackboneFactors 0 0   1.3000];# MpP/Mp
 set compBackboneFactors [lreplace $compBackboneFactors 1 1   1.1000];# MpN/Mp
-hingeBeamColumn 1030300 4030304 4030402 "Horizontal" $trans_selected $n $Es $FyBeam $rigMatTag 33.600 [expr 3884.700*$Comp_I] $degradation $c $secInfo_i $secInfo_j $Composite $compBackboneFactors;
+set fracSecGeometry { 27.3000  10.1000   0.9300   0.5700   0.3750   5.0000 { -7.5  -4.5  -1.5  1.5  4.5  7.5  }    0.625      1.5 1.0};
+set kBL 1.322
+set kTL 1.235
+set kBR 1.322
+set kTR 1.235
+hingeBeamColumnFracture 1030300 4030304 4030402 "Horizontal" $trans_selected $n $Es $FyBeam $rigMatTag 33.600 [expr 3884.700*$Comp_I] $degradation $c $secInfo_i $secInfo_j "Bolted" $fracSecGeometry $fracSecMaterials [expr $kBL*$sigCrB_bay3_floor3_i] [expr $kTL*$sigCrT_bay3_floor3_i] [expr $kBR*$sigCrB_bay3_floor3_j] [expr $kTR*$sigCrT_bay3_floor3_j] $FI_limB_bay3_floor3_i $FI_limT_bay3_floor3_i $FI_limB_bay3_floor3_j $FI_limT_bay3_floor3_j $Composite $compBackboneFactors $trib $tslab $bslab $AslabSteel $slabFiberMaterials;
 
 # Beams at floor 3 bay 4
-set secInfo_i { 46.5467   1.5402   0.2000   0.0099   0.0012   0.0170   0.0000};
-set secInfo_j { 46.5467   1.5402   0.2000   0.0099   0.0012   0.0170   0.0000};
+set secInfo_i { 46.5467   2.1925   0.2000   0.0219   0.0017   0.0322   0.0000};
+set secInfo_j { 46.5467   2.1925   0.2000   0.0219   0.0017   0.0322   0.0000};
 set compBackboneFactors [lreplace $compBackboneFactors 0 0   1.3000];# MpP/Mp
 set compBackboneFactors [lreplace $compBackboneFactors 1 1   1.1000];# MpN/Mp
-hingeBeamColumn 1030400 4030404 4030502 "Horizontal" $trans_selected $n $Es $FyBeam $rigMatTag 33.600 [expr 3884.700*$Comp_I] $degradation $c $secInfo_i $secInfo_j $Composite $compBackboneFactors;
+set fracSecGeometry { 27.3000  10.1000   0.9300   0.5700   0.3750   5.0000 { -7.5  -4.5  -1.5  1.5  4.5  7.5  }    0.625      1.5 1.0};
+set kBL 1.322
+set kTL 1.235
+set kBR 1.322
+set kTR 1.235
+hingeBeamColumnFracture 1030400 4030404 4030502 "Horizontal" $trans_selected $n $Es $FyBeam $rigMatTag 33.600 [expr 3884.700*$Comp_I] $degradation $c $secInfo_i $secInfo_j "Bolted" $fracSecGeometry $fracSecMaterials [expr $kBL*$sigCrB_bay4_floor3_i] [expr $kTL*$sigCrT_bay4_floor3_i] [expr $kBR*$sigCrB_bay4_floor3_j] [expr $kTR*$sigCrT_bay4_floor3_j] $FI_limB_bay4_floor3_i $FI_limT_bay4_floor3_i $FI_limB_bay4_floor3_j $FI_limT_bay4_floor3_j $Composite $compBackboneFactors $trib $tslab $bslab $AslabSteel $slabFiberMaterials;
 
 # Beams at floor 4 bay 1
-set secInfo_i { 37.0351   1.6118   0.2000   0.0101   0.0012   0.0171   0.0000};
-set secInfo_j { 37.0351   1.6118   0.2000   0.0101   0.0012   0.0171   0.0000};
+set secInfo_i { 37.0351   2.3377   0.2000   0.0221   0.0017   0.0324   0.0000};
+set secInfo_j { 37.0351   2.3377   0.2000   0.0221   0.0017   0.0324   0.0000};
 set compBackboneFactors [lreplace $compBackboneFactors 0 0   1.3000];# MpP/Mp
 set compBackboneFactors [lreplace $compBackboneFactors 1 1   1.1000];# MpN/Mp
-hingeBeamColumn 1040100 4040104 4040202 "Horizontal" $trans_selected $n $Es $FyBeam $rigMatTag 30.000 [expr 3445.698*$Comp_I] $degradation $c $secInfo_i $secInfo_j $Composite $compBackboneFactors;
+set fracSecGeometry { 27.1000  10.0000   0.8300   0.5150   0.3750   5.0000 { -7.5  -4.5  -1.5  1.5  4.5  7.5  }    0.625      1.5 1.0};
+set kBL 1.303
+set kTL 1.217
+set kBR 1.303
+set kTR 1.217
+hingeBeamColumnFracture 1040100 4040104 4040202 "Horizontal" $trans_selected $n $Es $FyBeam $rigMatTag 30.000 [expr 3445.698*$Comp_I] $degradation $c $secInfo_i $secInfo_j "Bolted" $fracSecGeometry $fracSecMaterials [expr $kBL*$sigCrB_bay1_floor4_i] [expr $kTL*$sigCrT_bay1_floor4_i] [expr $kBR*$sigCrB_bay1_floor4_j] [expr $kTR*$sigCrT_bay1_floor4_j] $FI_limB_bay1_floor4_i $FI_limT_bay1_floor4_i $FI_limB_bay1_floor4_j $FI_limT_bay1_floor4_j $Composite $compBackboneFactors $trib $tslab $bslab $AslabSteel $slabFiberMaterials;
 
 # Beams at floor 4 bay 2
-set secInfo_i { 37.0351   1.6118   0.2000   0.0101   0.0012   0.0171   0.0000};
-set secInfo_j { 37.0351   1.6118   0.2000   0.0101   0.0012   0.0171   0.0000};
+set secInfo_i { 37.0351   2.3377   0.2000   0.0221   0.0017   0.0324   0.0000};
+set secInfo_j { 37.0351   2.3377   0.2000   0.0221   0.0017   0.0324   0.0000};
 set compBackboneFactors [lreplace $compBackboneFactors 0 0   1.3000];# MpP/Mp
 set compBackboneFactors [lreplace $compBackboneFactors 1 1   1.1000];# MpN/Mp
-hingeBeamColumn 1040200 4040204 4040302 "Horizontal" $trans_selected $n $Es $FyBeam $rigMatTag 30.000 [expr 3445.698*$Comp_I] $degradation $c $secInfo_i $secInfo_j $Composite $compBackboneFactors;
+set fracSecGeometry { 27.1000  10.0000   0.8300   0.5150   0.3750   5.0000 { -7.5  -4.5  -1.5  1.5  4.5  7.5  }    0.625      1.5 1.0};
+set kBL 1.303
+set kTL 1.217
+set kBR 1.303
+set kTR 1.217
+hingeBeamColumnFracture 1040200 4040204 4040302 "Horizontal" $trans_selected $n $Es $FyBeam $rigMatTag 30.000 [expr 3445.698*$Comp_I] $degradation $c $secInfo_i $secInfo_j "Bolted" $fracSecGeometry $fracSecMaterials [expr $kBL*$sigCrB_bay2_floor4_i] [expr $kTL*$sigCrT_bay2_floor4_i] [expr $kBR*$sigCrB_bay2_floor4_j] [expr $kTR*$sigCrT_bay2_floor4_j] $FI_limB_bay2_floor4_i $FI_limT_bay2_floor4_i $FI_limB_bay2_floor4_j $FI_limT_bay2_floor4_j $Composite $compBackboneFactors $trib $tslab $bslab $AslabSteel $slabFiberMaterials;
 
 # Beams at floor 4 bay 3
-set secInfo_i { 37.0351   1.6118   0.2000   0.0101   0.0012   0.0171   0.0000};
-set secInfo_j { 37.0351   1.6118   0.2000   0.0101   0.0012   0.0171   0.0000};
+set secInfo_i { 37.0351   2.3377   0.2000   0.0221   0.0017   0.0324   0.0000};
+set secInfo_j { 37.0351   2.3377   0.2000   0.0221   0.0017   0.0324   0.0000};
 set compBackboneFactors [lreplace $compBackboneFactors 0 0   1.3000];# MpP/Mp
 set compBackboneFactors [lreplace $compBackboneFactors 1 1   1.1000];# MpN/Mp
-hingeBeamColumn 1040300 4040304 4040402 "Horizontal" $trans_selected $n $Es $FyBeam $rigMatTag 30.000 [expr 3445.698*$Comp_I] $degradation $c $secInfo_i $secInfo_j $Composite $compBackboneFactors;
+set fracSecGeometry { 27.1000  10.0000   0.8300   0.5150   0.3750   5.0000 { -7.5  -4.5  -1.5  1.5  4.5  7.5  }    0.625      1.5 1.0};
+set kBL 1.303
+set kTL 1.217
+set kBR 1.303
+set kTR 1.217
+hingeBeamColumnFracture 1040300 4040304 4040402 "Horizontal" $trans_selected $n $Es $FyBeam $rigMatTag 30.000 [expr 3445.698*$Comp_I] $degradation $c $secInfo_i $secInfo_j "Bolted" $fracSecGeometry $fracSecMaterials [expr $kBL*$sigCrB_bay3_floor4_i] [expr $kTL*$sigCrT_bay3_floor4_i] [expr $kBR*$sigCrB_bay3_floor4_j] [expr $kTR*$sigCrT_bay3_floor4_j] $FI_limB_bay3_floor4_i $FI_limT_bay3_floor4_i $FI_limB_bay3_floor4_j $FI_limT_bay3_floor4_j $Composite $compBackboneFactors $trib $tslab $bslab $AslabSteel $slabFiberMaterials;
 
 # Beams at floor 4 bay 4
-set secInfo_i { 37.0351   1.6118   0.2000   0.0101   0.0012   0.0171   0.0000};
-set secInfo_j { 37.0351   1.6118   0.2000   0.0101   0.0012   0.0171   0.0000};
+set secInfo_i { 37.0351   2.3377   0.2000   0.0221   0.0017   0.0324   0.0000};
+set secInfo_j { 37.0351   2.3377   0.2000   0.0221   0.0017   0.0324   0.0000};
 set compBackboneFactors [lreplace $compBackboneFactors 0 0   1.3000];# MpP/Mp
 set compBackboneFactors [lreplace $compBackboneFactors 1 1   1.1000];# MpN/Mp
-hingeBeamColumn 1040400 4040404 4040502 "Horizontal" $trans_selected $n $Es $FyBeam $rigMatTag 30.000 [expr 3445.698*$Comp_I] $degradation $c $secInfo_i $secInfo_j $Composite $compBackboneFactors;
+set fracSecGeometry { 27.1000  10.0000   0.8300   0.5150   0.3750   5.0000 { -7.5  -4.5  -1.5  1.5  4.5  7.5  }    0.625      1.5 1.0};
+set kBL 1.303
+set kTL 1.217
+set kBR 1.303
+set kTR 1.217
+hingeBeamColumnFracture 1040400 4040404 4040502 "Horizontal" $trans_selected $n $Es $FyBeam $rigMatTag 30.000 [expr 3445.698*$Comp_I] $degradation $c $secInfo_i $secInfo_j "Bolted" $fracSecGeometry $fracSecMaterials [expr $kBL*$sigCrB_bay4_floor4_i] [expr $kTL*$sigCrT_bay4_floor4_i] [expr $kBR*$sigCrB_bay4_floor4_j] [expr $kTR*$sigCrT_bay4_floor4_j] $FI_limB_bay4_floor4_i $FI_limT_bay4_floor4_i $FI_limB_bay4_floor4_j $FI_limT_bay4_floor4_j $Composite $compBackboneFactors $trib $tslab $bslab $AslabSteel $slabFiberMaterials;
 
 # Beams at floor 5 bay 1
-set secInfo_i { 37.0351   1.6118   0.2000   0.0101   0.0012   0.0171   0.0000};
-set secInfo_j { 37.0351   1.6118   0.2000   0.0101   0.0012   0.0171   0.0000};
+set secInfo_i { 37.0351   2.3377   0.2000   0.0221   0.0017   0.0324   0.0000};
+set secInfo_j { 37.0351   2.3377   0.2000   0.0221   0.0017   0.0324   0.0000};
 set compBackboneFactors [lreplace $compBackboneFactors 0 0   1.3000];# MpP/Mp
 set compBackboneFactors [lreplace $compBackboneFactors 1 1   1.1000];# MpN/Mp
-hingeBeamColumn 1050100 4050104 4050202 "Horizontal" $trans_selected $n $Es $FyBeam $rigMatTag 30.000 [expr 3445.698*$Comp_I] $degradation $c $secInfo_i $secInfo_j $Composite $compBackboneFactors;
+set fracSecGeometry { 27.1000  10.0000   0.8300   0.5150   0.3750   5.0000 { -7.5  -4.5  -1.5  1.5  4.5  7.5  }    0.625      1.5 1.0};
+set kBL 1.303
+set kTL 1.217
+set kBR 1.303
+set kTR 1.217
+hingeBeamColumnFracture 1050100 4050104 4050202 "Horizontal" $trans_selected $n $Es $FyBeam $rigMatTag 30.000 [expr 3445.698*$Comp_I] $degradation $c $secInfo_i $secInfo_j "Bolted" $fracSecGeometry $fracSecMaterials [expr $kBL*$sigCrB_bay1_floor5_i] [expr $kTL*$sigCrT_bay1_floor5_i] [expr $kBR*$sigCrB_bay1_floor5_j] [expr $kTR*$sigCrT_bay1_floor5_j] $FI_limB_bay1_floor5_i $FI_limT_bay1_floor5_i $FI_limB_bay1_floor5_j $FI_limT_bay1_floor5_j $Composite $compBackboneFactors $trib $tslab $bslab $AslabSteel $slabFiberMaterials;
 
 # Beams at floor 5 bay 2
-set secInfo_i { 37.0351   1.6118   0.2000   0.0101   0.0012   0.0171   0.0000};
-set secInfo_j { 37.0351   1.6118   0.2000   0.0101   0.0012   0.0171   0.0000};
+set secInfo_i { 37.0351   2.3377   0.2000   0.0221   0.0017   0.0324   0.0000};
+set secInfo_j { 37.0351   2.3377   0.2000   0.0221   0.0017   0.0324   0.0000};
 set compBackboneFactors [lreplace $compBackboneFactors 0 0   1.3000];# MpP/Mp
 set compBackboneFactors [lreplace $compBackboneFactors 1 1   1.1000];# MpN/Mp
-hingeBeamColumn 1050200 4050204 4050302 "Horizontal" $trans_selected $n $Es $FyBeam $rigMatTag 30.000 [expr 3445.698*$Comp_I] $degradation $c $secInfo_i $secInfo_j $Composite $compBackboneFactors;
+set fracSecGeometry { 27.1000  10.0000   0.8300   0.5150   0.3750   5.0000 { -7.5  -4.5  -1.5  1.5  4.5  7.5  }    0.625      1.5 1.0};
+set kBL 1.303
+set kTL 1.217
+set kBR 1.303
+set kTR 1.217
+hingeBeamColumnFracture 1050200 4050204 4050302 "Horizontal" $trans_selected $n $Es $FyBeam $rigMatTag 30.000 [expr 3445.698*$Comp_I] $degradation $c $secInfo_i $secInfo_j "Bolted" $fracSecGeometry $fracSecMaterials [expr $kBL*$sigCrB_bay2_floor5_i] [expr $kTL*$sigCrT_bay2_floor5_i] [expr $kBR*$sigCrB_bay2_floor5_j] [expr $kTR*$sigCrT_bay2_floor5_j] $FI_limB_bay2_floor5_i $FI_limT_bay2_floor5_i $FI_limB_bay2_floor5_j $FI_limT_bay2_floor5_j $Composite $compBackboneFactors $trib $tslab $bslab $AslabSteel $slabFiberMaterials;
 
 # Beams at floor 5 bay 3
-set secInfo_i { 37.0351   1.6118   0.2000   0.0101   0.0012   0.0171   0.0000};
-set secInfo_j { 37.0351   1.6118   0.2000   0.0101   0.0012   0.0171   0.0000};
+set secInfo_i { 37.0351   2.3377   0.2000   0.0221   0.0017   0.0324   0.0000};
+set secInfo_j { 37.0351   2.3377   0.2000   0.0221   0.0017   0.0324   0.0000};
 set compBackboneFactors [lreplace $compBackboneFactors 0 0   1.3000];# MpP/Mp
 set compBackboneFactors [lreplace $compBackboneFactors 1 1   1.1000];# MpN/Mp
-hingeBeamColumn 1050300 4050304 4050402 "Horizontal" $trans_selected $n $Es $FyBeam $rigMatTag 30.000 [expr 3445.698*$Comp_I] $degradation $c $secInfo_i $secInfo_j $Composite $compBackboneFactors;
+set fracSecGeometry { 27.1000  10.0000   0.8300   0.5150   0.3750   5.0000 { -7.5  -4.5  -1.5  1.5  4.5  7.5  }    0.625      1.5 1.0};
+set kBL 1.303
+set kTL 1.217
+set kBR 1.303
+set kTR 1.217
+hingeBeamColumnFracture 1050300 4050304 4050402 "Horizontal" $trans_selected $n $Es $FyBeam $rigMatTag 30.000 [expr 3445.698*$Comp_I] $degradation $c $secInfo_i $secInfo_j "Bolted" $fracSecGeometry $fracSecMaterials [expr $kBL*$sigCrB_bay3_floor5_i] [expr $kTL*$sigCrT_bay3_floor5_i] [expr $kBR*$sigCrB_bay3_floor5_j] [expr $kTR*$sigCrT_bay3_floor5_j] $FI_limB_bay3_floor5_i $FI_limT_bay3_floor5_i $FI_limB_bay3_floor5_j $FI_limT_bay3_floor5_j $Composite $compBackboneFactors $trib $tslab $bslab $AslabSteel $slabFiberMaterials;
 
 # Beams at floor 5 bay 4
-set secInfo_i { 37.0351   1.6118   0.2000   0.0101   0.0012   0.0171   0.0000};
-set secInfo_j { 37.0351   1.6118   0.2000   0.0101   0.0012   0.0171   0.0000};
+set secInfo_i { 37.0351   2.3377   0.2000   0.0221   0.0017   0.0324   0.0000};
+set secInfo_j { 37.0351   2.3377   0.2000   0.0221   0.0017   0.0324   0.0000};
 set compBackboneFactors [lreplace $compBackboneFactors 0 0   1.3000];# MpP/Mp
 set compBackboneFactors [lreplace $compBackboneFactors 1 1   1.1000];# MpN/Mp
-hingeBeamColumn 1050400 4050404 4050502 "Horizontal" $trans_selected $n $Es $FyBeam $rigMatTag 30.000 [expr 3445.698*$Comp_I] $degradation $c $secInfo_i $secInfo_j $Composite $compBackboneFactors;
+set fracSecGeometry { 27.1000  10.0000   0.8300   0.5150   0.3750   5.0000 { -7.5  -4.5  -1.5  1.5  4.5  7.5  }    0.625      1.5 1.0};
+set kBL 1.303
+set kTL 1.217
+set kBR 1.303
+set kTR 1.217
+hingeBeamColumnFracture 1050400 4050404 4050502 "Horizontal" $trans_selected $n $Es $FyBeam $rigMatTag 30.000 [expr 3445.698*$Comp_I] $degradation $c $secInfo_i $secInfo_j "Bolted" $fracSecGeometry $fracSecMaterials [expr $kBL*$sigCrB_bay4_floor5_i] [expr $kTL*$sigCrT_bay4_floor5_i] [expr $kBR*$sigCrB_bay4_floor5_j] [expr $kTR*$sigCrT_bay4_floor5_j] $FI_limB_bay4_floor5_i $FI_limT_bay4_floor5_i $FI_limB_bay4_floor5_j $FI_limT_bay4_floor5_j $Composite $compBackboneFactors $trib $tslab $bslab $AslabSteel $slabFiberMaterials;
 
 # Beams at floor 6 bay 1
-set secInfo_i { 30.6474   1.6795   0.2000   0.0103   0.0012   0.0172   0.0000};
-set secInfo_j { 30.6474   1.6795   0.2000   0.0103   0.0012   0.0172   0.0000};
+set secInfo_i { 30.6474   2.4717   0.2000   0.0222   0.0017   0.0326   0.0000};
+set secInfo_j { 30.6474   2.4717   0.2000   0.0222   0.0017   0.0326   0.0000};
 set compBackboneFactors [lreplace $compBackboneFactors 0 0   1.3000];# MpP/Mp
 set compBackboneFactors [lreplace $compBackboneFactors 1 1   1.1000];# MpN/Mp
-hingeBeamColumn 1060100 4060104 4060202 "Horizontal" $trans_selected $n $Es $FyBeam $rigMatTag 27.600 [expr 3119.678*$Comp_I] $degradation $c $secInfo_i $secInfo_j $Composite $compBackboneFactors;
+set fracSecGeometry { 26.9000  10.0000   0.7450   0.4900   0.3750   5.0000 { -7.5  -4.5  -1.5  1.5  4.5  7.5  }    0.625      1.5 1.0};
+set kBL 1.213
+set kTL 1.112
+set kBR 1.272
+set kTR 1.184
+hingeBeamColumnFracture 1060100 4060104 4060202 "Horizontal" $trans_selected $n $Es $FyBeam $rigMatTag 27.600 [expr 3119.678*$Comp_I] $degradation $c $secInfo_i $secInfo_j "Bolted" $fracSecGeometry $fracSecMaterials [expr $kBL*$sigCrB_bay1_floor6_i] [expr $kTL*$sigCrT_bay1_floor6_i] [expr $kBR*$sigCrB_bay1_floor6_j] [expr $kTR*$sigCrT_bay1_floor6_j] $FI_limB_bay1_floor6_i $FI_limT_bay1_floor6_i $FI_limB_bay1_floor6_j $FI_limT_bay1_floor6_j $Composite $compBackboneFactors $trib $tslab $bslab $AslabSteel $slabFiberMaterials;
 
 # Beams at floor 6 bay 2
-set secInfo_i { 30.6474   1.6797   0.2000   0.0103   0.0012   0.0172   0.0000};
-set secInfo_j { 30.6474   1.6797   0.2000   0.0103   0.0012   0.0172   0.0000};
+set secInfo_i { 30.6474   2.4722   0.2000   0.0222   0.0017   0.0326   0.0000};
+set secInfo_j { 30.6474   2.4722   0.2000   0.0222   0.0017   0.0326   0.0000};
 set compBackboneFactors [lreplace $compBackboneFactors 0 0   1.3000];# MpP/Mp
 set compBackboneFactors [lreplace $compBackboneFactors 1 1   1.1000];# MpN/Mp
-hingeBeamColumn 1060200 4060204 4060302 "Horizontal" $trans_selected $n $Es $FyBeam $rigMatTag 27.600 [expr 3119.578*$Comp_I] $degradation $c $secInfo_i $secInfo_j $Composite $compBackboneFactors;
+set fracSecGeometry { 26.9000  10.0000   0.7450   0.4900   0.3750   5.0000 { -7.5  -4.5  -1.5  1.5  4.5  7.5  }    0.625      1.5 1.0};
+set kBL 1.272
+set kTL 1.184
+set kBR 1.272
+set kTR 1.184
+hingeBeamColumnFracture 1060200 4060204 4060302 "Horizontal" $trans_selected $n $Es $FyBeam $rigMatTag 27.600 [expr 3119.578*$Comp_I] $degradation $c $secInfo_i $secInfo_j "Bolted" $fracSecGeometry $fracSecMaterials [expr $kBL*$sigCrB_bay2_floor6_i] [expr $kTL*$sigCrT_bay2_floor6_i] [expr $kBR*$sigCrB_bay2_floor6_j] [expr $kTR*$sigCrT_bay2_floor6_j] $FI_limB_bay2_floor6_i $FI_limT_bay2_floor6_i $FI_limB_bay2_floor6_j $FI_limT_bay2_floor6_j $Composite $compBackboneFactors $trib $tslab $bslab $AslabSteel $slabFiberMaterials;
 
 # Beams at floor 6 bay 3
-set secInfo_i { 30.6474   1.6797   0.2000   0.0103   0.0012   0.0172   0.0000};
-set secInfo_j { 30.6474   1.6797   0.2000   0.0103   0.0012   0.0172   0.0000};
+set secInfo_i { 30.6474   2.4722   0.2000   0.0222   0.0017   0.0326   0.0000};
+set secInfo_j { 30.6474   2.4722   0.2000   0.0222   0.0017   0.0326   0.0000};
 set compBackboneFactors [lreplace $compBackboneFactors 0 0   1.3000];# MpP/Mp
 set compBackboneFactors [lreplace $compBackboneFactors 1 1   1.1000];# MpN/Mp
-hingeBeamColumn 1060300 4060304 4060402 "Horizontal" $trans_selected $n $Es $FyBeam $rigMatTag 27.600 [expr 3119.578*$Comp_I] $degradation $c $secInfo_i $secInfo_j $Composite $compBackboneFactors;
+set fracSecGeometry { 26.9000  10.0000   0.7450   0.4900   0.3750   5.0000 { -7.5  -4.5  -1.5  1.5  4.5  7.5  }    0.625      1.5 1.0};
+set kBL 1.272
+set kTL 1.184
+set kBR 1.272
+set kTR 1.184
+hingeBeamColumnFracture 1060300 4060304 4060402 "Horizontal" $trans_selected $n $Es $FyBeam $rigMatTag 27.600 [expr 3119.578*$Comp_I] $degradation $c $secInfo_i $secInfo_j "Bolted" $fracSecGeometry $fracSecMaterials [expr $kBL*$sigCrB_bay3_floor6_i] [expr $kTL*$sigCrT_bay3_floor6_i] [expr $kBR*$sigCrB_bay3_floor6_j] [expr $kTR*$sigCrT_bay3_floor6_j] $FI_limB_bay3_floor6_i $FI_limT_bay3_floor6_i $FI_limB_bay3_floor6_j $FI_limT_bay3_floor6_j $Composite $compBackboneFactors $trib $tslab $bslab $AslabSteel $slabFiberMaterials;
 
 # Beams at floor 6 bay 4
-set secInfo_i { 30.6474   1.6795   0.2000   0.0103   0.0012   0.0172   0.0000};
-set secInfo_j { 30.6474   1.6795   0.2000   0.0103   0.0012   0.0172   0.0000};
+set secInfo_i { 30.6474   2.4717   0.2000   0.0222   0.0017   0.0326   0.0000};
+set secInfo_j { 30.6474   2.4717   0.2000   0.0222   0.0017   0.0326   0.0000};
 set compBackboneFactors [lreplace $compBackboneFactors 0 0   1.3000];# MpP/Mp
 set compBackboneFactors [lreplace $compBackboneFactors 1 1   1.1000];# MpN/Mp
-hingeBeamColumn 1060400 4060404 4060502 "Horizontal" $trans_selected $n $Es $FyBeam $rigMatTag 27.600 [expr 3119.678*$Comp_I] $degradation $c $secInfo_i $secInfo_j $Composite $compBackboneFactors;
+set fracSecGeometry { 26.9000  10.0000   0.7450   0.4900   0.3750   5.0000 { -7.5  -4.5  -1.5  1.5  4.5  7.5  }    0.625      1.5 1.0};
+set kBL 1.272
+set kTL 1.184
+set kBR 1.213
+set kTR 1.112
+hingeBeamColumnFracture 1060400 4060404 4060502 "Horizontal" $trans_selected $n $Es $FyBeam $rigMatTag 27.600 [expr 3119.678*$Comp_I] $degradation $c $secInfo_i $secInfo_j "Bolted" $fracSecGeometry $fracSecMaterials [expr $kBL*$sigCrB_bay4_floor6_i] [expr $kTL*$sigCrT_bay4_floor6_i] [expr $kBR*$sigCrB_bay4_floor6_j] [expr $kTR*$sigCrT_bay4_floor6_j] $FI_limB_bay4_floor6_i $FI_limT_bay4_floor6_i $FI_limB_bay4_floor6_j $FI_limT_bay4_floor6_j $Composite $compBackboneFactors $trib $tslab $bslab $AslabSteel $slabFiberMaterials;
 
 # Beams at floor 7 bay 1
-set secInfo_i { 30.6474   1.6795   0.2000   0.0103   0.0012   0.0172   0.0000};
-set secInfo_j { 30.6474   1.6795   0.2000   0.0103   0.0012   0.0172   0.0000};
+set secInfo_i { 30.6474   2.4717   0.2000   0.0222   0.0017   0.0326   0.0000};
+set secInfo_j { 30.6474   2.4717   0.2000   0.0222   0.0017   0.0326   0.0000};
 set compBackboneFactors [lreplace $compBackboneFactors 0 0   1.3000];# MpP/Mp
 set compBackboneFactors [lreplace $compBackboneFactors 1 1   1.1000];# MpN/Mp
-hingeBeamColumn 1070100 4070104 4070202 "Horizontal" $trans_selected $n $Es $FyBeam $rigMatTag 27.600 [expr 3119.678*$Comp_I] $degradation $c $secInfo_i $secInfo_j $Composite $compBackboneFactors;
+set fracSecGeometry { 26.9000  10.0000   0.7450   0.4900   0.3750   5.0000 { -7.5  -4.5  -1.5  1.5  4.5  7.5  }    0.625      1.5 1.0};
+set kBL 1.213
+set kTL 1.112
+set kBR 1.272
+set kTR 1.184
+hingeBeamColumnFracture 1070100 4070104 4070202 "Horizontal" $trans_selected $n $Es $FyBeam $rigMatTag 27.600 [expr 3119.678*$Comp_I] $degradation $c $secInfo_i $secInfo_j "Bolted" $fracSecGeometry $fracSecMaterials [expr $kBL*$sigCrB_bay1_floor7_i] [expr $kTL*$sigCrT_bay1_floor7_i] [expr $kBR*$sigCrB_bay1_floor7_j] [expr $kTR*$sigCrT_bay1_floor7_j] $FI_limB_bay1_floor7_i $FI_limT_bay1_floor7_i $FI_limB_bay1_floor7_j $FI_limT_bay1_floor7_j $Composite $compBackboneFactors $trib $tslab $bslab $AslabSteel $slabFiberMaterials;
 
 # Beams at floor 7 bay 2
-set secInfo_i { 30.6474   1.6797   0.2000   0.0103   0.0012   0.0172   0.0000};
-set secInfo_j { 30.6474   1.6797   0.2000   0.0103   0.0012   0.0172   0.0000};
+set secInfo_i { 30.6474   2.4722   0.2000   0.0222   0.0017   0.0326   0.0000};
+set secInfo_j { 30.6474   2.4722   0.2000   0.0222   0.0017   0.0326   0.0000};
 set compBackboneFactors [lreplace $compBackboneFactors 0 0   1.3000];# MpP/Mp
 set compBackboneFactors [lreplace $compBackboneFactors 1 1   1.1000];# MpN/Mp
-hingeBeamColumn 1070200 4070204 4070302 "Horizontal" $trans_selected $n $Es $FyBeam $rigMatTag 27.600 [expr 3119.578*$Comp_I] $degradation $c $secInfo_i $secInfo_j $Composite $compBackboneFactors;
+set fracSecGeometry { 26.9000  10.0000   0.7450   0.4900   0.3750   5.0000 { -7.5  -4.5  -1.5  1.5  4.5  7.5  }    0.625      1.5 1.0};
+set kBL 1.272
+set kTL 1.184
+set kBR 1.272
+set kTR 1.184
+hingeBeamColumnFracture 1070200 4070204 4070302 "Horizontal" $trans_selected $n $Es $FyBeam $rigMatTag 27.600 [expr 3119.578*$Comp_I] $degradation $c $secInfo_i $secInfo_j "Bolted" $fracSecGeometry $fracSecMaterials [expr $kBL*$sigCrB_bay2_floor7_i] [expr $kTL*$sigCrT_bay2_floor7_i] [expr $kBR*$sigCrB_bay2_floor7_j] [expr $kTR*$sigCrT_bay2_floor7_j] $FI_limB_bay2_floor7_i $FI_limT_bay2_floor7_i $FI_limB_bay2_floor7_j $FI_limT_bay2_floor7_j $Composite $compBackboneFactors $trib $tslab $bslab $AslabSteel $slabFiberMaterials;
 
 # Beams at floor 7 bay 3
-set secInfo_i { 30.6474   1.6797   0.2000   0.0103   0.0012   0.0172   0.0000};
-set secInfo_j { 30.6474   1.6797   0.2000   0.0103   0.0012   0.0172   0.0000};
+set secInfo_i { 30.6474   2.4722   0.2000   0.0222   0.0017   0.0326   0.0000};
+set secInfo_j { 30.6474   2.4722   0.2000   0.0222   0.0017   0.0326   0.0000};
 set compBackboneFactors [lreplace $compBackboneFactors 0 0   1.3000];# MpP/Mp
 set compBackboneFactors [lreplace $compBackboneFactors 1 1   1.1000];# MpN/Mp
-hingeBeamColumn 1070300 4070304 4070402 "Horizontal" $trans_selected $n $Es $FyBeam $rigMatTag 27.600 [expr 3119.578*$Comp_I] $degradation $c $secInfo_i $secInfo_j $Composite $compBackboneFactors;
+set fracSecGeometry { 26.9000  10.0000   0.7450   0.4900   0.3750   5.0000 { -7.5  -4.5  -1.5  1.5  4.5  7.5  }    0.625      1.5 1.0};
+set kBL 1.272
+set kTL 1.184
+set kBR 1.272
+set kTR 1.184
+hingeBeamColumnFracture 1070300 4070304 4070402 "Horizontal" $trans_selected $n $Es $FyBeam $rigMatTag 27.600 [expr 3119.578*$Comp_I] $degradation $c $secInfo_i $secInfo_j "Bolted" $fracSecGeometry $fracSecMaterials [expr $kBL*$sigCrB_bay3_floor7_i] [expr $kTL*$sigCrT_bay3_floor7_i] [expr $kBR*$sigCrB_bay3_floor7_j] [expr $kTR*$sigCrT_bay3_floor7_j] $FI_limB_bay3_floor7_i $FI_limT_bay3_floor7_i $FI_limB_bay3_floor7_j $FI_limT_bay3_floor7_j $Composite $compBackboneFactors $trib $tslab $bslab $AslabSteel $slabFiberMaterials;
 
 # Beams at floor 7 bay 4
-set secInfo_i { 30.6474   1.6795   0.2000   0.0103   0.0012   0.0172   0.0000};
-set secInfo_j { 30.6474   1.6795   0.2000   0.0103   0.0012   0.0172   0.0000};
+set secInfo_i { 30.6474   2.4717   0.2000   0.0222   0.0017   0.0326   0.0000};
+set secInfo_j { 30.6474   2.4717   0.2000   0.0222   0.0017   0.0326   0.0000};
 set compBackboneFactors [lreplace $compBackboneFactors 0 0   1.3000];# MpP/Mp
 set compBackboneFactors [lreplace $compBackboneFactors 1 1   1.1000];# MpN/Mp
-hingeBeamColumn 1070400 4070404 4070502 "Horizontal" $trans_selected $n $Es $FyBeam $rigMatTag 27.600 [expr 3119.678*$Comp_I] $degradation $c $secInfo_i $secInfo_j $Composite $compBackboneFactors;
+set fracSecGeometry { 26.9000  10.0000   0.7450   0.4900   0.3750   5.0000 { -7.5  -4.5  -1.5  1.5  4.5  7.5  }    0.625      1.5 1.0};
+set kBL 1.272
+set kTL 1.184
+set kBR 1.213
+set kTR 1.112
+hingeBeamColumnFracture 1070400 4070404 4070502 "Horizontal" $trans_selected $n $Es $FyBeam $rigMatTag 27.600 [expr 3119.678*$Comp_I] $degradation $c $secInfo_i $secInfo_j "Bolted" $fracSecGeometry $fracSecMaterials [expr $kBL*$sigCrB_bay4_floor7_i] [expr $kTL*$sigCrT_bay4_floor7_i] [expr $kBR*$sigCrB_bay4_floor7_j] [expr $kTR*$sigCrT_bay4_floor7_j] $FI_limB_bay4_floor7_i $FI_limT_bay4_floor7_i $FI_limB_bay4_floor7_j $FI_limT_bay4_floor7_j $Composite $compBackboneFactors $trib $tslab $bslab $AslabSteel $slabFiberMaterials;
 
 # Beams at floor 8 bay 1
-set secInfo_i { 30.6474   1.6789   0.2000   0.0103   0.0012   0.0172   0.0000};
-set secInfo_j { 30.6474   1.6789   0.2000   0.0103   0.0012   0.0172   0.0000};
+set secInfo_i { 30.6474   2.4705   0.2000   0.0222   0.0017   0.0326   0.0000};
+set secInfo_j { 30.6474   2.4705   0.2000   0.0222   0.0017   0.0326   0.0000};
 set compBackboneFactors [lreplace $compBackboneFactors 0 0   1.3000];# MpP/Mp
 set compBackboneFactors [lreplace $compBackboneFactors 1 1   1.1000];# MpN/Mp
-hingeBeamColumn 1080100 4080104 4080202 "Horizontal" $trans_selected $n $Es $FyBeam $rigMatTag 27.600 [expr 3119.927*$Comp_I] $degradation $c $secInfo_i $secInfo_j $Composite $compBackboneFactors;
+set fracSecGeometry { 26.9000  10.0000   0.7450   0.4900   0.3750   5.0000 { -7.5  -4.5  -1.5  1.5  4.5  7.5  }    0.625      1.5 1.0};
+set kBL 1.128
+set kTL 1.011
+set kBR 1.213
+set kTR 1.112
+hingeBeamColumnFracture 1080100 4080104 4080202 "Horizontal" $trans_selected $n $Es $FyBeam $rigMatTag 27.600 [expr 3119.927*$Comp_I] $degradation $c $secInfo_i $secInfo_j "Bolted" $fracSecGeometry $fracSecMaterials [expr $kBL*$sigCrB_bay1_floor8_i] [expr $kTL*$sigCrT_bay1_floor8_i] [expr $kBR*$sigCrB_bay1_floor8_j] [expr $kTR*$sigCrT_bay1_floor8_j] $FI_limB_bay1_floor8_i $FI_limT_bay1_floor8_i $FI_limB_bay1_floor8_j $FI_limT_bay1_floor8_j $Composite $compBackboneFactors $trib $tslab $bslab $AslabSteel $slabFiberMaterials;
 
 # Beams at floor 8 bay 2
-set secInfo_i { 30.6474   1.6793   0.2000   0.0103   0.0012   0.0172   0.0000};
-set secInfo_j { 30.6474   1.6793   0.2000   0.0103   0.0012   0.0172   0.0000};
+set secInfo_i { 30.6474   2.4712   0.2000   0.0222   0.0017   0.0326   0.0000};
+set secInfo_j { 30.6474   2.4712   0.2000   0.0222   0.0017   0.0326   0.0000};
 set compBackboneFactors [lreplace $compBackboneFactors 0 0   1.3000];# MpP/Mp
 set compBackboneFactors [lreplace $compBackboneFactors 1 1   1.1000];# MpN/Mp
-hingeBeamColumn 1080200 4080204 4080302 "Horizontal" $trans_selected $n $Es $FyBeam $rigMatTag 27.600 [expr 3119.777*$Comp_I] $degradation $c $secInfo_i $secInfo_j $Composite $compBackboneFactors;
+set fracSecGeometry { 26.9000  10.0000   0.7450   0.4900   0.3750   5.0000 { -7.5  -4.5  -1.5  1.5  4.5  7.5  }    0.625      1.5 1.0};
+set kBL 1.213
+set kTL 1.112
+set kBR 1.213
+set kTR 1.112
+hingeBeamColumnFracture 1080200 4080204 4080302 "Horizontal" $trans_selected $n $Es $FyBeam $rigMatTag 27.600 [expr 3119.777*$Comp_I] $degradation $c $secInfo_i $secInfo_j "Bolted" $fracSecGeometry $fracSecMaterials [expr $kBL*$sigCrB_bay2_floor8_i] [expr $kTL*$sigCrT_bay2_floor8_i] [expr $kBR*$sigCrB_bay2_floor8_j] [expr $kTR*$sigCrT_bay2_floor8_j] $FI_limB_bay2_floor8_i $FI_limT_bay2_floor8_i $FI_limB_bay2_floor8_j $FI_limT_bay2_floor8_j $Composite $compBackboneFactors $trib $tslab $bslab $AslabSteel $slabFiberMaterials;
 
 # Beams at floor 8 bay 3
-set secInfo_i { 30.6474   1.6793   0.2000   0.0103   0.0012   0.0172   0.0000};
-set secInfo_j { 30.6474   1.6793   0.2000   0.0103   0.0012   0.0172   0.0000};
+set secInfo_i { 30.6474   2.4712   0.2000   0.0222   0.0017   0.0326   0.0000};
+set secInfo_j { 30.6474   2.4712   0.2000   0.0222   0.0017   0.0326   0.0000};
 set compBackboneFactors [lreplace $compBackboneFactors 0 0   1.3000];# MpP/Mp
 set compBackboneFactors [lreplace $compBackboneFactors 1 1   1.1000];# MpN/Mp
-hingeBeamColumn 1080300 4080304 4080402 "Horizontal" $trans_selected $n $Es $FyBeam $rigMatTag 27.600 [expr 3119.777*$Comp_I] $degradation $c $secInfo_i $secInfo_j $Composite $compBackboneFactors;
+set fracSecGeometry { 26.9000  10.0000   0.7450   0.4900   0.3750   5.0000 { -7.5  -4.5  -1.5  1.5  4.5  7.5  }    0.625      1.5 1.0};
+set kBL 1.213
+set kTL 1.112
+set kBR 1.213
+set kTR 1.112
+hingeBeamColumnFracture 1080300 4080304 4080402 "Horizontal" $trans_selected $n $Es $FyBeam $rigMatTag 27.600 [expr 3119.777*$Comp_I] $degradation $c $secInfo_i $secInfo_j "Bolted" $fracSecGeometry $fracSecMaterials [expr $kBL*$sigCrB_bay3_floor8_i] [expr $kTL*$sigCrT_bay3_floor8_i] [expr $kBR*$sigCrB_bay3_floor8_j] [expr $kTR*$sigCrT_bay3_floor8_j] $FI_limB_bay3_floor8_i $FI_limT_bay3_floor8_i $FI_limB_bay3_floor8_j $FI_limT_bay3_floor8_j $Composite $compBackboneFactors $trib $tslab $bslab $AslabSteel $slabFiberMaterials;
 
 # Beams at floor 8 bay 4
-set secInfo_i { 30.6474   1.6789   0.2000   0.0103   0.0012   0.0172   0.0000};
-set secInfo_j { 30.6474   1.6789   0.2000   0.0103   0.0012   0.0172   0.0000};
+set secInfo_i { 30.6474   2.4705   0.2000   0.0222   0.0017   0.0326   0.0000};
+set secInfo_j { 30.6474   2.4705   0.2000   0.0222   0.0017   0.0326   0.0000};
 set compBackboneFactors [lreplace $compBackboneFactors 0 0   1.3000];# MpP/Mp
 set compBackboneFactors [lreplace $compBackboneFactors 1 1   1.1000];# MpN/Mp
-hingeBeamColumn 1080400 4080404 4080502 "Horizontal" $trans_selected $n $Es $FyBeam $rigMatTag 27.600 [expr 3119.927*$Comp_I] $degradation $c $secInfo_i $secInfo_j $Composite $compBackboneFactors;
+set fracSecGeometry { 26.9000  10.0000   0.7450   0.4900   0.3750   5.0000 { -7.5  -4.5  -1.5  1.5  4.5  7.5  }    0.625      1.5 1.0};
+set kBL 1.213
+set kTL 1.112
+set kBR 1.128
+set kTR 1.011
+hingeBeamColumnFracture 1080400 4080404 4080502 "Horizontal" $trans_selected $n $Es $FyBeam $rigMatTag 27.600 [expr 3119.927*$Comp_I] $degradation $c $secInfo_i $secInfo_j "Bolted" $fracSecGeometry $fracSecMaterials [expr $kBL*$sigCrB_bay4_floor8_i] [expr $kTL*$sigCrT_bay4_floor8_i] [expr $kBR*$sigCrB_bay4_floor8_j] [expr $kTR*$sigCrT_bay4_floor8_j] $FI_limB_bay4_floor8_i $FI_limT_bay4_floor8_i $FI_limB_bay4_floor8_j $FI_limT_bay4_floor8_j $Composite $compBackboneFactors $trib $tslab $bslab $AslabSteel $slabFiberMaterials;
 
 # Beams at floor 9 bay 1
-set secInfo_i { 30.6474   1.6789   0.2000   0.0103   0.0012   0.0172   0.0000};
-set secInfo_j { 30.6474   1.6789   0.2000   0.0103   0.0012   0.0172   0.0000};
+set secInfo_i { 30.6474   2.4705   0.2000   0.0222   0.0017   0.0326   0.0000};
+set secInfo_j { 30.6474   2.4705   0.2000   0.0222   0.0017   0.0326   0.0000};
 set compBackboneFactors [lreplace $compBackboneFactors 0 0   1.3000];# MpP/Mp
 set compBackboneFactors [lreplace $compBackboneFactors 1 1   1.1000];# MpN/Mp
-hingeBeamColumn 1090100 4090104 4090202 "Horizontal" $trans_selected $n $Es $FyBeam $rigMatTag 27.600 [expr 3119.927*$Comp_I] $degradation $c $secInfo_i $secInfo_j $Composite $compBackboneFactors;
+set fracSecGeometry { 26.9000  10.0000   0.7450   0.4900   0.3750   5.0000 { -7.5  -4.5  -1.5  1.5  4.5  7.5  }    0.625      1.5 1.0};
+set kBL 1.128
+set kTL 1.011
+set kBR 1.213
+set kTR 1.112
+hingeBeamColumnFracture 1090100 4090104 4090202 "Horizontal" $trans_selected $n $Es $FyBeam $rigMatTag 27.600 [expr 3119.927*$Comp_I] $degradation $c $secInfo_i $secInfo_j "Bolted" $fracSecGeometry $fracSecMaterials [expr $kBL*$sigCrB_bay1_floor9_i] [expr $kTL*$sigCrT_bay1_floor9_i] [expr $kBR*$sigCrB_bay1_floor9_j] [expr $kTR*$sigCrT_bay1_floor9_j] $FI_limB_bay1_floor9_i $FI_limT_bay1_floor9_i $FI_limB_bay1_floor9_j $FI_limT_bay1_floor9_j $Composite $compBackboneFactors $trib $tslab $bslab $AslabSteel $slabFiberMaterials;
 
 # Beams at floor 9 bay 2
-set secInfo_i { 30.6474   1.6793   0.2000   0.0103   0.0012   0.0172   0.0000};
-set secInfo_j { 30.6474   1.6793   0.2000   0.0103   0.0012   0.0172   0.0000};
+set secInfo_i { 30.6474   2.4712   0.2000   0.0222   0.0017   0.0326   0.0000};
+set secInfo_j { 30.6474   2.4712   0.2000   0.0222   0.0017   0.0326   0.0000};
 set compBackboneFactors [lreplace $compBackboneFactors 0 0   1.3000];# MpP/Mp
 set compBackboneFactors [lreplace $compBackboneFactors 1 1   1.1000];# MpN/Mp
-hingeBeamColumn 1090200 4090204 4090302 "Horizontal" $trans_selected $n $Es $FyBeam $rigMatTag 27.600 [expr 3119.777*$Comp_I] $degradation $c $secInfo_i $secInfo_j $Composite $compBackboneFactors;
+set fracSecGeometry { 26.9000  10.0000   0.7450   0.4900   0.3750   5.0000 { -7.5  -4.5  -1.5  1.5  4.5  7.5  }    0.625      1.5 1.0};
+set kBL 1.213
+set kTL 1.112
+set kBR 1.213
+set kTR 1.112
+hingeBeamColumnFracture 1090200 4090204 4090302 "Horizontal" $trans_selected $n $Es $FyBeam $rigMatTag 27.600 [expr 3119.777*$Comp_I] $degradation $c $secInfo_i $secInfo_j "Bolted" $fracSecGeometry $fracSecMaterials [expr $kBL*$sigCrB_bay2_floor9_i] [expr $kTL*$sigCrT_bay2_floor9_i] [expr $kBR*$sigCrB_bay2_floor9_j] [expr $kTR*$sigCrT_bay2_floor9_j] $FI_limB_bay2_floor9_i $FI_limT_bay2_floor9_i $FI_limB_bay2_floor9_j $FI_limT_bay2_floor9_j $Composite $compBackboneFactors $trib $tslab $bslab $AslabSteel $slabFiberMaterials;
 
 # Beams at floor 9 bay 3
-set secInfo_i { 30.6474   1.6793   0.2000   0.0103   0.0012   0.0172   0.0000};
-set secInfo_j { 30.6474   1.6793   0.2000   0.0103   0.0012   0.0172   0.0000};
+set secInfo_i { 30.6474   2.4712   0.2000   0.0222   0.0017   0.0326   0.0000};
+set secInfo_j { 30.6474   2.4712   0.2000   0.0222   0.0017   0.0326   0.0000};
 set compBackboneFactors [lreplace $compBackboneFactors 0 0   1.3000];# MpP/Mp
 set compBackboneFactors [lreplace $compBackboneFactors 1 1   1.1000];# MpN/Mp
-hingeBeamColumn 1090300 4090304 4090402 "Horizontal" $trans_selected $n $Es $FyBeam $rigMatTag 27.600 [expr 3119.777*$Comp_I] $degradation $c $secInfo_i $secInfo_j $Composite $compBackboneFactors;
+set fracSecGeometry { 26.9000  10.0000   0.7450   0.4900   0.3750   5.0000 { -7.5  -4.5  -1.5  1.5  4.5  7.5  }    0.625      1.5 1.0};
+set kBL 1.213
+set kTL 1.112
+set kBR 1.213
+set kTR 1.112
+hingeBeamColumnFracture 1090300 4090304 4090402 "Horizontal" $trans_selected $n $Es $FyBeam $rigMatTag 27.600 [expr 3119.777*$Comp_I] $degradation $c $secInfo_i $secInfo_j "Bolted" $fracSecGeometry $fracSecMaterials [expr $kBL*$sigCrB_bay3_floor9_i] [expr $kTL*$sigCrT_bay3_floor9_i] [expr $kBR*$sigCrB_bay3_floor9_j] [expr $kTR*$sigCrT_bay3_floor9_j] $FI_limB_bay3_floor9_i $FI_limT_bay3_floor9_i $FI_limB_bay3_floor9_j $FI_limT_bay3_floor9_j $Composite $compBackboneFactors $trib $tslab $bslab $AslabSteel $slabFiberMaterials;
 
 # Beams at floor 9 bay 4
-set secInfo_i { 30.6474   1.6789   0.2000   0.0103   0.0012   0.0172   0.0000};
-set secInfo_j { 30.6474   1.6789   0.2000   0.0103   0.0012   0.0172   0.0000};
+set secInfo_i { 30.6474   2.4705   0.2000   0.0222   0.0017   0.0326   0.0000};
+set secInfo_j { 30.6474   2.4705   0.2000   0.0222   0.0017   0.0326   0.0000};
 set compBackboneFactors [lreplace $compBackboneFactors 0 0   1.3000];# MpP/Mp
 set compBackboneFactors [lreplace $compBackboneFactors 1 1   1.1000];# MpN/Mp
-hingeBeamColumn 1090400 4090404 4090502 "Horizontal" $trans_selected $n $Es $FyBeam $rigMatTag 27.600 [expr 3119.927*$Comp_I] $degradation $c $secInfo_i $secInfo_j $Composite $compBackboneFactors;
+set fracSecGeometry { 26.9000  10.0000   0.7450   0.4900   0.3750   5.0000 { -7.5  -4.5  -1.5  1.5  4.5  7.5  }    0.625      1.5 1.0};
+set kBL 1.213
+set kTL 1.112
+set kBR 1.128
+set kTR 1.011
+hingeBeamColumnFracture 1090400 4090404 4090502 "Horizontal" $trans_selected $n $Es $FyBeam $rigMatTag 27.600 [expr 3119.927*$Comp_I] $degradation $c $secInfo_i $secInfo_j "Bolted" $fracSecGeometry $fracSecMaterials [expr $kBL*$sigCrB_bay4_floor9_i] [expr $kTL*$sigCrT_bay4_floor9_i] [expr $kBR*$sigCrB_bay4_floor9_j] [expr $kTR*$sigCrT_bay4_floor9_j] $FI_limB_bay4_floor9_i $FI_limT_bay4_floor9_i $FI_limB_bay4_floor9_j $FI_limT_bay4_floor9_j $Composite $compBackboneFactors $trib $tslab $bslab $AslabSteel $slabFiberMaterials;
 
 ####################################################################################################
 #                                            COLUMNS ELEMENTS                                      #
@@ -1068,7 +1476,7 @@ region 1 -ele 1020100 1020200 1020300 1020400 1030100 1030200 1030300 1030400 10
 region 2 -ele 2010100 2020100 2030100 2040100 2050100 2060100 2070100 2080100 2010200 2020200 2030200 2040200 2050200 2060200 2070200 2080200 2010300 2020300 2030300 2040300 2050300 2060300 2070300 2080300 2010400 2020400 2030400 2040400 2050400 2060400 2070400 2080400 2010500 2020500 2030500 2040500 2050500 2060500 2070500 2080500 2030102 2060102 2030202 2060202 2030302 2060302 2030402 2060402 2030502 2060502 -rayleigh 0.0 0.0 $a1_mod 0.0;
 
 # Hinge elements [beam springs, column springs]
-region 3 -ele 1020101 1020102 1020201 1020202 1020301 1020302 1020401 1020402 1030101 1030102 1030201 1030202 1030301 1030302 1030401 1030402 1040101 1040102 1040201 1040202 1040301 1040302 1040401 1040402 1050101 1050102 1050201 1050202 1050301 1050302 1050401 1050402 1060101 1060102 1060201 1060202 1060301 1060302 1060401 1060402 1070101 1070102 1070201 1070202 1070301 1070302 1070401 1070402 1080101 1080102 1080201 1080202 1080301 1080302 1080401 1080402 1090101 1090102 1090201 1090202 1090301 1090302 1090401 1090402 2010101 2010102 2010201 2010202 2010301 2010302 2010401 2010402 2010501 2010502 2020101 2020102 2020201 2020202 2020301 2020302 2020401 2020402 2020501 2020502 2040101 2040102 2040201 2040202 2040301 2040302 2040401 2040402 2040501 2040502 2050101 2050102 2050201 2050202 2050301 2050302 2050401 2050402 2050501 2050502 2070101 2070102 2070201 2070202 2070301 2070302 2070401 2070402 2070501 2070502 2080101 2080102 2080201 2080202 2080301 2080302 2080401 2080402 2080501 2080502 -rayleigh 0.0 0.0 [expr $a1_mod/$n] 0.0;
+region 3 -ele 1020102 1020104 1020202 1020204 1020302 1020304 1020402 1020404 1030102 1030104 1030202 1030204 1030302 1030304 1030402 1030404 1040102 1040104 1040202 1040204 1040302 1040304 1040402 1040404 1050102 1050104 1050202 1050204 1050302 1050304 1050402 1050404 1060102 1060104 1060202 1060204 1060302 1060304 1060402 1060404 1070102 1070104 1070202 1070204 1070302 1070304 1070402 1070404 1080102 1080104 1080202 1080204 1080302 1080304 1080402 1080404 1090102 1090104 1090202 1090204 1090302 1090304 1090402 1090404 2010101 2010102 2010201 2010202 2010301 2010302 2010401 2010402 2010501 2010502 2020101 2020102 2020201 2020202 2020301 2020302 2020401 2020402 2020501 2020502 2040101 2040102 2040201 2040202 2040301 2040302 2040401 2040402 2040501 2040502 2050101 2050102 2050201 2050202 2050301 2050302 2050401 2050402 2050501 2050502 2070101 2070102 2070201 2070202 2070301 2070302 2070401 2070402 2070501 2070502 2080101 2080102 2080201 2080202 2080301 2080302 2080401 2080402 2080501 2080502 -rayleigh 0.0 0.0 [expr $a1_mod/$n] 0.0;
 
 # Nodes with mass
 region 4 -nodes 4020103 4020203 4020303 4020403 4020503 4030103 4030203 4030303 4030403 4030503 4040103 4040203 4040303 4040403 4040503 4050103 4050203 4050303 4050403 4050503 4060103 4060203 4060303 4060403 4060503 4070103 4070203 4070303 4070403 4070503 4080103 4080203 4080303 4080403 4080503 4090103 4090203 4090303 4090403 4090503 -rayleigh $a0 0.0 0.0 0.0;
@@ -1086,20 +1494,118 @@ if {$addBasicRecorders == 1} {
 
 if {$addBasicRecorders == 1} {
 
-	# Recorders beam hinge element
+	# Recorders for beam fracture boolean
+	# Left-bottom flange
+	recorder Element -file $outdir/frac_LB.out -dT 0.01 -ele 1020105 1020205 1020305 1020405 1030105 1030205 1030305 1030405 1040105 1040205 1040305 1040405 1050105 1050205 1050305 1050405 1060105 1060205 1060305 1060405 1070105 1070205 1070305 1070405 1080105 1080205 1080305 1080405 1090105 1090205 1090305 1090405 section fiber 7 failure;
 
-	# Left
-	recorder Element -file $outdir/hinge_left.out -dT 0.01 -ele 1020101 1020201 1020301 1020401 1030101 1030201 1030301 1030401 1040101 1040201 1040301 1040401 1050101 1050201 1050301 1050401 1060101 1060201 1060301 1060401 1070101 1070201 1070301 1070401 1080101 1080201 1080301 1080401 1090101 1090201 1090301 1090401 deformation;
+	# Left-top flange
+	recorder Element -file $outdir/frac_LT.out -dT 0.01 -ele 1020105 1020205 1020305 1020405 1030105 1030205 1030305 1030405 1040105 1040205 1040305 1040405 1050105 1050205 1050305 1050405 1060105 1060205 1060305 1060405 1070105 1070205 1070305 1070405 1080105 1080205 1080305 1080405 1090105 1090205 1090305 1090405 section fiber 2 failure;
 
-	# Right
-	recorder Element -file $outdir/hinge_right.out -dT 0.01 -ele 1020102 1020202 1020302 1020402 1030102 1030202 1030302 1030402 1040102 1040202 1040302 1040402 1050102 1050202 1050302 1050402 1060102 1060202 1060302 1060402 1070102 1070202 1070302 1070402 1080102 1080202 1080302 1080402 1090102 1090202 1090302 1090402 deformation;
+	# Right-bottom flange
+	recorder Element -file $outdir/frac_RB.out -dT 0.01 -ele 1020106 1020206 1020306 1020406 1030106 1030206 1030306 1030406 1040106 1040206 1040306 1040406 1050106 1050206 1050306 1050406 1060106 1060206 1060306 1060406 1070106 1070206 1070306 1070406 1080106 1080206 1080306 1080406 1090106 1090206 1090306 1090406 section fiber 7 failure;
+
+	# Right-top flange
+	recorder Element -file $outdir/frac_RT.out -dT 0.01 -ele 1020106 1020206 1020306 1020406 1030106 1030206 1030306 1030406 1040106 1040206 1040306 1040406 1050106 1050206 1050306 1050406 1060106 1060206 1060306 1060406 1070106 1070206 1070306 1070406 1080106 1080206 1080306 1080406 1090106 1090206 1090306 1090406 section fiber 2 failure;
+
+	# Recorders for beam fracture index
+	# Left-bottom flange
+	recorder Element -file $outdir/FI_LB.out -dT 0.01 -ele 1020105 1020205 1020305 1020405 1030105 1030205 1030305 1030405 1040105 1040205 1040305 1040405 1050105 1050205 1050305 1050405 1060105 1060205 1060305 1060405 1070105 1070205 1070305 1070405 1080105 1080205 1080305 1080405 1090105 1090205 1090305 1090405 section fiber 7 damage;
+
+	# Left-top flange
+	recorder Element -file $outdir/FI_LT.out -dT 0.01 -ele 1020105 1020205 1020305 1020405 1030105 1030205 1030305 1030405 1040105 1040205 1040305 1040405 1050105 1050205 1050305 1050405 1060105 1060205 1060305 1060405 1070105 1070205 1070305 1070405 1080105 1080205 1080305 1080405 1090105 1090205 1090305 1090405 section fiber 2 damage;
+
+	# Right-bottom flange
+	recorder Element -file $outdir/FI_RB.out -dT 0.01 -ele 1020106 1020206 1020306 1020406 1030106 1030206 1030306 1030406 1040106 1040206 1040306 1040406 1050106 1050206 1050306 1050406 1060106 1060206 1060306 1060406 1070106 1070206 1070306 1070406 1080106 1080206 1080306 1080406 1090106 1090206 1090306 1090406 section fiber 7 damage;
+
+	# Right-top flange
+	recorder Element -file $outdir/FI_RT.out -dT 0.01 -ele 1020106 1020206 1020306 1020406 1030106 1030206 1030306 1030406 1040106 1040206 1040306 1040406 1050106 1050206 1050306 1050406 1060106 1060206 1060306 1060406 1070106 1070206 1070306 1070406 1080106 1080206 1080306 1080406 1090106 1090206 1090306 1090406 section fiber 2 damage;
+
 }
 
 if {$addDetailedRecorders == 1} {
 
-	recorder Element -file $outdir/hinge_right_force.out -dT 0.01 -ele 1020102 1020202 1020302 1020402 1030102 1030202 1030302 1030402 1040102 1040202 1040302 1040402 1050102 1050202 1050302 1050402 1060102 1060202 1060302 1060402 1070102 1070202 1070302 1070402 1080102 1080202 1080302 1080402 1090102 1090202 1090302 1090402 force;
+	# Recorders for beam fracture index
+	# Left-bottom flange
+	recorder Element -file $outdir/ss_LB.out -dT 0.01 -ele 1020105 1020205 1020305 1020405 1030105 1030205 1030305 1030405 1040105 1040205 1040305 1040405 1050105 1050205 1050305 1050405 1060105 1060205 1060305 1060405 1070105 1070205 1070305 1070405 1080105 1080205 1080305 1080405 1090105 1090205 1090305 1090405 section fiber 7 stressStrain;
 
-	recorder Element -file $outdir/hinge_left_force.out -dT 0.01 -ele 1020101 1020201 1020301 1020401 1030101 1030201 1030301 1030401 1040101 1040201 1040301 1040401 1050101 1050201 1050301 1050401 1060101 1060201 1060301 1060401 1070101 1070201 1070301 1070401 1080101 1080201 1080301 1080401 1090101 1090201 1090301 1090401 force;
+	# Left-top flange
+	recorder Element -file $outdir/ss_LT.out -dT 0.01 -ele 1020105 1020205 1020305 1020405 1030105 1030205 1030305 1030405 1040105 1040205 1040305 1040405 1050105 1050205 1050305 1050405 1060105 1060205 1060305 1060405 1070105 1070205 1070305 1070405 1080105 1080205 1080305 1080405 1090105 1090205 1090305 1090405 section fiber 2 stressStrain;
+
+	# Right-bottom flange
+	recorder Element -file $outdir/ss_RB.out -dT 0.01 -ele 1020106 1020206 1020306 1020406 1030106 1030206 1030306 1030406 1040106 1040206 1040306 1040406 1050106 1050206 1050306 1050406 1060106 1060206 1060306 1060406 1070106 1070206 1070306 1070406 1080106 1080206 1080306 1080406 1090106 1090206 1090306 1090406 section fiber 7 stressStrain;
+
+	# Right-top flange
+	recorder Element -file $outdir/ss_RT.out -dT 0.01 -ele 1020106 1020206 1020306 1020406 1030106 1030206 1030306 1030406 1040106 1040206 1040306 1040406 1050106 1050206 1050306 1050406 1060106 1060206 1060306 1060406 1070106 1070206 1070306 1070406 1080106 1080206 1080306 1080406 1090106 1090206 1090306 1090406 section fiber 2 stressStrain;
+
+	# Recorders for slab fiber stressStrain
+
+	# Left-Concrete
+	recorder Element -file $outdir/slabComp_L.out -dT 0.01 -ele 1020105 1020205 1020305 1020405 1030105 1030205 1030305 1030405 1040105 1040205 1040305 1040405 1050105 1050205 1050305 1050405 1060105 1060205 1060305 1060405 1070105 1070205 1070305 1070405 1080105 1080205 1080305 1080405 1090105 1090205 1090305 1090405 section fiber 10 stressStrain;
+
+	# Left-Steel
+	recorder Element -file $outdir/slabTen_L.out -dT 0.01 -ele 1020105 1020205 1020305 1020405 1030105 1030205 1030305 1030405 1040105 1040205 1040305 1040405 1050105 1050205 1050305 1050405 1060105 1060205 1060305 1060405 1070105 1070205 1070305 1070405 1080105 1080205 1080305 1080405 1090105 1090205 1090305 1090405 section fiber 11 stressStrain;
+
+	# Right-Concrete
+	recorder Element -file $outdir/slabComp_R.out -dT 0.01 -ele 1020106 1020206 1020306 1020406 1030106 1030206 1030306 1030406 1040106 1040206 1040306 1040406 1050106 1050206 1050306 1050406 1060106 1060206 1060306 1060406 1070106 1070206 1070306 1070406 1080106 1080206 1080306 1080406 1090106 1090206 1090306 1090406 section fiber 10 stressStrain;
+
+	# Right-Steel
+	recorder Element -file $outdir/slabTen_R.out -dT 0.01 -ele 1020106 1020206 1020306 1020406 1030106 1030206 1030306 1030406 1040106 1040206 1040306 1040406 1050106 1050206 1050306 1050406 1060106 1060206 1060306 1060406 1070106 1070206 1070306 1070406 1080106 1080206 1080306 1080406 1090106 1090206 1090306 1090406 section fiber 11 stressStrain;
+
+	# Recorders for web fibers
+
+	# Left-web1
+	recorder Element -file $outdir/webfiber_L1.out -dT 0.01 -ele 1020105 1020205 1020305 1020405 1030105 1030205 1030305 1030405 1040105 1040205 1040305 1040405 1050105 1050205 1050305 1050405 1060105 1060205 1060305 1060405 1070105 1070205 1070305 1070405 1080105 1080205 1080305 1080405 1090105 1090205 1090305 1090405 section fiber 12 stressStrain;
+
+	# Left-web2
+	recorder Element -file $outdir/webfiber_L2.out -dT 0.01 -ele 1020105 1020205 1020305 1020405 1030105 1030205 1030305 1030405 1040105 1040205 1040305 1040405 1050105 1050205 1050305 1050405 1060105 1060205 1060305 1060405 1070105 1070205 1070305 1070405 1080105 1080205 1080305 1080405 1090105 1090205 1090305 1090405 section fiber 13 stressStrain;
+
+	# Left-web3
+	recorder Element -file $outdir/webfiber_L3.out -dT 0.01 -ele 1020105 1020205 1020305 1020405 1030105 1030205 1030305 1030405 1040105 1040205 1040305 1040405 1050105 1050205 1050305 1050405 1060105 1060205 1060305 1060405 1070105 1070205 1070305 1070405 1080105 1080205 1080305 1080405 1090105 1090205 1090305 1090405 section fiber 14 stressStrain;
+
+
+	# Left-web4
+	recorder Element -file $outdir/webfiber_L4.out -dT 0.01 -ele 1020105 1020205 1020305 1020405 1030105 1030205 1030305 1030405 1040105 1040205 1040305 1040405 1050105 1050205 1050305 1050405 1060105 1060205 1060305 1060405 1070105 1070205 1070305 1070405 1080105 1080205 1080305 1080405 1090105 1090205 1090305 1090405 section fiber 15 stressStrain;
+
+
+	# Right-web1
+	recorder Element -file $outdir/webfiber_R1.out -dT 0.01 -ele 1020106 1020206 1020306 1020406 1030106 1030206 1030306 1030406 1040106 1040206 1040306 1040406 1050106 1050206 1050306 1050406 1060106 1060206 1060306 1060406 1070106 1070206 1070306 1070406 1080106 1080206 1080306 1080406 1090106 1090206 1090306 1090406 section fiber 12 stressStrain;
+
+	# Right-web2
+	recorder Element -file $outdir/webfiber_R2.out -dT 0.01 -ele 1020106 1020206 1020306 1020406 1030106 1030206 1030306 1030406 1040106 1040206 1040306 1040406 1050106 1050206 1050306 1050406 1060106 1060206 1060306 1060406 1070106 1070206 1070306 1070406 1080106 1080206 1080306 1080406 1090106 1090206 1090306 1090406 section fiber 13 stressStrain;
+
+	# Right-web3
+	recorder Element -file $outdir/webfiber_R3.out -dT 0.01 -ele 1020106 1020206 1020306 1020406 1030106 1030206 1030306 1030406 1040106 1040206 1040306 1040406 1050106 1050206 1050306 1050406 1060106 1060206 1060306 1060406 1070106 1070206 1070306 1070406 1080106 1080206 1080306 1080406 1090106 1090206 1090306 1090406 section fiber 14 stressStrain;
+
+
+	# Right-web4
+	recorder Element -file $outdir/webfiber_R4.out -dT 0.01 -ele 1020106 1020206 1020306 1020406 1030106 1030206 1030306 1030406 1040106 1040206 1040306 1040406 1050106 1050206 1050306 1050406 1060106 1060206 1060306 1060406 1070106 1070206 1070306 1070406 1080106 1080206 1080306 1080406 1090106 1090206 1090306 1090406 section fiber 15 stressStrain;
+
+	# Recorders beam fiber-section element
+
+	# Left
+	recorder Element -file $outdir/def_left.out -dT 0.01 -ele 1020105 1020205 1020305 1020405 1030105 1030205 1030305 1030405 1040105 1040205 1040305 1040405 1050105 1050205 1050305 1050405 1060105 1060205 1060305 1060405 1070105 1070205 1070305 1070405 1080105 1080205 1080305 1080405 1090105 1090205 1090305 1090405 section deformation;
+
+	# Right
+	recorder Element -file $outdir/def_right.out -dT 0.01 -ele 1020106 1020206 1020306 1020406 1030106 1030206 1030306 1030406 1040106 1040206 1040306 1040406 1050106 1050206 1050306 1050406 1060106 1060206 1060306 1060406 1070106 1070206 1070306 1070406 1080106 1080206 1080306 1080406 1090106 1090206 1090306 1090406 section deformation;
+
+}
+
+if {$addBasicRecorders == 1} {
+
+	# Recorders beam hinge element
+
+	# Left
+	recorder Element -file $outdir/hinge_left.out -dT 0.01 -ele 1020102 1020202 1020302 1020402 1030102 1030202 1030302 1030402 1040102 1040202 1040302 1040402 1050102 1050202 1050302 1050402 1060102 1060202 1060302 1060402 1070102 1070202 1070302 1070402 1080102 1080202 1080302 1080402 1090102 1090202 1090302 1090402 deformation;
+
+	# Right
+	recorder Element -file $outdir/hinge_right.out -dT 0.01 -ele 1020104 1020204 1020304 1020404 1030104 1030204 1030304 1030404 1040104 1040204 1040304 1040404 1050104 1050204 1050304 1050404 1060104 1060204 1060304 1060404 1070104 1070204 1070304 1070404 1080104 1080204 1080304 1080404 1090104 1090204 1090304 1090404 deformation;
+}
+
+if {$addDetailedRecorders == 1} {
+
+	recorder Element -file $outdir/hinge_right_force.out -dT 0.01 -ele 1020104 1020204 1020304 1020404 1030104 1030204 1030304 1030404 1040104 1040204 1040304 1040404 1050104 1050204 1050304 1050404 1060104 1060204 1060304 1060404 1070104 1070204 1070304 1070404 1080104 1080204 1080304 1080404 1090104 1090204 1090304 1090404 force;
+
+	recorder Element -file $outdir/hinge_left_force.out -dT 0.01 -ele 1020102 1020202 1020302 1020402 1030102 1030202 1030302 1030402 1040102 1040202 1040302 1040402 1050102 1050202 1050302 1050402 1060102 1060202 1060302 1060402 1070102 1070202 1070302 1070402 1080102 1080202 1080302 1080402 1090102 1090202 1090302 1090402 force;
 }
 
 if {$addDetailedRecorders == 1} {

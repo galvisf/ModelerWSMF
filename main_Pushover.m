@@ -3,6 +3,7 @@
 % Add functions
 close all; clear; clc;
 currFolder = pwd;
+addpath([currFolder filesep 'SRC'])
 addpath([currFolder filesep 'SRC' filesep '0_Databases'])
 addpath([currFolder filesep 'SRC' filesep '1_FunctionsModelGeneration'])
 addpath([currFolder filesep 'SRC' filesep '3_FunctionsModelAnalyses'])
@@ -35,7 +36,7 @@ font = 9;
 color_specs = linspecer(4);
 
 %% USER INPUTS: Pushover parameters 
-roofDrift = 0.01; % ENTER IN ABSOLUTE VALUE
+roofDrift = 0.02; % ENTER IN ABSOLUTE VALUE
 signPush = 1;
 
 % Lateral load pattern
@@ -104,7 +105,7 @@ end
 cvn_col   = flangeProp.cvn*1.5; % Fracture thougness of all column splices in the building
 
 %%% Rayleigth damping %%%
-zeta      = 0.02;
+zeta      = 0.015;
 DampModeI = 1;
 DampModeJ = 3;
 
@@ -211,7 +212,7 @@ end
 analysisFile = 'Pushover_analysis.tcl';
 pushoverAnalysis(analysisFile, modelFN, EQ_pattern, roofDrift, signPush, bldgData)
 % Run the analysis
-cmd = sprintf(['OpenSees_3_0 ',analysisFile]);
+cmd = sprintf(['OpenSees ',analysisFile]);
 tic
 system(cmd);
 toc

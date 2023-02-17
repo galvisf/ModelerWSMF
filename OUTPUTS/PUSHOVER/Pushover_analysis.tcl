@@ -4,7 +4,7 @@ source InelasticModel_ph.tcl
 set sign 1
 set CtrlNode [lindex $ctrl_nodes end]
 set CtrlDOF 1
-set Dmax [expr $sign*0.010000*1248];	# maximum displacement of pushover
+set Dmax [expr $sign*0.020000*1248];	# maximum displacement of pushover
 set Dincr [expr 0.005*abs($Dmax) ];	# displacement increment
 
 # ----- LATERAL LOAD PATTERN ----- #
