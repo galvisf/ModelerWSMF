@@ -53,7 +53,7 @@ This package supports linear and non-linear model generation using concentrated 
   
   - Box sections ('BOX db-bf-tw-tf'): 'BOX ##.##-##.##-#.###-#.###'
   
-2) Panel zone behavior could be included using any of the following assumptions (mode details in **SRC/PanelZoneSpring.tcl**):
+(2) Panel zone behavior could be included using any of the following assumptions (mode details in **SRC/PanelZoneSpring.tcl**):
   
   - None (rigid connection)
   - Elastic spring assuming only column web stiffness
