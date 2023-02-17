@@ -62,6 +62,10 @@ Panel zone behavior could be included using any of the following assumptions (mo
   - Nonlinear backbone per *Kim et al. (2015)*
   - Nonlinear backbone per *Skiadopoulos et al. (2021)*
   
+Beams can me simulated with and without composite action. Composite action increases elastic stiffness as well as modify the backbone per NIST (2017) modeling guidelines (variable "composite").
+
+The model can include or ignore the stiffness and strength contribution of the gravity system (variable "addEGF").
+  
 ## License
 
 ModelerWSMF is distributed under the MIT license, see [LICENSE](https://opensource.org/licenses/MIT).
