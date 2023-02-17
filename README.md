@@ -35,7 +35,7 @@ Current code has been checked with Matlab 2020 and newer.
 ## Post-processing options
 OpenSees produces output in a series of text files that need post-processing for effective interrogation. To this end, the folder **POSTPROCESSING** includes two sample Jupyter notebooks that facilitate this postprocessing by collecting the output data and ploting it in convenient ways. These notebooks harness the open-access module **galvisf/frame_postprocess**.
 
-## Current structural modeling features
+## Main structural modeling features
 
 This package supports linear and non-linear model generation using concentrated plasticity models using the backbones per any of the following documents (more details in **SRC/steelBeamHinge.m** and **SRC/steelColumnHinge.m**):
   
@@ -45,7 +45,7 @@ This package supports linear and non-linear model generation using concentrated 
   
   - *AISC 342 - draft (2023). “Seismic Provisions for Evaluation and Retrofit of Existing Structural Steel Buildings ”* (Only for box columns)
   
-Beams could be built-upwide-flange section and standard sections included in the extended database provided in **0_Databases**. Columns could be built-up wide-flange sections, standard wide-flange sections, or box columns. The format for the input file to specify the different type of sections is the following (more details in **SRC/getSteelSectionProps.m**):
+1) Beams could be built-upwide-flange section and standard sections included in the extended database provided in **0_Databases**. Columns could be built-up wide-flange sections, standard wide-flange sections, or box columns. The format for the input file to specify the different type of sections is the following (more details in **SRC/getSteelSectionProps.m**):
   
   - String with name of the section as is in **0_Databases/AISC_v14p1.mat**
   
@@ -53,7 +53,7 @@ Beams could be built-upwide-flange section and standard sections included in the
   
   - Box sections ('BOX db-bf-tw-tf'): 'BOX ##.##-##.##-#.###-#.###'
   
-Panel zone behavior could be included using any of the following assumptions (mode details in **SRC/PanelZoneSpring.tcl**):
+2) Panel zone behavior could be included using any of the following assumptions (mode details in **SRC/PanelZoneSpring.tcl**):
   
   - None (rigid connection)
   - Elastic spring assuming only column web stiffness
@@ -62,10 +62,14 @@ Panel zone behavior could be included using any of the following assumptions (mo
   - Nonlinear backbone per *Kim et al. (2015)*
   - Nonlinear backbone per *Skiadopoulos et al. (2021)*
   
-Beams can me simulated with and without composite action. Composite action increases elastic stiffness as well as modify the backbone per NIST (2017) modeling guidelines (variable "composite").
+3) Beams can me simulated with and without composite action. Composite action increases elastic stiffness as well as modify the backbone per NIST (2017) modeling guidelines (variable "composite").
 
-The model can include or ignore the stiffness and strength contribution of the gravity system (variable "addEGF").
+4) The model can include or ignore the stiffness and strength contribution of the gravity system (variable "addEGF").
   
+## Examples
+
+The ***INPUTS*** folder includes some ready to use examples to facilitate testing of the package. The file "inputs_TestBldg.xlsx" correspond to an unrealistically irregular building that showcase the capabilities of the package to simulate structurally irregular frames. Use this example with the "main_DesignDiagnostics.m" module for more details. Note that the "inputs_TestBldg.xlsx" frame is not suitable for nonlinear analyses (i.e., pushover or NLRHA) because of the unbalance nature of the structural system. The remaining examples are suitable for testing all modules.
+
 ## License
 
 ModelerWSMF is distributed under the MIT license, see [LICENSE](https://opensource.org/licenses/MIT).
