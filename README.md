@@ -30,6 +30,8 @@ The repository has three main scripts that use the supporting functions and data
 <p align="center"> <img src="https://user-images.githubusercontent.com/35354704/202243408-361accfd-56d0-4e37-ace5-61936db8a28b.png" align="middle" height=400 /></p>
 <p align="center"> Figure 2. Example of the design diagnostics dashboard. 
 
+Current code has been checked with Matlab 2020 and newer.
+  
 ## Post-processing options
 OpenSees produces output in a series of text files that need post-processing for effective interrogation. To this end, the folder **POSTPROCESSING** includes two sample Jupyter notebooks that facilitate this postprocessing by collecting the output data and ploting it in convenient ways. These notebooks harness the open-access module **galvisf/frame_postprocess**.
 
