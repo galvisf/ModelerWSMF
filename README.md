@@ -65,6 +65,8 @@ OpenSees produces output in a series of text files that need post-processing for
 **(4)** Beams can me simulated with and without composite action. Composite action increases elastic stiffness as well as modify the backbone per NIST (2017) modeling guidelines (variable "composite").
 
 **(5)** The model can include or ignore the stiffness and strength contribution of the gravity system (variable "addEGF").
+
+**(6)** Beam-to-column connections can be simulated with typical backbone curves or using a fiber-section with the novel material **SteelFractureDI** for simulating welded-flange fracture.
   
 ## Examples
 
