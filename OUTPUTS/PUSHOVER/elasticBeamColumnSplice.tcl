@@ -16,14 +16,13 @@
 #						2 -> PDelta
 #						3 -> Corotational
 # Es					Elastic modulus [ksi]
-# rigMatTag				tag of a pre-created elastic material with large E
 # A						Cross-sectional area of the element [in^2]
 # Ieff					Second moment of area of the section [in^4]
 # spliceLoc				Splice location measured from node_i [in]
 # 
 # Written by: Francisco Galvis, Stanford University
 #
-proc elasticBeamColumnSplice { eleTag node_i node_j eleDir transfTag Es rigMatTag A Ieff spliceLoc} {
+proc elasticBeamColumnSplice { eleTag node_i node_j eleDir transfTag Es A Ieff spliceLoc} {
 
 	## Create intermediate nodes for splices ##
 	set nodeSpl1 [expr $node_i+30]
@@ -39,32 +38,18 @@ proc elasticBeamColumnSplice { eleTag node_i node_j eleDir transfTag Es rigMatTa
 	if {$eleDir == "Horizontal"} {
 		set x3 [expr $x1 + $spliceLoc]
 		set y3 $y1;
-		node $nodeSpl1 [expr $x3 - 0] $y3	
-		node $nodeSpl2 [expr $x3 + 0] $y3
+		node $nodeSpl1 [expr $x3] $y3	
+		node $nodeSpl2 [expr $x3] $y3
 	} else {
 		set x3 $x1
 		set y3 [expr $y1 + $spliceLoc]
-		node $nodeSpl1 $x3 [expr $y3 - 0]
-		node $nodeSpl2 $x3 [expr $y3 + 0]
-	}	
-	
-	## Get element length ##	
-	if {$eleDir == "Horizontal"} {
-		set eleLength [expr $x2 - $x1]
-	} elseif {$eleDir == "Vertical"} {
-		set eleLength [expr $y2 - $y1]
-	} else {
-		puts "ERROR: specify Horizontal or Vertical element direction"
+		node $nodeSpl1 $x3 [expr $y3]
+		node $nodeSpl2 $x3 [expr $y3]
 	}
-	
-	## Read inputs for splice element ##
-	## Define stiffness constants
-	set EIeff [expr $Es*$Ieff]
-	set EA [expr $Es*$A]		
-	
+
 	## Create splice section ##
 	set rigSecTag [expr $eleTag + 30]
-	uniaxialMaterial Elastic $rigSecTag 1e9;
+	uniaxialMaterial Elastic $rigSecTag 1e12;
 
 	## Create elements ##
 	set eleTag2 [expr $eleTag+2];
@@ -72,11 +57,11 @@ proc elasticBeamColumnSplice { eleTag node_i node_j eleDir transfTag Es rigMatTa
 
 	# Elastic elements between end springs
 	element elasticBeamColumn   $eleTag $node_i $nodeSpl1 $A $Es $Ieff $transfTag;
-	element elasticBeamColumn   $eleTag2 $nodeSpl2 $node_j $A $Es $Ieff $transfTag;
+	element elasticBeamColumn   $eleTag2 $nodeSpl1 $node_j $A $Es $Ieff $transfTag;
 
 	# Splice element
 	equalDOF $nodeSpl1 $nodeSpl2 1 2
-	element zeroLength $spliceEleTag $nodeSpl1 $nodeSpl2 -mat $rigSecTag -dir 6
+	element zeroLength $spliceEleTag $nodeSpl1 $nodeSpl2 -mat $rigSecTag -dir 3
 	
 }
 
@@ -175,6 +160,7 @@ proc elasticBeamColumnSpliceFiber { eleTag node_i node_j eleDir transfTag Es rig
 	element elasticBeamColumn   $eleTag2 $nodeSpl2 $node_j $A $Es $Ieff $transfTag;
 
 	# Splice element
-	element zeroLengthSection $spliceEleTag $nodeSpl1 $nodeSpl2 $spliceSecTag2
+	element zeroLengthSection $spliceEleTag $nodeSpl1 $nodeSpl2 $spliceSecTag2 -orient 0 1 0 -1 0 0	
+
 	
 }

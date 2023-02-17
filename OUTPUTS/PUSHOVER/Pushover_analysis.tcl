@@ -4,11 +4,11 @@ source InelasticModel_ph.tcl
 set sign 1
 set CtrlNode [lindex $ctrl_nodes end]
 set CtrlDOF 1
-set Dmax [expr $sign*0.025000*624];	# maximum displacement of pushover
-set Dincr [expr 0.005*$Dmax ];	# displacement increment
+set Dmax [expr $sign*0.010000*1248];	# maximum displacement of pushover
+set Dincr [expr 0.005*abs($Dmax) ];	# displacement increment
 
 # ----- LATERAL LOAD PATTERN ----- #
-source EQ_Mode1.tcl
+source EQ_ASCE7.tcl
 # create load pattern for lateral pushover load coefficient when using linear load pattern
 pattern Plain 300 Linear {;			# define load pattern
 	for {set level 2} {$level <=[expr $num_stories]} {incr level 1} {

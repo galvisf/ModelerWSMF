@@ -14,9 +14,9 @@ set eigs [eigen -genBandArpack $modes_RSA]
 modalProperties -print -file "$outdir/ModalReport.txt" -unorm
 # ----- RECORDERS FOR RSA ----- #
 # Base shear columns recorders #
-recorder Element -file $outdir/RSA_base.out -closeOnWrite -precision 16 -ele 2010100 2010200 2010300 2010400 2010500 globalForce;
+recorder Element -file $outdir/RSA_base.out -closeOnWrite -precision 16 -ele 2010100 2010200 0 2010400 2010500 2010600 globalForce;
 
-# Drift recorders #
+recorder Element -file $outdir/RSA_base.out -closeOnWrite -precision 16 -ele 2010700 # Drift recorders #
 for {set story 1} {$story <= $num_stories} {incr story} {
 	recorder Drift -file $outdir/story${story}_drift.out -closeOnWrite -precision 16 -iNode [lindex $ctrl_nodes [expr {$story - 1}]] -jNode [lindex $ctrl_nodes $story] -dof 1 -perpDirn 2
 }

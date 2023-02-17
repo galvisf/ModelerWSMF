@@ -10,7 +10,9 @@ addpath([currFolder filesep 'SRC' filesep '3_FunctionsModelAnalyses'])
 
 sourceFolder = ['SRC' filesep '2_TemplateOpenSeesfiles'];
 
-%% GENERAL INPUTS
+scale = 500; % max length for deformed shapes for mode shape plots
+
+%% USER INPUTS: GENERAL
 isPushover = false;
 
 % Import AISC section data
@@ -18,9 +20,9 @@ load('AISC_v14p1.mat');
 AISC_info = AISC_v14p1(1, :)';
 
 % Building input data
-geomFN    = 'inputs_8storyFrameOakland.xlsx';
+geomFN    = 'inputs_TestBldg.xlsx';
 Code_Year = 1986;
-spl_ratio = 1; % ratio of welded flange thickness
+spl_ratio = 1; % ratio of welded flange thickness on splice
 frameType = 'Perimeter'; % 'Space' 'Perimeter' 'Intermediate'
 MRF_X     = 1; % frames parallel to X resisting WL together
 frameLengthY = 3*12; % [in] tributary width for WL to the MRF_X number of frames
@@ -33,7 +35,7 @@ folderPath = ['OUTPUTS' filesep 'DESIGN_DIAGNOSTICS']; % Folder to store results
 font = 9;
 color_specs = linspecer(4);
 
-%% Modeling considerations
+%% USER INPUTS: Modeling considerations
 %%% General %%%
 TransformationX = 2; %1: linear; 2:pdelta; 3:corotational
 fixedBase       = true; % false = pin
@@ -48,7 +50,7 @@ explicitMethod  = false; % add small mass to all DOF for explicit solution metho
 modelSetUp      = 'Generic'; % Generic    EE-UQ    Sherlock
 
 %%% Equivalent Gravity Frame Stiffness %%%
-addEGF = false; 
+addEGF = true; 
 
 %%% Material properties %%%
 Es     = 29000;
@@ -57,7 +59,7 @@ FyBeam = 44; % A36, based on SAC guidelines
 
 %%% Beams and Columns %%%
 backbone  = 'Elastic'; % 'Elastic' 'NIST2017', 'ASCE41'
-composite = false;
+composite = true;
 slabFiberMaterials.fc      = -3;
 slabFiberMaterials.caRatio = 0.35; % fraction of composite action
 slabFiberMaterials.La      = 5; % girder separation [ft]
@@ -91,7 +93,7 @@ connType            = 0;
 degradation         = 0;
 c                   = 0;
 
-%% Building code constants
+%% USER INPUTS: Building code constants
 % UBC (1961, 1973)
 Z   = 1.00; % Seismic zone factor
 wpa = 25; % Wind pressure area
@@ -234,7 +236,7 @@ toc
 % Collect the results
 [SDR_EQ_ASCE7, CsFirstMpEQ, dc_ratio_beams, dc_ratio_cols, ...
     dc_ratio_spl, stress_ratio_spl, splice_relative_dc] = ...
-    getRSAresults('Output', bldgData, secProps, sum(Fx_ASCE7), spl_ratio, FyCol);
+    getRSAresults('Output', bldgData, secProps, sum(Fx_ASCE7), spl_ratio, FyCol, addSplices);
 SDR_EQ_ASCE7 = SDR_EQ_ASCE7*Cd; 
 
 
@@ -245,7 +247,6 @@ cd(currFolder);
 figure('position', [0, 50, 1000, 700])
 output_dir = [folderPath, '/Output'];
 numModes = 3; % Number of modes
-scale = 50; % max length for deformed shapes
 
 % Plot model view
 subplot(3,4,1)
@@ -313,7 +314,7 @@ set(gca, 'position', figure_size)
 % Save figure
 if ~composite && ~addEGF
     figFileName = [folderPath, '/_Diagnostics_noComposite_noEGF'];
-elseif ~composite && addEGD
+elseif ~composite && addEGF
     figFileName = [folderPath, '/_Diagnostics_noComposite'];            
 else
     figFileName = [folderPath, '/_Diagnostics'];

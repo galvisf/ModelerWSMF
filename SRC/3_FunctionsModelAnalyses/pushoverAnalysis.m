@@ -27,7 +27,7 @@ fprintf(INP, 'set sign %d\n', signPush);
 fprintf(INP, 'set CtrlNode [lindex $ctrl_nodes end]\n');
 fprintf(INP, 'set CtrlDOF 1\n');
 fprintf(INP, 'set Dmax [expr $sign*%f*%d];	# maximum displacement of pushover\n', roofDrift, sum(storyHgt));
-fprintf(INP, 'set Dincr [expr 0.005*$Dmax ];	# displacement increment\n\n');
+fprintf(INP, 'set Dincr [expr 0.005*abs($Dmax) ];	# displacement increment\n\n');
 
 %%%% Create load pattern %%%%
 fprintf(INP, '# ----- LATERAL LOAD PATTERN ----- #\n');

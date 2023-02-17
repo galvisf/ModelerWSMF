@@ -11,7 +11,7 @@ puts "\nRunning pushover analysis ...\n"
 # ----- SOLVER PARAMETERS ----- #
 set minDiv 2; # division of basic displacement step
 set maxDiv 128; # maximim step division
-set TolMax 1e-3; # maximum tolerance to force convergence
+set TolMax 1e-8; # maximum tolerance to force convergence
 set TolCurr 1e-8;
 set Dbase $Dincr
 set fmt1 "%s Pushover analysis: CtrlNode %.3i, dof %.1i, Disp=%.4f %s";	# format for screen/file output of DONE/PROBLEM analysis
@@ -39,12 +39,11 @@ set Nsteps [expr int(abs($deltaD)/$Dincr)];     # number of pushover analysis st
 integrator DisplacementControl  $CtrlNode $CtrlDOF [expr $Dincr*$signDmax]
 analysis Static 
 
-set ok [analyze $Nsteps];  # this will return zero if no convergence problems were encountered
+set ok [analyze $Nsteps];  # this will return zero or negative if no convergence problems were encountered
 
 # ---------------------- Repeat if convergence issues ------------------ #
-if {$ok == 0} { 	
+if {$ok < 0} { 	
 	set controlDisp [nodeDisp $CtrlNode $CtrlDOF ];		# start from where push failed
-	puts "currentDisp = $controlDisp"
 	set div $minDiv
 	set DremainNorm [expr $controlDisp/$deltaD]; # normalized number to control when to finish (DremainNorm = 1 means we reached the deltaD)
 	

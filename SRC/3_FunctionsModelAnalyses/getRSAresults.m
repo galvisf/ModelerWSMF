@@ -3,7 +3,7 @@
 function [SDR, Cs_FirstMp, dc_ratio_beams, dc_ratio_cols, ...
           dc_ratio_spl, stress_ratio_spl, splice_relative_dc] = ...
                                     getRSAresults(output_dir, bldgData, ...
-                                    secProps, Vs_ELF, spl_ratio, FyCol)
+                                    secProps, Vs_ELF, spl_ratio, FyCol, addSplices)
 
 storyNum = bldgData.storyNum;
 beamSize = bldgData.beamSize;
@@ -171,6 +171,7 @@ Cs_FirstMp = baseShearFirstMp/weigthTotal;
 %% Get splice force results
 fid  = fopen([output_dir,'/force_splice.out'], 'r');
 mode = 1;
+noresults_flag = 0;
 if fid < 0 % no splices in model
     M_splice = 0;    
 else    
@@ -181,61 +182,70 @@ else
             mode = mode + 1;
         catch
             break
+            noresults_flag = 1;
         end
-    end
+    end        
     fclose(fid);
-    % complete SRSS
-    M_splice = sqrt(abs(sum(result, 1)));
-    M_splice = M_splice*ampFactor;
-    clear result
+    
+    if noresults_flag
+        M_splice = 0;
+    else
+        % complete SRSS
+        M_splice = sqrt(abs(sum(result, 1)));
+        M_splice = M_splice*ampFactor;
+        clear result
+    end
 end
 
 %% Compute splice moment / columns Mp
 dc_ratio_spl = zeros(size(colSplice));
 stress_ratio_spl = zeros(size(colSplice));
 k = 1;
-for Axis = 1:axisNum
-    storiesDone = zeros(storyNum, 1); % counter for columns spanning multiple stories
-    for Story = 1:storyNum
-        if ~isempty(colSize{Story, Axis}) && ~ismember(Story, storiesDone)
-            % Floor bottom end
-            Floor_i = Story;
-            
-            % Find Floor for top end (in case of missing beams the column spans multiple stories)
-            Floor_j = 0;
-            i = 0;
-            while Floor_j == 0
-                if ~isempty(beamSize{Story+i, max(Axis-1,1)}) || ~isempty(beamSize{Story+i, min(Axis,bayNum)})
-                    Floor_j = Story+i+1;
-                else
-                    i = i + 1;
-                end
-            end
-            storiesDone(Floor_i:Floor_j-1) = Floor_i:Floor_j-1;
-            
-            if colSplice(Story, Axis) == 1
-                % Compute demand capacity assuming full welding
-                dc_ratio_spl(Story, Axis) = M_splice(k)/MnCol(Story, Axis);
-                
-                % Compute flange weld sress
-                if strcmp(colSize{Floor_j-1, Axis}(1:3), 'BOX')
-                    twCol(Story, Axis) = 2*twCol(Story, Axis); % to consider both webs
-                end
-                                  
-                Ispl = 2*1/12*bfCol(Story, Axis)*(tfCol(Story, Axis)*spl_ratio)^3 + ...
-                    2*bfCol(Story, Axis)*(tfCol(Story, Axis)*spl_ratio)*(dbCol(Story, Axis)/2 - tfCol(Story, Axis)*spl_ratio/2)^2 + ...
-                    1/12*twCol(Story, Axis)*spl_ratio*(0.7*(dbCol(Story, Axis)-4*tfCol(Story, Axis)))^3;
-                c = dbCol(Story, Axis)/2;
-                stress_ratio_spl(Story, Axis) = M_splice(k)*c/Ispl;
 
-                k = k + 1;
+if addSplices
+    for Axis = 1:axisNum
+        storiesDone = zeros(storyNum, 1); % counter for columns spanning multiple stories
+        for Story = 1:storyNum
+            if ~isempty(colSize{Story, Axis}) && ~ismember(Story, storiesDone)
+                % Floor bottom end
+                Floor_i = Story;
+                
+                % Find Floor for top end (in case of missing beams the column spans multiple stories)
+                Floor_j = 0;
+                i = 0;
+                while Floor_j == 0
+                    if ~isempty(beamSize{Story+i, max(Axis-1,1)}) || ~isempty(beamSize{Story+i, min(Axis,bayNum)})
+                        Floor_j = Story+i+1;
+                    else
+                        i = i + 1;
+                    end
+                end
+                storiesDone(Floor_i:Floor_j-1) = Floor_i:Floor_j-1;
+                
+                
+                if colSplice(Story, Axis) == 1
+                    % Compute demand capacity assuming full welding
+                    dc_ratio_spl(Story, Axis) = M_splice(k)/MnCol(Story, Axis);
+                    
+                    % Compute flange weld sress
+                    if strcmp(colSize{Floor_j-1, Axis}(1:3), 'BOX')
+                        twCol(Story, Axis) = 2*twCol(Story, Axis); % to consider both webs
+                    end
+                    
+                    Ispl = 2*1/12*bfCol(Story, Axis)*(tfCol(Story, Axis)*spl_ratio)^3 + ...
+                        2*bfCol(Story, Axis)*(tfCol(Story, Axis)*spl_ratio)*(dbCol(Story, Axis)/2 - tfCol(Story, Axis)*spl_ratio/2)^2 + ...
+                        1/12*twCol(Story, Axis)*spl_ratio*(0.7*(dbCol(Story, Axis)-4*tfCol(Story, Axis)))^3;
+                    c = dbCol(Story, Axis)/2;
+                    stress_ratio_spl(Story, Axis) = M_splice(k)*c/Ispl;
+                    
+                    k = k + 1;
+                end
+                
             end
-            
         end
     end
+    stress_ratio_spl = stress_ratio_spl/FyCol;
 end
-stress_ratio_spl = stress_ratio_spl/FyCol;
-
 
 %% Compare splice stress ratio with adjacent beams and columns
 % Get critical D/C ratio per connection

@@ -15,9 +15,9 @@ pattern Plain 300 Linear {;			# define load pattern
 }
 # ----- RECORDERS FOR ELF ----- #
 # Base shear columns recorders #
-recorder Element -file $outdir/EPL_base.out -ele 2010100 2010200 2010300 2010400 2010500 globalForce;
+recorder Element -file $outdir/EPL_base.out -ele 2010100 2010200 0 2010400 2010500 2010600 globalForce;
 
-# Drift recorders #
+recorder Element -file $outdir/EPL_base.out -ele 2010700 # Drift recorders #
 for {set story 1} {$story <= $num_stories} {incr story} {
 	recorder EnvelopeDrift -file $outdir/story${story}_drift_env.out -iNode [lindex $ctrl_nodes [expr {$story - 1}]] -jNode [lindex $ctrl_nodes $story] -dof 1 -perpDirn 2
 }

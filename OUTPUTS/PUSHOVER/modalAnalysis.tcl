@@ -58,10 +58,12 @@ proc modal { num_modes filename {eig_solver -genBandArpack}} {
 	set omegas [lrepeat $num_modes]
 	set periods [lrepeat $num_modes]
 	
+	puts $lambdas
+	
 	# process each mode of vibration
 	for {set imode 0} {$imode < $num_modes} {incr imode} {
 		
-		# compute i-mode data
+		# compute i-mode data		
 		set lambda [lindex $lambdas $imode]
 		set omega [expr {sqrt($lambda)}]
 		set frequency [expr $omega / 2.0 / $pi]

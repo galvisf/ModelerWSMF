@@ -170,7 +170,7 @@ end
 
 if addSplices
     fprintf(INP,'# COLUMN SPLICES\n');
-    fprintf(INP,'set spliceLoc        %.3f;\n', spliceLoc*12); % length [in] from bottom end of the column
+    fprintf(INP,'set spliceLoc        %.3f;\n', spliceLoc); % length [in] from bottom end of the column
     fprintf(INP,'\n');
 end
 

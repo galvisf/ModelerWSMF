@@ -9,7 +9,7 @@ addpath([currFolder filesep 'SRC' filesep '3_FunctionsModelAnalyses'])
 
 sourceFolder = ['SRC' filesep '2_TemplateOpenSeesfiles'];
 
-%% GENERAL INPUTS
+%% USER INPUTS: GENERAL
 isPushover = true;
 plot_pushover = true;
 
@@ -18,7 +18,7 @@ load('AISC_v14p1.mat');
 AISC_info = AISC_v14p1(1, :)';
 
 % Building input data
-geomFN    = 'inputs_4storyFrameOakland.xlsx';
+geomFN    = 'inputs_8storyFrameOakland.xlsx';
 Code_Year = 1986;
 spl_ratio = 0.3; % ratio of welded flange thickness
 frameType = 'Perimeter'; % 'Space' 'Perimeter' 'Intermediate'
@@ -34,25 +34,22 @@ mkdir(folderPath)
 font = 9;
 color_specs = linspecer(4);
 
-%% Pushover parameters 
-roofDrift = 0.025;
+%% USER INPUTS: Pushover parameters 
+roofDrift = 0.01; % ENTER IN ABSOLUTE VALUE
 signPush = 1;
 
 % Lateral load pattern
-LatLoadPattern = 'Manual'; % 'ASCE_ELF' 'Manual'
+LatLoadPattern = 'ASCE_ELF'; % 'ASCE_ELF' 'Manual'
 % ASCE7 ELF
 Ss = 1.22;
 S1 = 0.6934;
 TL = 8;
 Cv = 5.5;
 Ro = 8; 
-% Manual (from mode shape)
-Fx_norm = [0.28407492029104258746
-0.38160272008700779622
-0.48340264520126863257
-0.58]*100;
+% Manual
+Fx_norm = ones(35, 1)*100;
 
-%% Modeling considerations
+%% USER INPUTS: Modeling considerations
 %%% General %%%
 TransformationX = 2; %1: linear; 2:pdelta; 3:corotational
 fixedBase       = true; % false = pin

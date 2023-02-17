@@ -95,7 +95,7 @@ c     = 1; % factor for torsional stiffness (W sections use == 1)
 Cb    = 2.27; % factor for moment redistribution (double curvature)
 orientation = 1; % strong always for beams
 isBox = false; % only support wide-flange beam sections
-[Mn, ~] = computeMnVnSteelProfile(Es,FyBeam,props,Lb/12,c,Cb,orientation,isBox);
+[Mn, ~] = computeMnVnSteelProfile(Es,FyBeam,props,Lb,c,Cb,orientation,isBox);
 Mn = 12*Mn; % kip-in
 
 %%%%% 

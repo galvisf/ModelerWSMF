@@ -11,7 +11,7 @@ currFolder = pwd;
 
 sourceFolder = ['SRC' filesep '2_TemplateOpenSeesfiles'];
 
-%% GENERAL INPUTS
+%% USER INPUTS: GENERAL
 % Import AISC section data
 load('AISC_v14p1.mat'); % update to place inside 0_functions folder
 AISC_info = AISC_v14p1(1, :)';
@@ -26,7 +26,7 @@ mkdir(folderPath)
 geomFN = 'inputs_8storyFrameOakland.xlsx';
 isPushover = false;
 
-%% Modeling considerations
+%% USER INPUTS: Modeling considerations
 %%% General %%%
 TransformationX = 2; %1: linear; 2:pdelta; 3:corotational
 fixedBase       = true; % false = pin
