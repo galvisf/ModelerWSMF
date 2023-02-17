@@ -37,7 +37,7 @@ OpenSees produces output in a series of text files that need post-processing for
 
 ## Main structural modeling features
 
-***(1)*** This package supports linear and non-linear model generation using concentrated plasticity models using the backbones per any of the following documents (more details in **SRC/steelBeamHinge.m** and **SRC/steelColumnHinge.m**):
+**(1)** This package supports linear and non-linear model generation using concentrated plasticity models using the backbones per any of the following documents (more details in **SRC/steelBeamHinge.m** and **SRC/steelColumnHinge.m**):
   
   - *NIST (2017). “Guidelines for Nonlinear Structural Analysis for Design of Buildings Part IIb – Concrete Moment Frames”* (first-cycle envelope or monotonic envelope+cyclic degradation using IMK hinges)
   
@@ -45,7 +45,7 @@ OpenSees produces output in a series of text files that need post-processing for
   
   - *AISC 342 - draft (2023). “Seismic Provisions for Evaluation and Retrofit of Existing Structural Steel Buildings ”* (Only for box columns)
   
-***(2)*** Beams could be built-upwide-flange section and standard sections included in the extended database provided in **0_Databases**. Columns could be built-up wide-flange sections, standard wide-flange sections, or box columns. The format for the input file to specify the different type of sections is the following (more details in **SRC/getSteelSectionProps.m**):
+**(2)** Beams could be built-upwide-flange section and standard sections included in the extended database provided in **0_Databases**. Columns could be built-up wide-flange sections, standard wide-flange sections, or box columns. The format for the input file to specify the different type of sections is the following (more details in **SRC/getSteelSectionProps.m**):
   
   - String with name of the section as is in **0_Databases/AISC_v14p1.mat**
   
@@ -53,7 +53,7 @@ OpenSees produces output in a series of text files that need post-processing for
   
   - Box sections ('BOX db-bf-tw-tf'): 'BOX ##.##-##.##-#.###-#.###'
   
-***(3)*** Panel zone behavior could be included using any of the following assumptions (mode details in **SRC/PanelZoneSpring.tcl**):
+**(3)** Panel zone behavior could be included using any of the following assumptions (mode details in **SRC/PanelZoneSpring.tcl**):
   
   - None (rigid connection)
   - Elastic spring assuming only column web stiffness
@@ -62,9 +62,9 @@ OpenSees produces output in a series of text files that need post-processing for
   - Nonlinear backbone per *Kim et al. (2015)*
   - Nonlinear backbone per *Skiadopoulos et al. (2021)*
   
-***(4)*** Beams can me simulated with and without composite action. Composite action increases elastic stiffness as well as modify the backbone per NIST (2017) modeling guidelines (variable "composite").
+**(4)** Beams can me simulated with and without composite action. Composite action increases elastic stiffness as well as modify the backbone per NIST (2017) modeling guidelines (variable "composite").
 
-***(5)*** The model can include or ignore the stiffness and strength contribution of the gravity system (variable "addEGF").
+**(5)** The model can include or ignore the stiffness and strength contribution of the gravity system (variable "addEGF").
   
 ## Examples
 
