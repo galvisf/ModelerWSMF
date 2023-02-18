@@ -31,6 +31,7 @@ frameLengthY = 3*12; % [in] tributary width for WL to the MRF_X number of frames
 % Basic paths
 folderInputFiles = 'INPUTS'; % Input files per building
 folderPath = ['OUTPUTS' filesep 'DESIGN_DIAGNOSTICS']; % Folder to store results
+mkdir(folderPath)
 
 % Figure inputs
 font = 9;
@@ -138,6 +139,7 @@ copyOpenSeesHelper(sourceFolder, folderPath, isPushover)
 %%%%%%% Generate elastic model per building and direction %%%%%%%%
 % Model filename
 modelFN = 'ElasticModel.tcl';
+
 % Generate model    
 [AllNodes, AllEle, bldgData] = write_FrameModel(folderPath, [folderInputFiles filesep geomFN], modelFN, ...
     AISC_v14p1, Es, mu_poisson, FyBeam, FyCol, ...

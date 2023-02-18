@@ -36,7 +36,7 @@ font = 9;
 color_specs = linspecer(4);
 
 %% USER INPUTS: Pushover parameters 
-roofDrift = 0.02; % ENTER IN ABSOLUTE VALUE
+roofDrift = 0.01; % ENTER IN ABSOLUTE VALUE
 signPush = 1;
 
 % Lateral load pattern
@@ -59,8 +59,8 @@ addSplices      = true;
 dampingType     = 'Rayleigh_k0_beams_cols_springs'; % Rayleigh_k0_beams_cols_springs  Rayleigh_k0_all
 outdir          = 'Output';
 addBasicRecorders    = true;
-addDetailedRecorders = false;
-isRHA           = true; % add dt for recorders (to avoid large output files when analysis reduces dt)
+addDetailedRecorders = true;
+isRHA           = false; % add dt for recorders (to avoid large output files when analysis reduces dt)
 explicitMethod  = false; % add small mass to all DOF for explicit solution method 
 modelSetUp      = 'Generic'; % Generic    EE-UQ    Sherlock
 
