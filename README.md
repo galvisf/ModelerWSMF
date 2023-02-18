@@ -1,7 +1,7 @@
 <p align="center"> Modeler WSMF
 
 ## What is it?
-ModelerWSMF is an open-source Matlab-based package that facilitates the automatic generation of 2D OpenSees (.tcl) models of moment resisiting frames with special emphasis on welded steel moment frames (WSMF).
+`ModelerWSMF` is an open-source Matlab-based package that facilitates the automatic generation of 2D OpenSees (.tcl) models of moment resisiting frames with special emphasis on welded steel moment frames (WSMF).
 The package is capable of generating state-of-the-art non-linear models that consider high-fidelity simulations of panel zones, welded beam-to-column connections, and columns splices as depicted in Figure 1.
 
 <p align="center"> <img src="https://user-images.githubusercontent.com/35354704/202242564-2c0335b3-5606-4451-9961-990533ad0e56.png" align="middle" height=500 /></p>
@@ -9,7 +9,7 @@ The package is capable of generating state-of-the-art non-linear models that con
 
 This code extends already available open-source packages (notably https://github.com/amaelkady/FM-2D) by including the capabilities to model irregular buildings that might have setbacks, atypical story heights, MEP floors, interrupted column lines, atriums, and podiums. These capabililities are envision to be included in FM-2D in the future.
 
-ModelerWSMF was the primary engine to generate the models that support the following publications:  
+`ModelerWSMF` was the primary engine to generate the models that support the following publications:  
   
 - *Galvis, F. A. (2022). “Seismic Risk and Post-Earthquake Recovery of Older Tall Buidings with Welded Steel Moment Frames.”Ph.D. thesis. John A. Blume Earthquake Engineering Center, Stanford University.*
   
@@ -68,13 +68,13 @@ OpenSees produces output in a series of text files that need post-processing for
 
 **(6)** Beam-to-column connections can be simulated with typical backbone curves or using a fiber-section with the novel material **SteelFractureDI** for simulating welded-flange fracture.
   
-## Examples
+## How can I get started?
 
 The ***INPUTS*** folder includes some ready to use examples to facilitate testing of the package. The file "inputs_TestBldg.xlsx" correspond to an unrealistically irregular building that showcase the capabilities of the package to simulate structurally irregular frames. Use this example with the "main_DesignDiagnostics.m" module for more details. Note that the "inputs_TestBldg.xlsx" frame is not suitable for nonlinear analyses (i.e., pushover or NLRHA) because of the unbalance nature of the structural system. The remaining examples are suitable for testing all modules.
 
 ## License
 
-ModelerWSMF is distributed under the MIT license, see [LICENSE](https://opensource.org/licenses/MIT).
+`ModelerWSMF` is distributed under the MIT license, see [LICENSE](https://opensource.org/licenses/MIT).
 
 ## Contact
 
