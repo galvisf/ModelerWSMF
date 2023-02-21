@@ -4,7 +4,7 @@
 `ModelerWSMF` is an open-source Matlab-based package that facilitates the automatic generation of 2D OpenSees (.tcl) models of moment resisiting frames with special emphasis on welded steel moment frames (WSMF).
 The package is capable of generating state-of-the-art non-linear models that consider high-fidelity simulations of panel zones, welded beam-to-column connections, and columns splices as depicted in Figure 1.
 
-<p align="center"> <img src="https://user-images.githubusercontent.com/35354704/202242564-2c0335b3-5606-4451-9961-990533ad0e56.png" align="middle" height=500 /></p>
+<p align="center"> <img src="https://user-images.githubusercontent.com/35354704/202242564-2c0335b3-5606-4451-9961-990533ad0e56.png" align="middle" height=400 /></p>
 <p align="center"> Figure 1. OpenSees 2D frame modeling details. 
 
 This code extends already available open-source packages (notably https://github.com/amaelkady/FM-2D) by including the capabilities to model irregular buildings that might have setbacks, atypical story heights, MEP floors, interrupted column lines, atriums, and podiums. These capabililities are envision to be included in FM-2D in the future.
