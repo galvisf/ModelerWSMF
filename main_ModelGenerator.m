@@ -41,18 +41,18 @@ explicitMethod  = false; % add small mass to all DOF for explicit solution metho
 modelSetUp      = 'Sherlock'; % Generic    EE-UQ    Sherlock
 
 %%% Equivalent Gravity Frame %%%
-addEGF = false; 
+addEGF = true; 
 
 %%% Material properties %%%
 Es     = 29000;
-FyCol  = 44; % A572, Gr.50, based on SAC guidelines
-FyBeam = 44; % A36, based on SAC guidelines
+FyCol  = 50*1.1; % Column steel yield stress [amplified by Ry]
+FyBeam = 50*1.1; % Beam steel yield stress [amplified by Ry]
 
 %%% Beams and Columns %%%
 fractureElement = false;
-generation      = 'Pre_Northridge'; %'Pre_Northridge' 'Post_Northridge'
-backbone        = 'ASCE41'; % 'Elastic' 'NIST2017', 'ASCE41'
-connType        = 'non_RBS'; % 'non_RBS', 'RBS'
+generation      = 'Post_Northridge'; %'Pre_Northridge' 'Post_Northridge'
+backbone        = 'NIST2017'; % 'Elastic' 'NIST2017', 'ASCE41'
+connType        = 'RBS'; % 'non_RBS', 'RBS'
 degradation     = false;
 composite       = true;
 switchOrientation = false; % True: space frames switch the columns on weak-strong orientation

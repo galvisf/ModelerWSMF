@@ -226,7 +226,7 @@ function AllEle = write_Columns(INP,AllEle,bldgData,AISC_v14p1,addSplices,...
                     AllEle.Mn_Mp_col(Story, Axis) = mean([Mp_i/(Zz_i*FyCol), Mp_j/(Zz_j*FyCol)]);
                     
                     % Write column section data
-                    Zp_i = Mp_i/FyCol; % this captures the strain hardening factor added in the steelBeamHinge function
+                    Zp_i = Mp_i/FyCol; % this captures the strain hardening factor added in the steelColumnHinge function
                     Zp_j = Mp_j/FyCol; 
                     fprintf(INP, 'set secInfo_i {%8.4f %8.4f %8.4f %8.4f %8.4f %8.4f %8.4f};\n', ...
                         Zp_i, McMp_i, MrMp_i, theta_p_i, theta_pc_i, theta_u_i, lambda_i);

@@ -29,7 +29,7 @@
 %               Sy [in^3]
 %               Zy [in^3]
 %               
-%   Lb          = unbraced length [ft]
+%   Lb          = unbraced length [in]
 %   c           = 1; % factor for torsional stiffness (W sections use == 1)
 %   Cb          = 1; % factor for moment redistribution (simply supported beam == 1)
 %   orientation = 1 -> strong orientation
@@ -149,9 +149,7 @@ function [Mn, Vn] = computeMnVnSteelProfile(Es,Fy,props,Lb,c,Cb,orientation,isBo
         bf = props.bf;
         Zy = props.Zy;
         Sy = props.Sy;
-        
-        Lb = Lb * 12; % unbraced length [in]
-        
+             
         if orientation == 1
             %%%%%%%%%% Strong orientation %%%%%%%%%%
             % Shear capacity
@@ -163,8 +161,8 @@ function [Mn, Vn] = computeMnVnSteelProfile(Es,Fy,props,Lb,c,Cb,orientation,isBo
             
             % (Lateral torsional buckling)
             rts = sqrt(sqrt(Iy*Cw)/Sz);
-            Lp = 1.76*ry*sqrt(Es/Fy); % largest unbraced length for developing Mp
-            Lr = 1.95*rts*Es/(0.7*Fy)*sqrt(J*c/(Sz*ho) + sqrt((J*c/(Sz*ho))^2 + 6.76*(0.7*Fy/Es)^2)); % unbraced length limit to have bad lateral-torsional buckling
+            Lp = 1.76*ry*sqrt(Es/Fy); % largest unbraced length for developing Mp [in]
+            Lr = 1.95*rts*Es/(0.7*Fy)*sqrt(J*c/(Sz*ho) + sqrt((J*c/(Sz*ho))^2 + 6.76*(0.7*Fy/Es)^2)); % unbraced length limit to have bad lateral-torsional buckling [in]
             
             if Lb < Lp
                 MnLTB = Mp;

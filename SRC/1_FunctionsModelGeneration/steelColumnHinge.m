@@ -65,7 +65,7 @@ else
     Aw = 2*tf*bf;
 end
 G = Es/(2*(1+0.3)); % Shear modulus
-beta = 1.00;        % overstrength factor (1.15 in reference but using MmaxOverMp is better to use 1.0 here)
+beta = 1.00;        % overstrength factor (1.15 in NIST2017 but using MmaxOverMp is better to use 1.0 here)
 Lb = LCol;          % Braced length of the column
 
 %%%%% FLEXURAL STRENGTH CONSIDERING UNBRACED LENGTH
@@ -107,7 +107,7 @@ if ~isBox
         % Residual strength
         MrOverMp = (0.5 - 0.4*Pg/Pye);
         % Deformation capacity
-        thetaCap = min(294*(h_tw)^(-1.7)*(Lb/r_y)^(-0.7)*(1 - Pg/Pye)^1.6, 0.12); % upper bound modified from 0.20 to get a logical curve    
+        thetaCap = min(294*(h_tw)^(-1.7)*(Lb/r_y)^(-0.7)*(1 - Pg/Pye)^1.6, 0.2); % upper bound modified from 0.20 to get a logical curve    
         thetaPC = min([90*(h_tw)^(-0.8)*(Lb/r_y)^(-0.8)*(1 - Pg/Pye)^2.5, 0.30]);
         thetaUlt = 0.15;
         % Cyclic detereoration parameter

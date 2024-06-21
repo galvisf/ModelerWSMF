@@ -39,7 +39,7 @@ for Floor = 1:floorNum
 %             end
 %         end        
 %     end
-    for Axis = axisNum % select last pier as locations for control nodes
+    for Axis = 2%axisNum % select second pier as locations for control nodes
         if Floor == 1
             nodeID = Floor*10000+Axis*100;
             fprintf(INP, '\t%d\n', nodeID);

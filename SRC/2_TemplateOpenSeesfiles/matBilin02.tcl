@@ -17,7 +17,7 @@
 # Mp			bare section flexural strength [kip-in]
 # McMp			Ratio of maximum (or capping) moment to flexural strength
 # theta_p		Plastic rotation to the maximum (or capping) point
-# theta_pc		Plastic rotation from capping point to residual
+# theta_pc		Plastic rotation from capping point to zero moment
 # theta_u		Ultimate plastic rotation (to complete moment drop)
 # lambda		Parameters defining the deterioration in excursion
 # c 			Exponent defining the rate of cyclic deterioration 

@@ -61,7 +61,7 @@ proc matHysteretic { matTag EIeff eleLength n Mp McMp theta_p theta_pc MrMp Comp
 		set MpN $Mp
 	}
 		
-	set K [expr $n * 6 * $EIeff / $eleLength]	
+	set K [expr ($n + 1) * 6 * $EIeff / $eleLength]	
 	
 	# Corrected rotations to account for elastic deformations
 	set theta_y_p  [expr $MpP/$K];

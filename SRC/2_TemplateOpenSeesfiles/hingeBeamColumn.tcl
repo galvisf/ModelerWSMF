@@ -125,11 +125,11 @@ proc hingeBeamColumn { eleTag node_i node_j eleDir transfTag n Es Fy rigMatTag A
 	set K11_2 [expr (1+2*$n)*$K44_2/(1+$n)];
 	set K33_2 [expr (1+2*$n)*$K44_2/(1+$n)];
 	set IeffElement [expr $Ieff * ($n+1) / $n]
-	element ModElasticBeam2d $eleTag $nodeInt1 $nodeInt2 $A $Es $IeffElement $K11_2 $K33_2 $K44_2 $transfTag
+	element ModElasticBeam2d $eleTag $nodeInt1 $nodeInt2 [expr 100*$A] $Es $IeffElement $K11_2 $K33_2 $K44_2 $transfTag
 	
 	# Option 2 Typical elasticBeamColumn
 	# set IeffElement [expr $Ieff * ($n+1) / $n]	
-	# element elasticBeamColumn   $eleTag $nodeInt1 $nodeInt2 $A $Es $IeffElement $transfTag
+	# element elasticBeamColumn   $eleTag $nodeInt1 $nodeInt2 [expr 100*$A] $Es $IeffElement $transfTag
 	
 	## End springs and elastic element in the middle
 	# Option 1: Constraint (MORE EFFICIENT FOR IMPLICIT SOLUTION ALGORITHMS)

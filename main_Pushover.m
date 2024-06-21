@@ -19,8 +19,8 @@ load('AISC_v14p1.mat');
 AISC_info = AISC_v14p1(1, :)';
 
 % Building input data
-geomFN    = 'inputs_8storyFrameOakland.xlsx';
-Code_Year = 1986;
+geomFN    = 'inputs_3storyFrameOakland.xlsx';
+Code_Year = 2010;
 spl_ratio = 0.3; % ratio of welded flange thickness
 frameType = 'Perimeter'; % 'Space' 'Perimeter' 'Intermediate'
 MRF_X     = 1; % frames parallel to X resisting WL together
@@ -36,7 +36,7 @@ font = 9;
 color_specs = linspecer(4);
 
 %% USER INPUTS: Pushover parameters 
-roofDrift = 0.01; % ENTER IN ABSOLUTE VALUE
+roofDrift = 0.1; % ENTER IN ABSOLUTE VALUE
 signPush = 1;
 
 % Lateral load pattern
@@ -55,7 +55,7 @@ Fx_norm = ones(35, 1)*100;
 TransformationX = 2; %1: linear; 2:pdelta; 3:corotational
 fixedBase       = true; % false = pin
 rigidFloor      = false;
-addSplices      = true;
+addSplices      = false;
 dampingType     = 'Rayleigh_k0_beams_cols_springs'; % Rayleigh_k0_beams_cols_springs  Rayleigh_k0_all
 outdir          = 'Output';
 addBasicRecorders    = true;
@@ -65,20 +65,20 @@ explicitMethod  = false; % add small mass to all DOF for explicit solution metho
 modelSetUp      = 'Generic'; % Generic    EE-UQ    Sherlock
 
 %%% Equivalent Gravity Frame %%%
-addEGF = false; 
+addEGF = true; 
 
 %%% Material properties %%%
 Es     = 29000;
-FyCol  = 44; % A572, Gr.50, based on SAC guidelines
-FyBeam = 44; % A36, based on SAC guidelines
+FyCol  = 50*1.1; % Column steel yield stress [amplified by Ry]
+FyBeam = 50*1.1; % Beam steel yield stress [amplified by Ry]
 
 %%% Beams and Columns %%%
 fractureElement = false;
-generation      = 'Pre_Northridge'; %'Pre_Northridge' 'Post_Northridge'
-backbone        = 'ASCE41'; % 'Elastic' 'NIST2017', 'ASCE41'
-connType        = 'non_RBS'; % 'non_RBS', 'RBS'
+generation      = 'Post_Northridge'; %'Pre_Northridge' 'Post_Northridge'
+backbone        = 'NIST2017'; % 'Elastic' 'NIST2017', 'ASCE41'
+connType        = 'RBS'; % 'non_RBS', 'RBS'
 degradation     = false;
-composite       = true;
+composite       = false;
 switchOrientation = false; % True: space frames switch the columns on weak-strong orientation
                            % False: assume columns always in strong orientation, even for space frames
 %%% Panel zones %%%
@@ -105,7 +105,7 @@ end
 cvn_col   = flangeProp.cvn*1.5; % Fracture thougness of all column splices in the building
 
 %%% Rayleigth damping %%%
-zeta      = 0.015;
+zeta      = 0.02;
 DampModeI = 1;
 DampModeJ = 3;
 

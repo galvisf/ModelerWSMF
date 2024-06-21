@@ -18,7 +18,7 @@ function [Ieff, Mp, MmaxOverMp, MrOverMp, thetaCap, thetaPC, thetaUlt, lambda, t
 % Nonlinear Analysis in Support of Seismic Evaluation, Retrofit, and Design
 %
 % INPUTS
-%   backbone    = 'NIST2017_Monotonic', 'NIST2017_First_cycle', 'ASCE41', 'AISC342'
+%   backbone    = 'NIST2017', 'ASCE41', 'AISC342'
 %   connType    = 'RBS', 'non_RBS', 'PN'
 %   degradation = True, False (Consider or not cyclic degradation)
 %   props = struct with section geometrical properties
@@ -77,12 +77,13 @@ G = Es/(2*(1+0.3)); % Shear modulus
 % BEAM IS FIXED-FIXED
 Aw = tw*db;
 L = Lbeam/2;             % Shear spam (half the length)
-Ks = G*Aw/L;             % Shear lateral stiffness of the column
-Kb = 12*Es*Iz/Lbeam^3;   % bending lateral stiffness of the column
+Ks = G*Aw/L;             % Shear lateral stiffness of the beam
+Kb = 12*Es*Iz/Lbeam^3;   % bending lateral stiffness of the beam
 Ke = Ks*Kb/(Ks+Kb);      % effective lateral stiffness
 EIeff = Ke*Lbeam^3/12;   % effective EI to use in element without shear deformation in its formulation
 Ieff = EIeff/Es;          % effective I to use in element without shear deformation in its formulation
 %%%%% 
+L = Lbeam;             % Clear span of the beam
 
 %%%%% REDUCE CAPACITY IF RBS
 if strcmp(connType, 'RBS')
@@ -96,7 +97,8 @@ Cb    = 2.27; % factor for moment redistribution (double curvature)
 orientation = 1; % strong always for beams
 isBox = false; % only support wide-flange beam sections
 [Mn, ~] = computeMnVnSteelProfile(Es,FyBeam,props,Lb,c,Cb,orientation,isBox);
-Mn = 12*Mn; % kip-in
+beta = 1.00; % overstrength factor (1.15 in NIST2017 but using MmaxOverMp is better to use 1.0 here)
+Mn = 12*(beta*Mn); % kip-in
 
 %%%%% 
 if strcmp(backbone, 'NIST2017') && degradation

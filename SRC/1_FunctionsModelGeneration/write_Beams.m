@@ -132,11 +132,12 @@ function AllEle = write_Beams(INP,AllEle,bldgData,AISC_v14p1,connType,backbone,.
                 Lbeam = sum(bayLgth(Bay:Axis_j-1)) - dc_i/2 - dc_j/2;
                 
                 % Beam unbraced length
-                if beamBracing
-                    Lb = 4.5/0.025; % [in]
-                else
-                    Lb = Lbeam;
-                end
+                Lb = beamBracing;
+%                 if beamBracing
+%                     Lb = 8*12; %4.5/0.025; % [in]
+%                 else
+%                     Lb = Lbeam;
+%                 end
                 
                 % Write beams in model file
                 if strcmp(backbone, 'Elastic')

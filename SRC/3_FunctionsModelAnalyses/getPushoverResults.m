@@ -32,13 +32,14 @@ BaseShearCoefficient = baseShear/totalWeight;
 
 % get roof displacement
 RoofDisp = zeros(length(baseShear),1);
-fid  = fopen([output_dir,'/story',num2str(storyNum),'_disp.out'], 'r');
+% fid  = fopen([output_dir,'/story',num2str(storyNum),'_disp.out'], 'r');
+fid  = fopen([output_dir,'/all_disp.out'], 'r');
 i = 2;
 while ~feof(fid)
     try % Stop if finds an issue reading the data (means analysis didn't converge)
         line = fgets(fid); %# read line by line
         temp = sscanf(line,'%f')'; %# sscanf can read only numeric data
-        RoofDisp(i,1) = temp(2);
+        RoofDisp(i,1) = temp(end);
         i = i + 1;
     catch
         break
@@ -46,6 +47,10 @@ while ~feof(fid)
 end
 fclose(fid);
 RoofDrift = RoofDisp/sum(storyHgt)*100;
+
+steps = min([length(BaseShearCoefficient), length(RoofDrift)]);
+RoofDrift = RoofDrift(1:steps);
+BaseShearCoefficient = BaseShearCoefficient(1:steps);
 
 if plot_pushover    
     hold on
@@ -62,6 +67,8 @@ if plot_pushover
     xlabel('Roof drift');
     ylabel('Base shear coefficient');
     font = 9;
+    xlim([0, 10]);
+    ylim([0, 0.60]);
 %     legend('ASCE7 Load Pattern', 'Base shear to first Mp', 'Location', 'southoutside')
     title_text = ['Pushover curve - ', EQ_pattern];
     PlotGrayScaleForPaper(-999,'vertical',title_text,[0.5 1],'normal',font)

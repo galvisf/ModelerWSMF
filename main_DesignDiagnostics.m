@@ -21,8 +21,8 @@ load('AISC_v14p1.mat');
 AISC_info = AISC_v14p1(1, :)';
 
 % Building input data
-geomFN    = 'inputs_TestBldg.xlsx';
-Code_Year = 1986;
+geomFN    = 'inputs_3storyFrameOakland.xlsx';
+Code_Year = 2010;
 spl_ratio = 1; % ratio of welded flange thickness on splice
 frameType = 'Perimeter'; % 'Space' 'Perimeter' 'Intermediate'
 MRF_X     = 1; % frames parallel to X resisting WL together
@@ -42,26 +42,26 @@ color_specs = linspecer(4);
 TransformationX = 2; %1: linear; 2:pdelta; 3:corotational
 fixedBase       = true; % false = pin
 rigidFloor      = false;
-addSplices      = true;
+addSplices      = false;
 dampingType     = 'Rayleigh_k0_beams_cols_springs'; % Rayleigh_k0_beams_cols_springs  Rayleigh_k0_all
 outdir          = 'Output';
 addBasicRecorders    = true;
-addDetailedRecorders = true;
+addDetailedRecorders = false;
 isRHA           = false; % does not add a dt to recorders to avoid issues with RSA output
 explicitMethod  = false; % add small mass to all DOF for explicit solution method 
 modelSetUp      = 'Generic'; % Generic    EE-UQ    Sherlock
 
 %%% Equivalent Gravity Frame Stiffness %%%
-addEGF = true; 
+addEGF = false; 
 
 %%% Material properties %%%
 Es     = 29000;
-FyCol  = 44; % A572, Gr.50, based on SAC guidelines
-FyBeam = 44; % A36, based on SAC guidelines
+FyCol  = 50; % A572, Gr.50, based on SAC guidelines
+FyBeam = 50; % A36, based on SAC guidelines
 
 %%% Beams and Columns %%%
 backbone  = 'Elastic'; % 'Elastic' 'NIST2017', 'ASCE41'
-composite = true;
+composite = false;
 slabFiberMaterials.fc      = -3;
 slabFiberMaterials.caRatio = 0.35; % fraction of composite action
 slabFiberMaterials.La      = 5; % girder separation [ft]

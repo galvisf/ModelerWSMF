@@ -228,13 +228,13 @@ proc hingeBeamColumnFracture { eleTag node1 node2 eleDir transfTag n Es Fy rigMa
 	
 	# Elastic elements between end springs
 	# set IeffElement [expr $Ieff * ($n+1) / $n]
-	# element elasticBeamColumn   $eleTag $nodeInt2 $nodeInt3 $A $Es $IeffElement $transfTag;
+	# element elasticBeamColumn   $eleTag $nodeInt2 $nodeInt3 [expr 100*$A] $Es $IeffElement $transfTag;
 
 	set K44_2 [expr 6*(1+$n)/(2+3*$n)];
 	set K11_2 [expr (1+2*$n)*$K44_2/(1+$n)];
 	set K33_2 [expr (1+2*$n)*$K44_2/(1+$n)];
 	set IeffElement [expr $Ieff * ($n+1) / $n]
-	element ModElasticBeam2d $eleTag $nodeInt2 $nodeInt3 $A $Es $IeffElement $K11_2 $K33_2 $K44_2 $transfTag
+	element ModElasticBeam2d $eleTag $nodeInt2 $nodeInt3 [expr 100*$A] $Es $IeffElement $K11_2 $K33_2 $K44_2 $transfTag
 
 	# Fracture element
 	if {$eleDir == "Horizontal"} {

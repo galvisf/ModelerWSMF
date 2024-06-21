@@ -26,7 +26,7 @@ function Mn = computeMnCompositeSteelProfile(Fy,fc,props,tdeck,tslab,Lv,La,caRat
 
     % Flexural capacity
     beff = min(2*Lv/8, La); % effective slab width
-    Qn = caRatio*min(Fy*A, 0.85*fc*beff*(tdeck/2 + tslab)); % shear flow at the interphase concrte-steel
+    Qn = caRatio*min(Fy*A, 0.85*abs(fc)*beff*(tdeck/2 + tslab)); % shear flow at the interphase concrte-steel
     a = Qn/(0.85*fc*beff); % depth of the concrete block
     
     y_EN = db/2 + Qn/(tw*Fy);
