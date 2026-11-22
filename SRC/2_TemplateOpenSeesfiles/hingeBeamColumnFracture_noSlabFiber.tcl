@@ -138,7 +138,7 @@ proc hingeBeamColumnFracture { eleTag node1 node2 eleDir transfTag n Es Fy rigMa
 	set lambda_i [lindex $secInfo_i 6]
 	
 	# Flexural hinge next to node 2 for bare steel section
-	set Zp_j [lindex $secInfo_i 0]
+	set Zp_j [lindex $secInfo_j 0]
 	set McMp_j [lindex $secInfo_j 1]
 	set MrMp_j [lindex $secInfo_j 2]
 	set theta_p_j [lindex $secInfo_j 3]
